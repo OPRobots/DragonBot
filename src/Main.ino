@@ -38,11 +38,20 @@
 #define SENSOR_FRONTAL_XSLEEP PB3
 #define SENSOR_DERECHO_XSLEEP PB4
 
+//////////////////
+// SENSORES I2C //
+//////////////////
+#include <Wire.h>
+#include <VL53L0X.h>
+
+VL53L0X sensor_izquierdo, sensor_frontal, sensor_derecho;
+
+
 
 void setup() {
-    // put your setup code here, to run once:
+  // put your setup code here, to run once:
 }
 
 void loop() {
-    // put your main code here, to run repeatedly:
+  // put your main code here, to run repeatedly:
 }

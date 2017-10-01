@@ -24,7 +24,7 @@ void init_motors(){
   pinMode(MOTOR_DERECHO_PWM, OUTPUT);
   pinMode(MOTOR_IZQUIERDO_PWM, OUTPUT);
   pinMode(MOTOR_RUN, OUTPUT);
-  
+
   digitalWrite(MOTOR_DERECHO_ADELANTE, LOW);
   digitalWrite(MOTOR_DERECHO_ATRAS, LOW);
   digitalWrite(MOTOR_IZQUIERDO_ADELANTE, LOW);
@@ -39,7 +39,44 @@ void init_motors(){
 * Inicialización de los sensores.
 */
 void init_sensors(){
+  init_laser_sensors();
+}
 
+/**
+ * Inicizaliza los sensores láser VL53L0X
+ */
+void init_laser_sensors(){
+  pinMode(SENSOR_IZQUIERDO_XSLEEP, OUTPUT);
+  pinMode(SENSOR_FRONTAL_XSLEEP, OUTPUT);
+  pinMode(SENSOR_DERECHO_XSLEEP, OUTPUT);
+  digitalWrite(SENSOR_IZQUIERDO_XSLEEP, LOW);
+  digitalWrite(SENSOR_FRONTAL_XSLEEP, LOW);
+  digitalWrite(SENSOR_DERECHO_XSLEEP, LOW);
+
+  delay(500);
+  Wire.begin();
+
+  pinMode(SENSOR_IZQUIERDO_XSLEEP, INPUT);
+  delay(150);
+  sensor_izquierdo.init(true);
+  delay(100);
+  sensor_izquierdo.setAddress((uint8_t)22);
+
+  pinMode(SENSOR_FRONTAL_XSLEEP, INPUT);
+  delay(150);
+  sensor_frontal.init(true);
+  delay(100);
+  sensor_frontal.setAddress((uint8_t)25);
+
+  pinMode(SENSOR_DERECHO_XSLEEP, INPUT);
+  delay(150);
+  sensor_derecho.init(true);
+  delay(100);
+  sensor_derecho.setAddress((uint8_t)28);
+
+  sensor_izquierdo.setTimeout(500);
+  sensor_frontal.setTimeout(500);
+  sensor_derecho.setTimeout(500);
 }
 
 /**
