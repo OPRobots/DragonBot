@@ -44,8 +44,8 @@ void init_sensors(){
 }
 
 /**
- * Inizializa los sensores IR QRE1113
- */
+* Inizializa los sensores IR QRE1113
+*/
 void init_IR_sensors(){
   for (byte sensor = 0; sensor < NUM_SENSORS; sensor++) {
     pinMode(sensorPins[sensor], INPUT);
@@ -53,8 +53,8 @@ void init_IR_sensors(){
 }
 
 /**
- * Inicizaliza los sensores láser VL53L0X
- */
+* Inicizaliza los sensores láser VL53L0X
+*/
 void init_laser_sensors(){
   pinMode(SENSOR_IZQUIERDO_XSLEEP, OUTPUT);
   pinMode(SENSOR_FRONTAL_XSLEEP, OUTPUT);
@@ -93,5 +93,10 @@ void init_laser_sensors(){
 * Inicialización de leds, botones, ...
 */
 void init_led_buttons(){
+  pinMode(LED, OUTPUT);
 
+  pinMode(BTN, INPUT_PULLUP);
+
+  pinMode(SW_1, INPUT_PULLUP);
+  pinMode(SW_2, INPUT_PULLUP);
 }
