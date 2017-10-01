@@ -13,6 +13,14 @@ void init_all(){
 }
 
 /**
+ * Inicialización del puerto Serial.
+ */
+void init_serial(){
+  Serial.begin(115200);
+  while (!Serial){}
+}
+
+/**
 * Inicialización de los motores.
 */
 void init_motors(){
