@@ -39,7 +39,17 @@ void init_motors(){
 * Inicialización de los sensores.
 */
 void init_sensors(){
+  init_IR_sensors();
   init_laser_sensors();
+}
+
+/**
+ * Inizializa los sensores IR QRE1113
+ */
+void init_IR_sensors(){
+  for (byte sensor = 0; sensor < NUM_SENSORS; sensor++) {
+    pinMode(sensorPins[sensor], INPUT);
+  }
 }
 
 /**

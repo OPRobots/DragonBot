@@ -46,6 +46,11 @@
 
 VL53L0X sensor_izquierdo, sensor_frontal, sensor_derecho;
 
+//////////////////////
+// SENSORES QRE1113 //
+//////////////////////
+const short NUM_SENSORS =  7;
+short sensorPins[] = {SENSOR_1, SENSOR_2, SENSOR_3, SENSOR_4, SENSOR_5, SENSOR_6, SENSOR_7};
 
 
 void setup() {
