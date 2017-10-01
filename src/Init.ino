@@ -16,7 +16,23 @@ void init_all(){
 * Inicialización de los motores.
 */
 void init_motors(){
+  pinMode(MOTOR_DERECHO_ADELANTE, OUTPUT);
+  pinMode(MOTOR_DERECHO_ATRAS, OUTPUT);
+  pinMode(MOTOR_IZQUIERDO_ADELANTE, OUTPUT);
+  pinMode(MOTOR_IZQUIERDO_ATRAS, OUTPUT);
 
+  pinMode(MOTOR_DERECHO_PWM, OUTPUT);
+  pinMode(MOTOR_IZQUIERDO_PWM, OUTPUT);
+  pinMode(MOTOR_RUN, OUTPUT);
+  
+  digitalWrite(MOTOR_DERECHO_ADELANTE, LOW);
+  digitalWrite(MOTOR_DERECHO_ATRAS, LOW);
+  digitalWrite(MOTOR_IZQUIERDO_ADELANTE, LOW);
+  digitalWrite(MOTOR_IZQUIERDO_ATRAS, LOW);
+  digitalWrite(MOTOR_RUN, HIGH);
+
+  digitalWrite(MOTOR_DERECHO_PWM, LOW);
+  digitalWrite(MOTOR_IZQUIERDO_PWM, LOW);
 }
 
 /**
