@@ -7,6 +7,7 @@
 * Función principal de inicialización de componentes.
 */
 void init_all(){
+  init_serial();
   init_motors();
   init_sensors();
   init_led_buttons();
