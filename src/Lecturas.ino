@@ -25,6 +25,27 @@ int read_raw_line_sensor(int sensor){
 }
 
 /**
+* Lectura escalada de todos los sensores de linea consecutivamente guardandolo en el array de valores
+* "line_sensor_values" para su posterior uso.
+* NOTA: Se usa la funcion de lectura individual de sensor, pasándole el índice del sensor a leer.
+* @param line_sensor_values Array de valores de todos los sensores.
+*/
+void read_scaled_line_sensors(int line_sensor_values[]){
+  for (int sensor = 0; sensor < NUM_SENSORS; sensor++) {
+    line_sensor_values[sensor] = read_raw_line_sensor(sensor);
+  }
+}
+
+/**
+* Lectura escalada e individual de un sensor de línea.
+* @param  sensor Índice del array de pines "sensorPins" cuyo sensor se va a leer
+* @return        Lectura del sensor.
+*/
+int read_scaled_line_sensor(int sensor){
+  return map(analogRead(sensorPins[sensor]), minVals[sensor], maxVals[sensor], 0, 4095);
+}
+
+/**
  * Calibración inicial de los sensores de línea
  * @param doCalibrate Bandera para evitar calibración en caso de haber introducido anteriormente los datos.
  */
