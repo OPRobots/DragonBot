@@ -22,7 +22,7 @@
 // PINES BTN/LED //
 //////////////////
 #define BTN PB5
-#define LED PB0
+#define LED PC13
 
 ////////////////////
 // PINES SENSORES //
@@ -46,6 +46,15 @@
 
 VL53L0X sensor_izquierdo, sensor_frontal, sensor_derecho;
 
+/////////////
+//CIRCUITO //
+/////////////
+#define MODO_LINEA 1
+#define MODO_DEGRADADO 2
+// Establece el tipo de circuito
+#define MODO_CIRCUITO MODO_LINEA
+
+
 //////////////////////
 // SENSORES QRE1113 //
 //////////////////////
@@ -53,31 +62,28 @@ const short NUM_SENSORS =  7;
 short sensorPins[] = {SENSOR_1, SENSOR_2, SENSOR_3, SENSOR_4, SENSOR_5, SENSOR_6, SENSOR_7};
 
 
-/////////////
-//CIRCUITO //
-/////////////
-#define MODO_LINEA 1
-#define MODO_DEGRADADO 2
-
-// Establece el tipo de circuito
-#define MODO_CIRCUITO MODO_LINEA
-
-
 //////////////////////////
 //VARIABLES DE LECTURAS //
 //////////////////////////
-
-int line_sensor_values[7];
-
-
-
-
+#define REALIZAR_CALIBRACION 1
+#define CALIBRATION_TIME 5000
+int line_sensor_values[] = {0, 0, 0, 0, 0, 0, 0};
+int minVal = 0; // Valor mínimo por debajo del cual se interpreta como negro
+int maxVal = 4095; // Valor máximo por encima del cual se interpreta como blanco
+int minVals[] = {4095, 4095, 4095, 4095, 4095, 4095, 4095};
+int maxVals[] = {0, 0, 0, 0, 0, 0, 0};
+int minMappedVals[] = {4095, 4095, 4095, 4095, 4095, 4095, 4095};
+int maxMappedVals[] = {0, 0, 0, 0, 0, 0, 0};
+float mediaMax = 0;
+float mediaMin = 0;
 
 
 void setup() {
   // Arranca todos los componentes
   init_all();
-  delay(500);
+  delay(100);
+  calibrate_line_sensors((bool)REALIZAR_CALIBRACION);
+
 }
 
 void loop() {
