@@ -53,10 +53,21 @@ const short NUM_SENSORS =  7;
 short sensorPins[] = {SENSOR_1, SENSOR_2, SENSOR_3, SENSOR_4, SENSOR_5, SENSOR_6, SENSOR_7};
 
 
+/////////////
+//CIRCUITO //
+/////////////
+#define MODO_LINEA 1
+#define MODO_DEGRADADO 2
+
+// Establece el tipo de circuito
+#define MODO_CIRCUITO MODO_LINEA
+
+
 void setup() {
-  // put your setup code here, to run once:
+  // Arranca todos los componentes
+  init_all();
+  delay(500);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
 }
