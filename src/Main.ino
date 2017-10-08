@@ -63,6 +63,17 @@ short sensorPins[] = {SENSOR_1, SENSOR_2, SENSOR_3, SENSOR_4, SENSOR_5, SENSOR_6
 #define MODO_CIRCUITO MODO_LINEA
 
 
+//////////////////////////
+//VARIABLES DE LECTURAS //
+//////////////////////////
+
+int line_sensor_values[7];
+
+
+
+
+
+
 void setup() {
   // Arranca todos los componentes
   init_all();
