@@ -63,7 +63,7 @@ void calibrate_line_sensors(bool doCalibrate){
 * al rango de valores que puede tomar en la pista cada uno de los sensores.
 */
 void calibrate_minimum_maximum_value_line_sensors(){
-  long millis_inicial = millis();
+  long millis_inicial = 0;
   digitalWrite(LED, LOW);
   do{
     for (int sensor = 0; sensor < NUM_SENSORS; sensor++) {
@@ -74,7 +74,7 @@ void calibrate_minimum_maximum_value_line_sensors(){
         maxVals[sensor] = value;
       }
     }
-  }while((millis()-millis_inicial)>CALIBRATION_TIME);
+  }while((millis()-millis_inicial)<CALIBRATION_TIME);
   digitalWrite(LED, HIGH);
   delay(100);
 }
