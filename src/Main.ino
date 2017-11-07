@@ -68,8 +68,8 @@ short sensorPins[] = {SENSOR_1, SENSOR_2, SENSOR_3, SENSOR_4, SENSOR_5, SENSOR_6
 #define REALIZAR_CALIBRACION 1
 #define CALIBRATION_TIME 5000
 int line_sensor_values[] = {0, 0, 0, 0, 0, 0, 0};
-int minVal = 0; // Valor mínimo por debajo del cual se interpreta como negro
-int maxVal = 4095; // Valor máximo por encima del cual se interpreta como blanco
+int minVal = 100; // Valor mínimo por debajo del cual se interpreta como negro
+int maxVal = 3850; // Valor máximo por encima del cual se interpreta como blanco
 int minVals[] = {4095, 4095, 4095, 4095, 4095, 4095, 4095};
 int maxVals[] = {0, 0, 0, 0, 0, 0, 0};
 int minMappedVals[] = {4095, 4095, 4095, 4095, 4095, 4095, 4095};
