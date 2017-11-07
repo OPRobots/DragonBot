@@ -76,6 +76,7 @@ int minMappedVals[] = {4095, 4095, 4095, 4095, 4095, 4095, 4095};
 int maxMappedVals[] = {0, 0, 0, 0, 0, 0, 0};
 float mediaMax = 0;
 float mediaMin = 0;
+double position = 0;
 
 
 void setup() {
@@ -87,60 +88,5 @@ void setup() {
 }
 
 void loop() {
-double get_position(double last_position){
-  switch (MODO_CIRCUITO) {
-    case MODO_LINEA:
-
-    // Número de sensores detectando negro. Por defecto todos
-    int lineSensors;
-    lineSensors = NUM_SENSORS;
-
-    for(int sensor = 0;sensor < NUM_SENSORS;sensor++){
-      // Mapea la lectura de los sensores a 0-4095, en función de sus maximos y minimos de cada sensor
-      line_sensor_values[sensor] = map(analogRead(sensorPins[sensor]), minVals[sensor], maxVals[sensor], 0, 4095);
-
-      // Satura la lectura de los sensores a blanco y negro absoluto
-      if (line_sensor_values[sensor] > maxVal) {
-        line_sensor_values[sensor] = 4095;
-        lineSensors--;
-      } else if (line_sensor_values[sensor] < minVal) {
-        line_sensor_values[sensor] = 0;
-      }
-
-      // Invierte los valores de forma que las lecturas sean en base a detectar línea.
-      line_sensor_values[sensor] = 4095 - line_sensor_values[sensor];
-
-    }
-
-    /////////////////////////
-    // Cálculo de Posición //
-    /////////////////////////
-
-    // Suma de todos los valores de los sensores pesados
-    unsigned long linea;
-    // Suma de todos los valores de los sensores sin pesar
-    unsigned long valores;
-    // Posición real en la que se encuentra el robot. Por defecto es la anterior.
-    double posicion_real;
-
-    linea = 0;
-    valores = 0;
-    posicion_real = 0;
-
-    for (int sensor = 0; sensor < NUM_SENSORS; sensor++) {
-      linea += (sensor + 1) * line_sensor_values[sensor] * 1000L;
-      valores += (long)line_sensor_values[sensor];
-    }
-    if (lineSensors > 0) {
-      // Calcula la posición real sobre la línea.
-      posicion_real = ((linea / valores) - ((NUM_SENSORS + 1) * (double)(1000 / 2)));
-      return posicion_real;
-    } else {
-      // Si no hay ningún sensor detectando la linea, simula un sensor extra en el lado adecuado.
-      return (last_position > 0) ? (1000 * (NUM_SENSORS + 1) / 2) : -(1000 * (NUM_SENSORS + 1) / 2);
-    }
-    break;
-    case MODO_DEGRADADO:
-    break;
-  }
+  position = get_position(position);
 }
