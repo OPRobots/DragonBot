@@ -79,6 +79,9 @@ float mediaMin = 0;
 double position = 0;
 
 
+volatile long ticks_derecho = 0;
+volatile long ticks_izquierdo = 0;
+
 void setup() {
   // Arranca todos los componentes
   init_all();

@@ -170,3 +170,12 @@ double get_position(double last_position){
     break;
   }
 }
+
+
+void encoder_derecho(){
+  ticks_derecho++;
+}
+
+void encoder_izquierdo(){
+  ticks_izquierdo++;
+}
