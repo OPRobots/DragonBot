@@ -104,13 +104,76 @@ volatile long ticks_derecho = 0;
 volatile long ticks_izquierdo = 0;
 
 void setup() {
-  // Arranca todos los componentes
   init_all();
+  if (!digitalRead(BTN)) {
+		competicion = true;
+	}
   delay(100);
   calibrate_line_sensors((bool)REALIZAR_CALIBRACION);
-
+  delay(2000);
 }
 
 void loop() {
-  position = get_position(position);
+  if (!competicion || (competicion && competicion_iniciada)) {
+  		if (!competicion) {
+  			pid_calibrate.update();
+        velVentilador = ki;
+  		}
+      pid_calibrate.update();
+      position = get_position(position);
+      set_speed(calc_PID(position));
+      analogWrite(MOTOR_VENTILADOR, velVentilador);
+  	} else if (competicion) {
+  		if (digitalRead(BTN)) {
+  			delay(100);
+  			if (!digitalRead(BTN)) {
+          set_settings(!digitalRead(SW_1), !digitalRead(SW_2));
+  				while (!digitalRead(BTN)) {
+  					digitalWrite(LED, LOW);
+  				}
+  				long millis_pre_start = millis();
+  				bool led_state = true;
+  				while (millis() < (millis_pre_start + 5000)) {
+  					if ((millis() - millis_pre_start) % 500 == 0) {
+  						led_state = !led_state;
+  						digitalWrite(LED, led_state);
+  					}
+  				}
+  				digitalWrite(LED, LOW);
+  				competicion_iniciada = true;
+  			}
+  		}
+  	}
+}
+
+void set_settings(bool sw1, bool sw2){
+    // Configuración normal super segura
+    if(!sw1 && !sw2){
+      kp = 6;
+      kd = 1200;
+      velBase = 120;
+      velVentilador = 190;
+    }
+    // Configuración rapida segura
+    if(sw1 && !sw2){
+      kp = 6;
+      kd = 1200;
+      velBase = 150;
+      velVentilador = 230;
+    }
+    // Configuración rapida arriesgada
+    if(sw1 && sw2){
+      kp = 7;
+      kd = 1500;
+      velBase = 180;
+      velVentilador = 250;
+    }
+    // // Configuración rapida super arriesgada
+    // if(sw1 && sw2){
+    //   kp = 7;
+    //   kd = 400;
+    //   velBase = 200;
+    //   velVentilador = 255;
+    //   // aceleraciones(?)
+    // }
 }
