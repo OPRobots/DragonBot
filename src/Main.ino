@@ -79,6 +79,15 @@ float mediaMin = 0;
 double position = 0;
 
 
+// VARIABLES DE PID
+#include <PIDfromBT.h>
+double ideal = 0;
+long last_pid_calc = 0;
+double last_error = 0;
+double sum_error = 0;
+double kp = 0, ki = 0, kd = 0;
+PIDfromBT pid_calibrate(&kp, &ki, &kd, &velBase, &ideal, MIN_IDEAL, MAX_IDEAL, DEBUG);
+
 volatile long ticks_derecho = 0;
 volatile long ticks_izquierdo = 0;
 
