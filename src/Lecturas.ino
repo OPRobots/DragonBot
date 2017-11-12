@@ -121,8 +121,8 @@ double get_position(double last_position){
     case MODO_LINEA:
 
     // Número de sensores detectando negro. Por defecto todos
-    int lineSensors;
-    lineSensors = NUM_SENSORS;
+    int sensores_negro;
+    sensores_negro = NUM_SENSORS;
 
     for(int sensor = 0;sensor < NUM_SENSORS;sensor++){
       // Mapea la lectura de los sensores a 0-4095, en función de sus maximos y minimos de cada sensor
@@ -131,9 +131,9 @@ double get_position(double last_position){
       // Satura la lectura de los sensores a blanco y negro absoluto
       if (line_sensor_values[sensor] > maxVal) {
         line_sensor_values[sensor] = 4000;
-        lineSensors--;
       } else if (line_sensor_values[sensor] < minVal) {
         line_sensor_values[sensor] = 0;
+        sensores_negro--;
       }
 
     }
@@ -157,7 +157,19 @@ double get_position(double last_position){
       linea += (sensor + 1) * line_sensor_values[sensor] * 1000L;
       valores += (long)line_sensor_values[sensor];
     }
-    if (lineSensors > 0) {
+
+    if(!stop_emergencia && (sensores_negro == 0 ||sensores_negro == NUM_SENSORS) && millis_stop == 0){
+      millis_stop = millis();
+    }else if (!stop_emergencia && !(sensores_negro == 0 ||sensores_negro == NUM_SENSORS)){
+      millis_stop = 0;
+    }
+    if(millis_stop> 0 && millis()-millis_stop > 500 && velBase > 0){
+      stop_emergencia = true;
+    }
+
+
+    if (sensores_negro > 0) {
+
       // Calcula la posición real sobre la línea.
       posicion_real = ((linea / valores) - ((NUM_SENSORS + 1) * (double)(1000 / 2)));
       return posicion_real;

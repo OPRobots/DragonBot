@@ -86,6 +86,10 @@ short vel_ini = 0;
 long millis_inicial_accel = 0;
 float m;
 bool cambiando_vel = false;
+bool competicion = false;
+bool competicion_iniciada = false;
+long millis_stop = 0;
+bool stop_emergencia = false;
 
 // VARIABLES DE PID
 #include <PIDfromBT.h>
