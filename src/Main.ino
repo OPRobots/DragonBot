@@ -78,6 +78,14 @@ float mediaMax = 0;
 float mediaMin = 0;
 double position = 0;
 
+// VARIABLES DE VELOCIDADES
+int velBase = 0;
+int velVentilador = 0;
+int velReal = 0;
+short vel_ini = 0;
+long millis_inicial_accel = 0;
+float m;
+bool cambiando_vel = false;
 
 // VARIABLES DE PID
 #include <PIDfromBT.h>
