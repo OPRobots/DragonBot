@@ -3,6 +3,67 @@
 //aceleraciones que tendrá el robot.                          //
 ////////////////////////////////////////////////////////////////
 
+
+/**
+ * Establece la velocidad de los motores, luego de comprobar si es necesario realizar
+ * una aceleración.
+ * @param correccion Variación de la velocidad calculada por el PID
+ */
+void set_speed(double correccion) {
+
+  calc_accel(velBase, false, 500, false);
+
+  int velI = velReal - correccion;
+  int velD = velReal + correccion;
+
+  if(stop_emergencia){
+    velI = 0;
+    velD = 0;
+    velVentilador = 0;
+    kp = 0;
+    ki = 0;
+    kd = 0;
+  }
+
+  int pinD = MOTOR_DERECHO_ADELANTE;
+  int pinI = MOTOR_IZQUIERDO_ADELANTE;
+  // Limitar velocidad del motor derecho y selecciona la dirección.
+  if (velD > 255) {
+    velD = 255;
+    pinD = MOTOR_DERECHO_ADELANTE;
+  } else if (velD < 0) {
+    velD = abs(velD);
+    if (velD > 255) {
+      velD = 255;
+    }
+    pinD = MOTOR_DERECHO_ATRAS;
+  }
+
+  // Limitar velocidad del motor izquierdo y selecciona la dirección.
+  if (velI > 255) {
+    velI = 255;
+    pinI = MOTOR_IZQUIERDO_ADELANTE;
+  } else if (velI < 0) {
+    velI = abs(velI);
+    if (velI > 255) {
+      velI = 255;
+    }
+    pinI = MOTOR_IZQUIERDO_ATRAS;
+  }
+
+  digitalWrite(MOTOR_DERECHO_ADELANTE, LOW);
+  digitalWrite(MOTOR_DERECHO_ATRAS, LOW);
+  digitalWrite(MOTOR_IZQUIERDO_ADELANTE, LOW);
+  digitalWrite(MOTOR_IZQUIERDO_ATRAS, LOW);
+
+  digitalWrite(pinD, HIGH);
+  digitalWrite(pinI, HIGH);
+
+  analogWrite(MOTOR_DERECHO_PWM   , velD);
+  analogWrite(MOTOR_IZQUIERDO_PWM , velI);
+}
+
+/**
  * Función de calculo de la aceleración, en caso de que la velocidad deseada no sea igual a la velocidad actual del robot
  * @param vel              Velocidad deseada para el robot
  * @param forzar_calculo   Indica si se realiza de nuevo el cálculo de la pendiente de la recta de aceleración
