@@ -25,30 +25,18 @@ void set_speed(double correccion) {
     kd = 0;
   }
 
-  int pinD = MOTOR_DERECHO_ADELANTE;
-  int pinI = MOTOR_IZQUIERDO_ADELANTE;
-  // Limitar velocidad del motor derecho y selecciona la dirección.
+  // Limitar velocidad del motor derecho
   if (velD > 255) {
     velD = 255;
-    pinD = MOTOR_DERECHO_ADELANTE;
   } else if (velD < 0) {
-    velD = abs(velD);
-    if (velD > 255) {
-      velD = 255;
-    }
-    pinD = MOTOR_DERECHO_ATRAS;
+    velD = 0;
   }
 
-  // Limitar velocidad del motor izquierdo y selecciona la dirección.
+  // Limitar velocidad del motor izquierdo
   if (velI > 255) {
     velI = 255;
-    pinI = MOTOR_IZQUIERDO_ADELANTE;
   } else if (velI < 0) {
-    velI = abs(velI);
-    if (velI > 255) {
-      velI = 255;
-    }
-    pinI = MOTOR_IZQUIERDO_ATRAS;
+    velI = 0;
   }
 
   digitalWrite(MOTOR_DERECHO_ADELANTE, LOW);
@@ -56,8 +44,8 @@ void set_speed(double correccion) {
   digitalWrite(MOTOR_IZQUIERDO_ADELANTE, LOW);
   digitalWrite(MOTOR_IZQUIERDO_ATRAS, LOW);
 
-  digitalWrite(pinD, HIGH);
-  digitalWrite(pinI, HIGH);
+  digitalWrite(MOTOR_DERECHO_ADELANTE, HIGH);
+  digitalWrite(MOTOR_IZQUIERDO_ADELANTE, HIGH);
 
   analogWrite(MOTOR_DERECHO_PWM   , velD);
   analogWrite(MOTOR_IZQUIERDO_PWM , velI);
@@ -139,7 +127,7 @@ double calc_PID(double position) {
   }
 
   // i = ki/100.0 * sum_error;
-  
+
   last_pid_calc = micros();
   last_error = error;
 
