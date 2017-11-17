@@ -147,7 +147,7 @@ double get_position(double last_position){
     sensores_negro = NUM_SENSORS;
 
     for(int sensor = 0;sensor < NUM_SENSORS;sensor++){
-      // Mapea la lectura de los sensores a 0-4095, en función de sus maximos y minimos de cada sensor
+      // Mapea la lectura de los sensores a 0-4000, en función de sus maximos y minimos de cada sensor
       line_sensor_values[sensor] = map(analogRead(sensorPins[sensor]), minVals[sensor], maxVals[sensor], 0, 4000);
 
       // Satura la lectura de los sensores a blanco y negro absoluto
