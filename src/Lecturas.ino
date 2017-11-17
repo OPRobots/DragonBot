@@ -46,13 +46,15 @@ int read_scaled_line_sensor(int sensor){
 }
 
 /**
- * Calibración inicial de los sensores de línea
- * @param doCalibrate Bandera para evitar calibración en caso de haber introducido anteriormente los datos.
- */
+* Calibración inicial de los sensores de línea
+* @param doCalibrate Bandera para evitar calibración en caso de haber introducido anteriormente los datos.
+*/
 void calibrate_line_sensors(bool doCalibrate){
   if(doCalibrate){
     calibrate_minimum_maximum_value_line_sensors();
     if(MODO_CIRCUITO == MODO_DEGRADADO){
+      while (digitalRead(BTN)) {};
+      delay(500);
       calibrate_minimum_maximum_average_value_line_sensors();
     }
   }
