@@ -92,10 +92,10 @@ void calibrate_minimum_maximum_average_value_line_sensors(){
   digitalWrite(LED, LOW);
   do{
     for (int sensor = 0; sensor < NUM_SENSORS; sensor++) {
-      int value = 4095-read_raw_line_sensor(sensor);
-      if (value < minVals[sensor]) {
+      int value = read_scaled_line_sensor(sensor);
+      if (value < minMappedVals[sensor]) {
         minMappedVals[sensor] = value;
-      } else if (value > maxVals[sensor]) {
+      } else if (value > maxMappedVals[sensor]) {
         maxMappedVals[sensor] = value;
       }
     }
