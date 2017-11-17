@@ -52,7 +52,7 @@ VL53L0X sensor_izquierdo, sensor_frontal, sensor_derecho;
 #define MODO_LINEA 1
 #define MODO_DEGRADADO 2
 // Establece el tipo de circuito
-#define MODO_CIRCUITO MODO_LINEA
+#define MODO_CIRCUITO MODO_DEGRADADO
 
 
 //////////////////////
