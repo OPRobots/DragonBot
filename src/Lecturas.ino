@@ -110,6 +110,26 @@ void calibrate_minimum_maximum_average_value_line_sensors(){
   delay(100);
 }
 
+/**
+* Lectura filtrada de los sensores de robots.
+*/
+void read_robots_sensors(bool filtrado){
+  if(filtrado){
+    filtro_sensor_izquierdo.Filter(sensor_izquierdo.readRangeSingleMillimeters());
+    filtro_sensor_frontal.Filter(sensor_frontal.readRangeSingleMillimeters());
+    filtro_sensor_derecho.Filter(sensor_derecho.readRangeSingleMillimeters());
+
+    robots_sensor_values[0] = filtro_sensor_izquierdo.Current();
+    robots_sensor_values[1] = filtro_sensor_frontal.Current();
+    robots_sensor_values[2] = filtro_sensor_derecho.Current();
+  }else{
+    robots_sensor_values[0] = sensor_izquierdo.readRangeSingleMillimeters();
+    robots_sensor_values[1] = sensor_frontal.readRangeSingleMillimeters();
+    robots_sensor_values[2] = sensor_derecho.readRangeSingleMillimeters();
+  }
+
+}
+
 
 /**
 * Obtiene la posición del robot sobre la línea o el degradado, retornando un valor analogico desde -4000 hasta +4000.

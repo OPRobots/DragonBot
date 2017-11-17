@@ -43,7 +43,7 @@
 //////////////////
 #include <Wire.h>
 #include <VL53L0X.h>
-
+const short NUM_ROBOT_SENSORS = 3;
 VL53L0X sensor_izquierdo, sensor_frontal, sensor_derecho;
 
 /////////////
@@ -77,6 +77,7 @@ int maxMappedVals[] = {0, 0, 0, 0, 0, 0, 0};
 float mediaMax = 0;
 float mediaMin = 0;
 double position = 0;
+int robots_sensor_values[] = {0,0,0};
 
 // VARIABLES DE VELOCIDADES
 int velBase = 0;
@@ -90,6 +91,12 @@ bool competicion = false;
 bool competicion_iniciada = false;
 long millis_stop = 0;
 bool stop_emergencia = false;
+#include "MegunoLink.h"
+#include "Filter.h"
+ExponentialFilter<long> filtro_sensor_izquierdo(5,0);
+ExponentialFilter<long> filtro_sensor_frontal(5,0);
+ExponentialFilter<long> filtro_sensor_derecho(5,0);
+// ATDelay lectura_sensor_robot(500);
 
 // VARIABLES DE PID
 #include <PIDfromBT.h>
@@ -99,6 +106,7 @@ double last_error = 0;
 double sum_error = 0;
 double kp = 0, ki = 0, kd = 0;
 PIDfromBT pid_calibrate(&kp, &ki, &kd, &velBase, &ideal, MIN_IDEAL, MAX_IDEAL, DEBUG);
+ExponentialFilter<long> filtroDegradado(30, 0);
 
 volatile long ticks_derecho = 0;
 volatile long ticks_izquierdo = 0;
