@@ -200,7 +200,51 @@ double get_position(double last_position){
       return (last_position > 0) ? (1000 * (NUM_SENSORS + 1) / 2) : -(1000 * (NUM_SENSORS + 1) / 2);
     }
     break;
+
+
+
     case MODO_DEGRADADO:
+
+    for(int sensor = 0;sensor < NUM_SENSORS;sensor++){
+      // Mapea la lectura de los sensores a 0-4000, en función de sus maximos y minimos de cada sensor
+      line_sensor_values[sensor] = read_scaled_line_sensor(sensor);
+    }
+
+    long posicion_real_deg = 0;
+    int num_sensors_deg = 0;
+    float sensor_average = 0.0f;
+    for(int sensor = 0;sensor < NUM_SENSORS;sensor++){
+      if(line_sensor_values[sensor] >= minMappedVals[sensor] && line_sensor_values[sensor] <= maxMappedVals[sensor]){
+        num_sensors_deg++;
+        sensor_average+=line_sensor_values[sensor];
+      }
+    }
+
+    if(num_sensors_deg>0){
+      sensor_average = sensor_average/(float)num_sensors_deg;
+      sensor_average = map(sensor_average, mediaMin, mediaMax, 0, 750);
+      pid_calibrate.setMinIdeal(-750);
+      pid_calibrate.setMaxIdeal(750);
+      if(last_sensor > first_sensor){
+        if (line_sensor_values[first_sensor] < line_sensor_values[last_sensor]) {
+          posicion_real_deg = -sensor_average;
+        }else{
+          posicion_real_deg = sensor_average;
+        }
+      }else{
+        if(last_position>=0){
+          posicion_real_deg = sensor_average;
+        }else{
+          posicion_real_deg = -sensor_average;
+        }
+      }
+    }else{
+      posicion_real_deg = last_position;
+    }
+    filtroDegradado.Filter(posicion_real_deg);
+
+    return filtroDegradado.Current();
+
     break;
   }
 }
