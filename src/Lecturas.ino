@@ -42,7 +42,7 @@ void read_scaled_line_sensors(int line_sensor_values[]){
 * @return        Lectura del sensor.
 */
 int read_scaled_line_sensor(int sensor){
-  return map(analogRead(sensorPins[sensor]), minVals[sensor], maxVals[sensor], 0, 4095);
+  return map(analogRead(sensorPins[sensor]), minVals[sensor], maxVals[sensor], 0, 4000);
 }
 
 /**
