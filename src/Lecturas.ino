@@ -32,7 +32,7 @@ int read_raw_line_sensor(int sensor){
 */
 void read_scaled_line_sensors(int line_sensor_values[]){
   for (int sensor = 0; sensor < NUM_SENSORS; sensor++) {
-    line_sensor_values[sensor] = read_raw_line_sensor(sensor);
+    line_sensor_values[sensor] = read_scaled_line_sensor(sensor);
   }
 }
 
