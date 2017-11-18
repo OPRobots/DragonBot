@@ -213,11 +213,30 @@ double get_position(double last_position){
     long posicion_real_deg = 0;
     int num_sensors_deg = 0;
     float sensor_average = 0.0f;
+    int inicio_for;
+    int fin_for;
+    int first_deg_sensor = -1;
+    int last_deg_sensor = -1;
+    if(last_position>=0){
+      inicio_for = 0;
+      fin_for = NUM_SENSORS;
+    }else{
+
+    }
     for(int sensor = 0;sensor < NUM_SENSORS;sensor++){
-      if(line_sensor_values[sensor] >= minMappedVals[sensor] && line_sensor_values[sensor] <= maxMappedVals[sensor]){
+      // if(line_sensor_values[sensor] >= minMappedVals[sensor] && line_sensor_values[sensor] <= maxMappedVals[sensor]){
+      if(abs(last_position)<400 || sensorEnPista(sensor, last_position, line_sensor_values)){
         num_sensors_deg++;
         sensor_average+=line_sensor_values[sensor];
+        if(first_deg_sensor < 0){
+          first_deg_sensor = sensor;
+        }else{
+          last_deg_sensor = sensor;
+        }
       }
+    }
+    if(last_deg_sensor < 0){
+      last_deg_sensor = first_deg_sensor;
     }
 
     if(num_sensors_deg>0){
@@ -225,11 +244,11 @@ double get_position(double last_position){
       sensor_average = map(sensor_average, mediaMin, mediaMax, 0, 750);
       pid_calibrate.setMinIdeal(-750);
       pid_calibrate.setMaxIdeal(750);
-      if(last_sensor > first_sensor){
-        if (line_sensor_values[first_sensor] < line_sensor_values[last_sensor]) {
-          posicion_real_deg = -sensor_average;
-        }else{
+      if(num_sensors_deg>1){
+        if (line_sensor_values[first_deg_sensor] < line_sensor_values[last_deg_sensor]) {
           posicion_real_deg = sensor_average;
+        }else{
+          posicion_real_deg = -sensor_average;
         }
       }else{
         if(last_position>=0){
@@ -241,6 +260,11 @@ double get_position(double last_position){
     }else{
       posicion_real_deg = last_position;
     }
+
+    if(num_sensors_deg != NUM_SENSORS && abs(last_position)>400 && abs(last_position-posicion_real_deg) > 400){
+      posicion_real_deg = last_position;
+    }
+
     filtroDegradado.Filter(posicion_real_deg);
 
     return filtroDegradado.Current();
