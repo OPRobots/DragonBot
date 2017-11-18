@@ -100,7 +100,52 @@ void calc_accel(short vel, bool forzar_calculo, short time, bool forzar_velocida
   }
 }
 
+/**
+* Función de calculo del ideal para ajustarlo progresivamente y evitar que el robot dé sacudidas
+* @param ideal_obj        Ideal deseado para el robot
+* @param forzar_calculo   Indica si se realiza de nuevo el cálculo de la pendiente de la recta de aceleración
+* @param time             Tiempo que tardará en realizar el cambio de ideal
+* @param forzar_ideal     Indica si se salta el cambio y asigna el ideal de inmediato.
+*/
+void calc_ideal(short ideal_obj, bool forzar_calculo, short time, bool forzar_ideal) {
+  if ((abs(ideal_obj - ideal) > 40 || cambiando_ideal) && !forzar_ideal) {
 
+    // Calcula la pendiente si el ideal objetivo es muy distinto al actual o si se especifica forzado de calculo
+    // TODO: Comprobar comportamiento cuando no es necesaria actualizacion => Cuando la ideal objetivo es igual a la ideal actual
+
+    if (((m_ideal == 0) && ideal_obj != ideal_ini) || forzar_calculo) {
+      // Obtiene su ideal actual, del que partirá para la realización de cambios.
+      ideal_ini = ideal;
+
+      // Calcula la pendiente si el ideal objetivo es distinto al ideal inicial
+      m_ideal = (ideal_obj - (float)ideal_ini) / (float)time;
+
+      // Indica que se esta cambiando_ideal y guarda los millis del inicio del cambio
+      cambiando_ideal = true;
+      millis_inicial_ideal = millis();
+
+    }
+
+    // Asigna el ideal correspondiente al tiempo transcurrido
+    if (cambiando_ideal) {
+      // y   = 	mx    +    b
+      // ideal = m*millis + ideal_ini
+      ideal = ((millis() - millis_inicial_ideal) * m_ideal) + (float)ideal_ini;
+
+    }
+
+    // Establece el ideal en el máximo (objetivo) cuando pasa el tiempo de cambio, e indica el fin del cambio de ideal.
+    if ((millis() - millis_inicial_ideal) >= time) {
+      cambiando_ideal = false;
+      ideal = ideal_obj;
+      m_ideal = 0;
+    }
+  } else {
+    ideal = ideal_obj;
+    ideal_ini = ideal;
+    m_ideal = 0;
+    cambiando_ideal = false;
+  }
 }
 
 /**
