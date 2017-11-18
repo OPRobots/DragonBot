@@ -58,6 +58,7 @@ void calibrate_line_sensors(bool doCalibrate){
       calibrate_minimum_maximum_average_value_line_sensors();
     }
   }
+  digitalWrite(LED, HIGH);
 }
 
 /**
