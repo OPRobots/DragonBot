@@ -157,7 +157,8 @@ double calc_PID(double position) {
   double p = 0;
   double i = 0;
   double d = 0;
-  double error = ideal - position;
+  filtro_ideal.Filter(ideal);
+  double error = filtro_ideal.Current() - position;
 
   // Proporcional: constante · desviación
   p = kp/100.0 * error;

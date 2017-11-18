@@ -106,6 +106,7 @@ double sum_error = 0;
 double kp = 0, ki = 0, kd = 0;
 PIDfromBT pid_calibrate(&kp, &ki, &kd, &velBase, &ideal, MIN_IDEAL, MAX_IDEAL, DEBUG);
 ExponentialFilter<long> filtroDegradado(30, 0);
+ExponentialFilter<long> filtro_ideal(10, 0);
 
 volatile long ticks_derecho = 0;
 volatile long ticks_izquierdo = 0;
