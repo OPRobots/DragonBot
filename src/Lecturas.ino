@@ -249,6 +249,49 @@ double get_position(double last_position){
   }
 }
 
+bool sensorEnPista(int sensor, int last_position, int line_sensor_values[] ){
+  if(line_sensor_values[sensor] < minMappedVals[sensor] && line_sensor_values[sensor] > maxMappedVals[sensor]){
+    return false;
+  }
+  // Está por la derecha
+  if(last_position >= 0){
+    // No es el primer sensor
+    if(sensor > 0){
+      if(line_sensor_values[sensor] > line_sensor_values[sensor-1]){
+        return true;
+      }else{
+        return false;
+      }
+    // Es el primer sensor
+    }else{
+      if(line_sensor_values[sensor]< line_sensor_values[sensor+1]){
+        return true;
+      }else{
+        return false;
+      }
+    }
+    // Está por la izquierda
+  }else{
+    // No es el primer sensor
+    if(sensor > 0){
+      if(line_sensor_values[sensor] < line_sensor_values[sensor-1]){
+        return true;
+      }else{
+        return false;
+      }
+    // Es el primer sensor
+    }else{
+      if(line_sensor_values[sensor] > line_sensor_values[sensor+1]){
+        return true;
+      }else{
+        return false;
+      }
+    }
+  }
+
+
+}
+
 
 void encoder_derecho(){
   ticks_derecho++;
