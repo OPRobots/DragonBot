@@ -182,3 +182,13 @@ double calc_PID(double position) {
 
   return p + i + d;
 }
+
+long last_cambio_carril = 0;
+void check_laser_sensors(){
+  read_laser_sensor(LASER_FRONTAL);
+  if(robots_sensor_values[LASER_FRONTAL] < 500 && (millis()-last_cambio_carril) > 2000){
+    id_ob = -id_ob;
+    last_cambio_carril = millis();
+    digitalWrite(LED, LOW);
+  }
+}
