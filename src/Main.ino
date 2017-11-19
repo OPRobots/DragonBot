@@ -97,6 +97,11 @@ ATDelay lectura_frontal_laser(50);
 #include <PIDfromBT.h>
 double fake_ideal = 0;
 double ideal = 0;
+short ideal_ini = 0;
+double id_ob = 0;
+long millis_inicial_ideal = 0;
+float m_ideal;
+bool cambiando_ideal = false;
 long last_pid_calc = 0;
 double last_error = 0;
 double sum_error = 0;
