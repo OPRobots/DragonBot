@@ -132,6 +132,7 @@ void loop() {
         velVentilador = ki;
   		}
       pid_calibrate.update();
+      check_laser_sensors();
       position = get_position(position);
       set_speed(calc_PID(position));
       analogWrite(MOTOR_VENTILADOR, velVentilador);
