@@ -105,9 +105,10 @@ void init_laser_sensors(){
   delay(100);
   sensor_derecho.setAddress((uint8_t)28);
 
-  sensor_izquierdo.setTimeout(500);
-  sensor_frontal.setTimeout(500);
-  sensor_derecho.setTimeout(500);
+  sensor_izquierdo.setTimeout(5);
+  sensor_frontal.setTimeout(5);
+  sensor_derecho.setTimeout(5);
+  sensor_frontal.startContinuous(200);
 }
 
 /**
