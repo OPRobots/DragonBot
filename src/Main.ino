@@ -91,7 +91,7 @@ bool competicion_iniciada = false;
 long millis_stop = 0;
 bool stop_emergencia = false;
 #include "ATDelay.h"
-ATDelay lectura_frontal_laser(50);
+ATDelay lectura_frontal_laser(100);
 
 // VARIABLES DE PID
 #include <PIDfromBT.h>
