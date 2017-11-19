@@ -96,6 +96,8 @@ ExponentialFilter<long> filtro_sensor_izquierdo(5,0);
 ExponentialFilter<long> filtro_sensor_frontal(5,0);
 ExponentialFilter<long> filtro_sensor_derecho(5,0);
 // ATDelay lectura_sensor_robot(500);
+#include "ATDelay.h"
+ATDelay lectura_frontal_laser(50);
 
 // VARIABLES DE PID
 #include <PIDfromBT.h>
