@@ -106,9 +106,11 @@ long last_pid_calc = 0;
 double last_error = 0;
 double sum_error = 0;
 double kp = 0, ki = 0, kd = 0;
-ExponentialFilter<long> filtroDegradado(30, 0);
-ExponentialFilter<long> filtro_ideal(10, 0);
 PIDfromBT pid_calibrate(&kp, &ki, &kd, &velBase, &fake_ideal, MIN_IDEAL, MAX_IDEAL, DEBUG);
+#include "MegunoLink.h"
+#include "Filter.h"
+ExponentialFilter<long> filtroDegradado(15, 0);
+ExponentialFilter<long> filtro_ideal(15, 0);
 
 volatile long ticks_derecho = 0;
 volatile long ticks_izquierdo = 0;
