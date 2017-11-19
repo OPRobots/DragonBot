@@ -114,23 +114,23 @@ void calibrate_minimum_maximum_average_value_line_sensors(){
 }
 
 /**
-* Lectura filtrada de los sensores de robots.
+* Lectura de los sensores láser de robots.
 */
-void read_robots_sensors(bool filtrado){
-  if(filtrado){
-    filtro_sensor_izquierdo.Filter(sensor_izquierdo.readRangeSingleMillimeters());
-    filtro_sensor_frontal.Filter(sensor_frontal.readRangeSingleMillimeters());
-    filtro_sensor_derecho.Filter(sensor_derecho.readRangeSingleMillimeters());
-
-    robots_sensor_values[0] = filtro_sensor_izquierdo.Current();
-    robots_sensor_values[1] = filtro_sensor_frontal.Current();
-    robots_sensor_values[2] = filtro_sensor_derecho.Current();
-  }else{
-    robots_sensor_values[0] = sensor_izquierdo.readRangeSingleMillimeters();
-    robots_sensor_values[1] = sensor_frontal.readRangeSingleMillimeters();
-    robots_sensor_values[2] = sensor_derecho.readRangeSingleMillimeters();
+void read_laser_sensor(byte sensor){
+  switch (sensor) {
+    case LASER_IZQUIERDO:
+    robots_sensor_values[LASER_IZQUIERDO] = sensor_izquierdo.readRangeSingleMillimeters();
+    break;
+    case LASER_FRONTAL:
+    if(lectura_frontal_laser.check()){
+      robots_sensor_values[LASER_FRONTAL] = sensor_frontal.readRangeContinuousMillimeters();
+      lectura_frontal_laser.reset();
+    }
+    break;
+    case LASER_DERECHO:
+    robots_sensor_values[LASER_DERECHO] = sensor_derecho.readRangeSingleMillimeters();
+    break;
   }
-
 }
 
 
