@@ -123,8 +123,8 @@ void read_laser_sensor(byte sensor){
     break;
     case LASER_FRONTAL:
     if(lectura_frontal_laser.check()){
-      robots_sensor_values[LASER_FRONTAL] = sensor_frontal.readRangeContinuousMillimeters();
       lectura_frontal_laser.reset();
+      robots_sensor_values[LASER_FRONTAL] = sensor_frontal.readRangeContinuousMillimeters();
     }
     break;
     case LASER_DERECHO:
