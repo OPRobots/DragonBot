@@ -205,7 +205,6 @@ double get_position(double last_position){
 
 
     case MODO_DEGRADADO:
-
     for(int sensor = 0;sensor < NUM_SENSORS;sensor++){
       // Mapea la lectura de los sensores a 0-4000, en función de sus maximos y minimos de cada sensor
       line_sensor_values[sensor] = read_scaled_line_sensor(sensor);
@@ -214,16 +213,8 @@ double get_position(double last_position){
     long posicion_real_deg = 0;
     int num_sensors_deg = 0;
     float sensor_average = 0.0f;
-    int inicio_for;
-    int fin_for;
     int first_deg_sensor = -1;
     int last_deg_sensor = -1;
-    if(last_position>=0){
-      inicio_for = 0;
-      fin_for = NUM_SENSORS;
-    }else{
-
-    }
     for(int sensor = 0;sensor < NUM_SENSORS;sensor++){
       // if(line_sensor_values[sensor] >= minMappedVals[sensor] && line_sensor_values[sensor] <= maxMappedVals[sensor]){
       if(abs(last_position)<400 || sensorEnPista(sensor, last_position, line_sensor_values)){
@@ -277,7 +268,6 @@ double get_position(double last_position){
     filtroDegradado.Filter(posicion_real_deg);
 
     return filtroDegradado.Current();
-
     break;
   }
 }
