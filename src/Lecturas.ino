@@ -262,8 +262,16 @@ double get_position(double last_position){
       posicion_real_deg = last_position;
     }
 
+
+
     if(num_sensors_deg != NUM_SENSORS && abs(last_position)>400 && abs(last_position-posicion_real_deg) > 400){
       posicion_real_deg = last_position;
+    }
+
+    if(idealInicial==0){
+      idealInicial = posicion_real_deg;
+      id_ob = idealInicial;
+      ideal = id_ob;
     }
 
     filtroDegradado.Filter(posicion_real_deg);
