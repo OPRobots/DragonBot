@@ -145,6 +145,7 @@ void calc_ideal(short ideal_obj, bool forzar_calculo, short time, bool forzar_id
     ideal_ini = ideal;
     m_ideal = 0;
     cambiando_ideal = false;
+    digitalWrite(LED, HIGH);
   }
 }
 
