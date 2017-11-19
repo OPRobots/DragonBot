@@ -134,6 +134,7 @@ void loop() {
       pid_calibrate.update();
       check_laser_sensors();
       position = get_position(position);
+      calc_ideal(id_ob, false, 300, false);
       set_speed(calc_PID(position));
       analogWrite(MOTOR_VENTILADOR, velVentilador);
   	} else if (competicion) {
