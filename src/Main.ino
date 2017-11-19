@@ -90,12 +90,6 @@ bool competicion = false;
 bool competicion_iniciada = false;
 long millis_stop = 0;
 bool stop_emergencia = false;
-#include "MegunoLink.h"
-#include "Filter.h"
-ExponentialFilter<long> filtro_sensor_izquierdo(5,0);
-ExponentialFilter<long> filtro_sensor_frontal(5,0);
-ExponentialFilter<long> filtro_sensor_derecho(5,0);
-// ATDelay lectura_sensor_robot(500);
 #include "ATDelay.h"
 ATDelay lectura_frontal_laser(50);
 
