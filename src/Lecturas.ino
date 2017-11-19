@@ -295,7 +295,7 @@ bool sensorEnPista(int sensor, int last_position, int line_sensor_values[] ){
       }else{
         return false;
       }
-    // Es el primer sensor
+      // Es el primer sensor
     }else{
       if(line_sensor_values[sensor]< line_sensor_values[sensor+1]){
         return true;
@@ -312,7 +312,7 @@ bool sensorEnPista(int sensor, int last_position, int line_sensor_values[] ){
       }else{
         return false;
       }
-    // Es el primer sensor
+      // Es el primer sensor
     }else{
       if(line_sensor_values[sensor] > line_sensor_values[sensor+1]){
         return true;
