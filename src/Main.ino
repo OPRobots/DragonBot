@@ -101,6 +101,8 @@ short ideal_ini = 0;
 double id_ob = 0;
 long millis_inicial_ideal = 0;
 float m_ideal;
+bool cambiarCarril = false;
+bool puedeCambiar = false;
 bool cambiando_ideal = false;
 long last_pid_calc = 0;
 double last_error = 0;

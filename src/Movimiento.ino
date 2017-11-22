@@ -39,6 +39,12 @@ void set_speed(double correccion) {
     velI = 0;
   }
 
+  if(cambiarCarril){
+    if(abs(correccion)<50){
+      puedeCambiar = true;
+    }
+  }
+
   digitalWrite(MOTOR_DERECHO_ADELANTE, LOW);
   digitalWrite(MOTOR_DERECHO_ATRAS, LOW);
   digitalWrite(MOTOR_IZQUIERDO_ADELANTE, LOW);
@@ -139,13 +145,14 @@ void calc_ideal(short ideal_obj, bool forzar_calculo, short time, bool forzar_id
       cambiando_ideal = false;
       ideal = ideal_obj;
       m_ideal = 0;
+      puedeCambiar = false;
+      cambiarCarril = false;
     }
   } else {
     ideal = ideal_obj;
     ideal_ini = ideal;
     m_ideal = 0;
     cambiando_ideal = false;
-    digitalWrite(LED, HIGH);
   }
 }
 
@@ -155,6 +162,7 @@ void calc_ideal(short ideal_obj, bool forzar_calculo, short time, bool forzar_id
 * @return          Posición actual del robot
 */
 double calc_PID(double position) {
+
   double p = 0;
   double i = 0;
   double d = 0;
@@ -188,8 +196,17 @@ long last_cambio_carril = 0;
 void check_laser_sensors(){
   read_laser_sensor(LASER_FRONTAL);
   if(robots_sensor_values[LASER_FRONTAL] < 500 && (millis()-last_cambio_carril) > 2000){
-    id_ob = -id_ob;
-    last_cambio_carril = millis();
-    digitalWrite(LED, LOW);
+
+    if(!cambiarCarril){
+      cambiarCarril = true;
+    }else if(puedeCambiar){
+      id_ob = -id_ob;
+      last_cambio_carril = millis();
+    }
+  }else if(robots_sensor_values[LASER_FRONTAL] != 65535){
+
   }
+
+
+
 }
