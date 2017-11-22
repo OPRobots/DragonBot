@@ -44,6 +44,9 @@
 #include <Wire.h>
 #include <VL53L0X.h>
 const short NUM_ROBOT_SENSORS = 3;
+#define LASER_IZQUIERDO 0
+#define LASER_FRONTAL 1
+#define LASER_DERECHO 2
 VL53L0X sensor_izquierdo, sensor_frontal, sensor_derecho;
 
 /////////////
