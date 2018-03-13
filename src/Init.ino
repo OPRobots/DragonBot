@@ -55,6 +55,7 @@ void inicia_leds(){
 	pinMode(RED_RGB_R  , OUTPUT);
 	pinMode(RED_RGB_G  , OUTPUT);
 	pinMode(RED_RGB_B  , OUTPUT);
+  set_color_RGB(0, 0, 0);
 }
 
 /**
