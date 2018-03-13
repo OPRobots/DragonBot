@@ -7,6 +7,23 @@
  */
  #include <PIDfromBT.h>
 
+////////////
+// MODOS  //
+////////////
+#define MODO_LINEA        1
+#define MODO_DEGRADADO    2
+
+#define LINEA_NEGRA       1
+#define LINEA_BLANCA      2
+
+///////////////////
+// CONFIGURACION //
+///////////////////
+#define PISTA             MODO_LINEA
+#define LINEA             LINEA_NEGRA
+#define TIEMPO_CALIBRADO  5000
+
+
 //////////////
 // SENSORES //
 //////////////
