@@ -1,3 +1,11 @@
+//////////////////////////
+// INCLUDE de LIBRERIAS //
+//////////////////////////
+/**
+ * Calibración del PID desde la APP android PIDfromBT
+ * https://github.com/robotaleh/PIDfromBT
+ */
+ #include <PIDfromBT.h>
 
 //////////////
 // SENSORES //
@@ -25,10 +33,10 @@
 // MULTIPLEXADOR //
 ///////////////////
 #define MUX_LECTURA PB1
-#define MUX_ESTADO_0 PA12
-#define MUX_ESTADO_1 PA11
-#define MUX_ESTADO_2 PB10
-#define MUX_ESTADO_3 PB11
+#define MUX_CANAL_0 PA12
+#define MUX_CANAL_1 PA11
+#define MUX_CANAL_2 PB10
+#define MUX_CANAL_3 PB11
 
 /////////////
 // MOTORES //
@@ -66,7 +74,6 @@
 // MISC //
 //////////
 #define CHOP_PIN PB0
-#define MOTOR_SUCCION PB9
 #define NIVEL_BATERIA PA0
 
 ///////////////
@@ -112,7 +119,6 @@ const int valorCalibradoMaximo = 4000;
 // INICIALIZACION LIBRERIAS //
 //////////////////////////////
 PIDfromBT CalibracionPID(&kp, &ki, &kd, &velocidadBase, &posicionIdeal, DEBUG);
-
 
 void setup(){
 
