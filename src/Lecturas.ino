@@ -14,10 +14,11 @@ int mux_analog_read(byte canalMux) {
 /**
  * Función de lectura del sensor indicado mapeando los máximos y mínimos del mismo
  * @param  canalMux Canal del Multiplexador correspondiente al sensor que se desea leer.
+ * @param  sensor 	Índice del array de sensores correspondiente al sensor leído actualmente.
  * @return [int]    Lectura analógica del sensor indicado.
  */
-int mux_analog_read_map(byte canalMux) {
-	return  map(mux_analog_read(canalMux), valoresCalibracionMinimos[canalMux], valoresCalibracionMaximos[canalMux], valorCalibradoMinimo, valorCalibradoMaximo);
+int mux_analog_read_map(byte canalMux, int sensor) {
+	return  map(mux_analog_read(canalMux), valoresCalibracionMinimos[sensor], valoresCalibracionMaximos[sensor], valorCalibradoMinimo, valorCalibradoMaximo);
 }
 
 /**
@@ -25,7 +26,7 @@ int mux_analog_read_map(byte canalMux) {
  */
 void lectura_sensores_calibrados(){
 		for (int sensor = 0; sensor < NUMERO_SENSORES; sensor++) {
-			valoresSensores[sensor] = mux_analog_read_map(pinesSensores[sensor]);
+			valoresSensores[sensor] = mux_analog_read_map(pinesSensores[sensor], sensor);
       if(valoresSensores[sensor] > valorSaturacionAlto){
         valoresSensores[sensor] = valorCalibradoMaximo;
       }
