@@ -14,8 +14,6 @@ void inicia_todo(){
   delay(100);
   inicia_switch_boton();
   delay(100);
-  inicia_timers();
-  delay(100);
 }
 
 /**

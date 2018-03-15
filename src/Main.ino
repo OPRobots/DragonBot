@@ -136,12 +136,14 @@ const int valorCalibradoMaximo = 4000;
 //////////////////////////////
 // INICIALIZACION LIBRERIAS //
 //////////////////////////////
-HardwareTimer TimerPID(1);
+HardwareTimer TimerPID(2);
 PIDfromBT CalibracionPID(&kp, &ki, &kd, &velocidadBase, &posicionIdeal, DEBUG);
 
 void setup(){
     inicia_todo();
     calibra_sensores();
+    inicia_timers();
+    delay(100);
 }
 
 void loop(){
