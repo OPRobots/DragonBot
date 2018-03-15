@@ -71,5 +71,6 @@ void inicia_switch_boton(){
  */
 void inicia_misc(){
   pinMode(CHOP_PIN, OUTPUT);
+  digitalWrite(CHOP_PIN, HIGH);
 	pinMode(NIVEL_BATERIA , INPUT);
 }
