@@ -44,5 +44,5 @@ void lectura_sensores_calibrados(){
  * @return [bool]		Indica si el botón está pulsado.
  */
 bool btn_pulsado(){
-	return !digitalRead(BTN);
+	return digitalRead(BTN);
 }
