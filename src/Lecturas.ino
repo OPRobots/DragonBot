@@ -33,7 +33,7 @@ void lectura_sensores_calibrados(){
       if(valoresSensores[sensor] < valorSaturacionBajo){
         valoresSensores[sensor] = valorCalibradoMinimo;
       }
-      if(LINEA == LINEA_NEGRA){
+      if(LINEA == LINEA_BLANCA){
         valoresSensores[sensor] = valorCalibradoMaximo - valoresSensores[sensor];
       }
     }
