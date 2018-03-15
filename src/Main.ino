@@ -100,9 +100,6 @@ int velocidadBase         = 0;
 int velocidadMaxima       = 255;
 float velocidadDerecha    = 0;
 float velocidadIzquierda  = 0;
-bool motoresHabilitados   = false;
-bool enCompeticion        = false;
-bool competicionIniciada  = false;
 long ultimaLinea          = 0;
 
 //////////////////////////
@@ -133,6 +130,12 @@ int valoresCalibracionMaximos[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 const int valorCalibradoMinimo = 0;
 const int valorCalibradoMaximo = 4000;
 
+///////////////////////////////
+// VARIABLES DE COMPETICIÓN  //
+///////////////////////////////
+bool enCompeticion = false;
+bool competicionIniciada = false;
+
 //////////////////////////////
 // INICIALIZACION LIBRERIAS //
 //////////////////////////////
@@ -141,14 +144,40 @@ PIDfromBT CalibracionPID(&kp, &ki, &kd, &velocidadBase, &posicionIdeal, DEBUG);
 
 void setup(){
     inicia_todo();
+    enCompeticion = btn_pulsado();
     calibra_sensores();
     inicia_timers();
     delay(100);
 }
 
 void loop(){
-    CalibracionPID.update();
-    if(btn_pulsado())
-    Serial.println(posicionActual);
-    dar_velocidad(correccion);
+  if(!enCompeticion || (enCompeticion && competicionIniciada)){
+    if(!enCompeticion){
+      CalibracionPID.update();
+      if(btn_pulsado()){
+        Serial.println(posicionActual);
+      }
+    }
+  }else if(enCompeticion){
+    if(!btn_pulsado()){
+      delay(100);
+      if(btn_pulsado()){
+        // TODO: Asignación de configuraciones.
+        while(btn_pulsado()){
+          set_color_RGB(random(200,255),0,0);
+        }
+        long millisIniciales = millis();
+        int tiempoPasado = 5;
+        while(millis()<(millisIniciales + 5000)){
+            tiempoPasado = millis()-millisIniciales;
+            byte r = 0, g =0;
+            r = map(tiempoPasado, 0,5000, 255,0);
+            g = map(tiempoPasado, 0,1000, 0,255);
+            set_color_RGB(r,g,0);
+        }
+        competicionIniciada = true;
+        set_color_RGB(0,0,0);
+      }
+    }
+  }
 }
