@@ -4,7 +4,7 @@
 void inicia_todo(){
   CalibracionPID.setMaxIdeal(posicionMaxima);
   CalibracionPID.setMinIdeal(posiciconMinima);
-  Serial.begin(115200);
+  Serial.begin(9600);
   while(!Serial){}
   inicia_sensores();
   delay(100);
@@ -13,6 +13,8 @@ void inicia_todo(){
   inicia_leds();
   delay(100);
   inicia_switch_boton();
+  delay(100);
+  inicia_timers();
   delay(100);
 }
 
@@ -73,4 +75,11 @@ void inicia_misc(){
   pinMode(CHOP_PIN, OUTPUT);
   digitalWrite(CHOP_PIN, HIGH);
 	pinMode(NIVEL_BATERIA , INPUT);
+}
+
+/**
+ * Configuración de todos los Timers en uso
+ */
+void inicia_timers(){
+  inicia_timer_PID();
 }

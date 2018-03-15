@@ -113,6 +113,7 @@ int posicionIdeal = 0;
 float errorAnterior = 0;
 float integralErrores = 0;
 float kp = 0, ki = 0, kd = 0;
+int correccion = 0;
 
 ///////////////////////////
 // VARIABLES DE SENSORES //
@@ -135,12 +136,17 @@ const int valorCalibradoMaximo = 4000;
 //////////////////////////////
 // INICIALIZACION LIBRERIAS //
 //////////////////////////////
+HardwareTimer TimerPID(1);
 PIDfromBT CalibracionPID(&kp, &ki, &kd, &velocidadBase, &posicionIdeal, DEBUG);
 
 void setup(){
-
+    inicia_todo();
+    calibra_sensores();
 }
 
 void loop(){
-
+    CalibracionPID.update();
+    if(btn_pulsado())
+    Serial.println(posicionActual);
+    dar_velocidad(correccion);
 }
