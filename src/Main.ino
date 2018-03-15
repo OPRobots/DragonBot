@@ -118,11 +118,11 @@ float kp = 0, ki = 0, kd = 0;
 // VARIABLES DE SENSORES //
 ///////////////////////////
 int pinesSensores[] = {SENSOR_1, SENSOR_2, SENSOR_3, SENSOR_4, SENSOR_5, SENSOR_6, SENSOR_7, SENSOR_8, SENSOR_9, SENSOR_10, SENSOR_11, SENSOR_12};
-int posicionMaxima = 7000;
-int posiciconMinima = -7000;
+int posicionMaxima = 6500;
+int posiciconMinima = -6500;
 int valoresSensores[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-int valorSaturacionBajo = 40;
-int valorSaturacionAlto = 3960;
+int valorSaturacionBajo = 80;
+int valorSaturacionAlto = 3000;
 
 ///////////////////////////////
 // VARIABLES DE CALIBRACIÓN  //
