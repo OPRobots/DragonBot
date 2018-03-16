@@ -1,5 +1,5 @@
 /**
- * Función para configurar el Timer 1 para cálculo de posición y PID
+ * Función para configurar el Timer 2 para cálculo de posición y PID
  */
 void inicia_timer_PID(){
     TimerPID.pause();
@@ -12,9 +12,12 @@ void inicia_timer_PID(){
 }
 
 /**
- * Función a la que llama el Timer 1 para realizar el cálculo de posición y PID
+ * Función a la que llama el Timer 2 para realizar el cálculo de posición y PID
  */
 void handler_timer_PID() {
   posicionActual = calcular_posicion(posicionActual);
   correccion = calcular_PID(posicionActual);
+  if(!enCompeticion || competicionIniciada){
+    dar_velocidad(correccion);
+  }
 }
