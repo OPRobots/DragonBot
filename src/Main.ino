@@ -32,6 +32,7 @@
 // SENSORES //
 //////////////
 #define NUMERO_SENSORES 12
+#define TIEMPO_SIN_PISTA 500
 #define SENSOR_1 0
 #define SENSOR_2 1
 #define SENSOR_3 2
@@ -123,7 +124,7 @@ int correccion = 0;
 ///////////////////////////
 int pinesSensores[] = {SENSOR_1, SENSOR_2, SENSOR_3, SENSOR_4, SENSOR_5, SENSOR_6, SENSOR_7, SENSOR_8, SENSOR_9, SENSOR_10, SENSOR_11, SENSOR_12};
 int posicionMaxima = 6500;
-int posiciconMinima = -6500;
+int posicionMinima = -6500;
 int valoresSensores[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 int valorSaturacionBajo = 80;
 int valorSaturacionAlto = 3000;
