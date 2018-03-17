@@ -1,4 +1,68 @@
 /**
+ * Función para controlar nivel de carga de la LiPo durante el funcionamiento
+ * @param  enLoop Indica si se ha llamado a la función desde el loop, para efectuar la comprobación con intervalo
+ */
+void nivel_bateria(bool enLoop){
+  int carga;
+  byte r, g;
+  if(enLoop){
+    if(millis()> (ultimaBateria+500)){
+      switch (LIPO) {
+        case LIPO_2S:
+          carga = map(analogRead(NIVEL_BATERIA), 2718, 2395, 100,0);
+        break;
+        case LIPO_3S:
+          carga = map(analogRead(NIVEL_BATERIA), 4083, 2718, 100,0);
+        break;
+      }
+      if(carga <= 15 && carga > 5){
+        avisoBateria = !avisoBateria;
+        if(avisoBateria){
+            set_color_RGB(255, 0, 0);
+        }else{
+            set_color_RGB(0, 0, 0);
+        }
+      }else if (carga <= 5){
+          set_color_RGB(255, 0, 0);
+      }
+      ultimaBateria = millis();
+    }
+  }else{
+    switch (LIPO) {
+      case LIPO_2S:
+        carga = map(analogRead(NIVEL_BATERIA), 2718, 2395, 100,0);
+      break;
+      case LIPO_3S:
+        carga = map(analogRead(NIVEL_BATERIA), 4083, 2718, 100,0);
+      break;
+    }
+    if(carga > 50){
+      r = map(carga, 51,100, 255,0);
+      g = 255;
+    }else if (carga < 50){
+      r = 255;
+      g = map(carga, 49,0, 255,0);
+    }else{
+      r = 255;
+      g = 255;
+    }
+    if(carga <= 15 || carga >= 85){
+      long millisInicial = millis();
+      do {
+        set_color_RGB(r, g, 0);
+        delay(200);
+        set_color_RGB(0,0,0);
+      } while((millis()-millisInicial) < 1000);
+    }else{
+      set_color_RGB(r, g, 0);
+      delay(1000);
+      set_color_RGB(0,0,0);
+    }
+  }
+
+}
+
+/**
  * Función para calcular a posición para cada tipo de pista.
  * @param  ultimaPosicion Última posición calculada para usar en caso de pérdida de pista
  * @return [int]          Posición actual sobre la línea

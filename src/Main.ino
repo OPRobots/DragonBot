@@ -16,11 +16,15 @@
 #define LINEA_NEGRA       1
 #define LINEA_BLANCA      2
 
+#define LIPO_2S           1
+#define LIPO_3S           2
+
 ///////////////////
 // CONFIGURACION //
 ///////////////////
 #define PISTA             MODO_LINEA
 #define LINEA             LINEA_NEGRA
+#define LIPO              LIPO_2S
 #define TIEMPO_CALIBRADO  5000
 
 
@@ -101,6 +105,8 @@ int velocidadMaxima       = 255;
 float velocidadDerecha    = 0;
 float velocidadIzquierda  = 0;
 long ultimaLinea          = 0;
+long ultimaBateria        = 0;
+bool avisoBateria         = false;
 
 //////////////////////////
 // VARIABLES DE CONTROL //
@@ -146,12 +152,14 @@ PIDfromBT CalibracionPID(&kp, &ki, &kd, &velocidadBase, &posicionIdeal, DEBUG);
 void setup(){
     inicia_todo();
     enCompeticion = btn_pulsado();
+    nivel_bateria(false);
     calibra_sensores();
     inicia_timers();
     delay(100);
 }
 
 void loop(){
+  nivel_bateria(true);
   if(!enCompeticion || (enCompeticion && competicionIniciada)){
     if(!enCompeticion){
       if(btn_pulsado()){
