@@ -21,3 +21,23 @@ void handler_timer_PID() {
     dar_velocidad(correccion);
   }
 }
+
+/**
+ * Función para configurar el Timer 3 para la calibración Serial-BT
+ */
+void inicia_timer_BT(){
+    TimerBT.pause();
+    TimerBT.setPeriod(50000);
+    TimerBT.setMode(TIMER_CH1, TIMER_OUTPUT_COMPARE);
+    TimerBT.setCompare(TIMER_CH1, 1);
+    TimerBT.attachInterrupt(1, handler_timer_BT);
+    TimerBT.refresh();
+    TimerBT.resume();
+}
+
+/**
+ * Función a la que llama el Timer 3 ajustar la configuración via Serial-BT
+ */
+void handler_timer_BT() {
+  CalibracionPID.update();
+}

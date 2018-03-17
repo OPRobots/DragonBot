@@ -80,4 +80,5 @@ void inicia_misc(){
  */
 void inicia_timers(){
   inicia_timer_PID();
+  inicia_timer_BT();
 }

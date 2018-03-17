@@ -140,6 +140,7 @@ bool competicionIniciada = false;
 // INICIALIZACION LIBRERIAS //
 //////////////////////////////
 HardwareTimer TimerPID(2);
+HardwareTimer TimerBT(3);
 PIDfromBT CalibracionPID(&kp, &ki, &kd, &velocidadBase, &posicionIdeal, DEBUG);
 
 void setup(){
@@ -153,7 +154,6 @@ void setup(){
 void loop(){
   if(!enCompeticion || (enCompeticion && competicionIniciada)){
     if(!enCompeticion){
-      CalibracionPID.update();
       if(btn_pulsado()){
         Serial.println(posicionActual);
       }
