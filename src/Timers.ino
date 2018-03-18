@@ -40,4 +40,5 @@ void inicia_timer_BT(){
  */
 void handler_timer_BT() {
   CalibracionPID.update();
+  nivel_bateria(true);
 }

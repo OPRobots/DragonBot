@@ -5,7 +5,10 @@
  * Calibración del PID desde la APP android PIDfromBT
  * https://github.com/robotaleh/PIDfromBT
  */
- #include <PIDfromBT.h>
+#include <PIDfromBT.h>
+#include <Wire.h>
+#include <MegunoLink.h>
+#include <Filter.h>
 
 ////////////
 // MODOS  //
@@ -149,6 +152,7 @@ bool competicionIniciada = false;
 HardwareTimer TimerPID(2);
 HardwareTimer TimerBT(3);
 PIDfromBT CalibracionPID(&kp, &ki, &kd, &velocidadBase, &posicionIdeal, DEBUG);
+ExponentialFilter<long> filtroBateria(15, 0);
 
 void setup(){
     inicia_todo();
@@ -160,7 +164,6 @@ void setup(){
 }
 
 void loop(){
-  nivel_bateria(true);
   if(!enCompeticion || (enCompeticion && competicionIniciada)){
     if(!enCompeticion){
       if(btn_pulsado()){

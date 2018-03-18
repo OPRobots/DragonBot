@@ -7,14 +7,16 @@ void nivel_bateria(bool enLoop){
   byte r, g;
   if(enLoop){
     if(millis()> (ultimaBateria+500)){
+      set_color_RGB(0, 0, 0);
       switch (LIPO) {
         case LIPO_2S:
-          carga = map(analogRead(NIVEL_BATERIA), 2718, 2395, 100,0);
+          filtroBateria.Filter(map(analogRead(NIVEL_BATERIA), 2718, 2395, 100,0));
         break;
         case LIPO_3S:
-          carga = map(analogRead(NIVEL_BATERIA), 4083, 2718, 100,0);
+          filtroBateria.Filter(map(analogRead(NIVEL_BATERIA), 4083, 2718, 100,0));
         break;
       }
+      carga = filtroBateria.Current();
       if(carga <= 15 && carga > 5){
         avisoBateria = !avisoBateria;
         if(avisoBateria){
@@ -36,6 +38,7 @@ void nivel_bateria(bool enLoop){
         carga = map(analogRead(NIVEL_BATERIA), 4083, 2718, 100,0);
       break;
     }
+    filtroBateria.Filter(carga);
     if(carga > 50){
       r = map(carga, 51,100, 255,0);
       g = 255;
