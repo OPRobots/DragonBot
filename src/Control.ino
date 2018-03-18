@@ -185,3 +185,17 @@ void dar_velocidad(int correccion) {
 	analogWrite(MOTOR_DERECHO_PWM   , velocidadDerecha);
 	analogWrite(MOTOR_IZQUIERDO_PWM , velocidadIzquierda);
 }
+
+/**
+ * Función de interrupción para el canal A del encoder derecho
+ */
+void encoder_derecho_A(){
+  ticksDerecho++;
+}
+
+/**
+ * Función de interrupción para el canal A del encoder izquierdo
+ */
+void encoder_izquierdo_A(){
+  ticksIzquierdo++;
+}

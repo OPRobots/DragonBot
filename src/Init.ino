@@ -3,12 +3,14 @@
  */
 void inicia_todo(){
   CalibracionPID.setMaxIdeal(posicionMaxima);
-  CalibracionPID.setMinIdeal(posiciconMinima);
+  CalibracionPID.setMinIdeal(posicionMinima);
   Serial.begin(9600);
   while(!Serial){}
   inicia_sensores();
   delay(100);
   inicia_motores();
+  delay(100);
+  inicia_encoders();
   delay(100);
   inicia_leds();
   delay(100);
@@ -46,6 +48,26 @@ void inicia_motores(){
 	digitalWrite(MOTOR_DERECHO_ATRAS       , LOW);
 	digitalWrite(MOTOR_IZQUIERDO_ADELANTE  , LOW);
 	digitalWrite(MOTOR_IZQUIERDO_ATRAS     , LOW);
+}
+
+/**
+ * Configura las interrupciones para lectrua de los encoders
+ */
+void inicia_encoders(){
+  pinMode(MOTOR_DERECHO_ENCODER_A, INPUT_PULLUP);
+  pinMode(MOTOR_IZQUIERDO_ENCODER_A, INPUT_PULLUP);
+
+  attachInterrupt(MOTOR_DERECHO_ENCODER_A, encoder_derecho_A, CHANGE);
+  attachInterrupt(MOTOR_IZQUIERDO_ENCODER_A, encoder_izquierdo_A, CHANGE);
+}
+
+/**
+ * Inicia el protocolo I2C mediante la librería Wire.h y el MPU9250
+ */
+void inicia_I2C(){
+  Wire.begin();
+  delay(100);
+  inicia_MPU9250();
 }
 
 /**
