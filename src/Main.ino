@@ -6,6 +6,7 @@
  * https://github.com/robotaleh/PIDfromBT
  */
 #include <PIDfromBT.h>
+#include <Servo.h>
 #include <Wire.h>
 #include <MegunoLink.h>
 #include <Filter.h>
@@ -113,6 +114,7 @@ long ultimaBateria        = 0;
 bool avisoBateria         = false;
 volatile long ticksDerecho = 0;
 volatile long ticksIzquierdo = 0;
+int velocidadSuccion      = 0;
 
 //////////////////////////
 // VARIABLES DE CONTROL //
@@ -151,15 +153,19 @@ bool competicionIniciada = false;
 //////////////////////////////
 // INICIALIZACION LIBRERIAS //
 //////////////////////////////
+Servo Brushless;
 HardwareTimer TimerPID(2);
 HardwareTimer TimerBT(3);
-PIDfromBT CalibracionPID(&kp, &ki, &kd, &velocidadBase, &posicionIdeal, DEBUG);
+PIDfromBT CalibracionPID(&kp, &ki, &kd, &velocidadBase, &posicionIdeal, &velocidadSuccion, DEBUG);
 ExponentialFilter<long> filtroBateria(15, 0);
 
 void setup(){
     inicia_todo();
     enCompeticion = btn_pulsado();
     nivel_bateria(false);
+    if(!enCompeticion){
+      inicia_brushless();
+    }
     calibra_sensores();
     inicia_timers();
     delay(100);
@@ -177,6 +183,7 @@ void loop(){
       delay(100);
       if(btn_pulsado()){
         // TODO: Asignación de configuraciones.
+        inicia_brushless();
         while(btn_pulsado()){
           set_color_RGB(random(200,255),0,0);
         }

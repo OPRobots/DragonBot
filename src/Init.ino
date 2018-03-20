@@ -98,6 +98,19 @@ void inicia_misc(){
 }
 
 /**
+ * Configura el ESC del Brushless para la succión
+ */
+void inicia_brushless(){
+  set_color_RGB(random(200,255), random(200,255), 0);
+  Brushless.attach(MOTOR_SUCCION);
+  Brushless.writeMicroseconds(2000);
+  delay(5000);
+  Brushless.writeMicroseconds(1000);
+  delay(5000);
+    set_color_RGB(0, 0, 0);
+}
+
+/**
  * Configuración de todos los Timers en uso
  */
 void inicia_timers(){
