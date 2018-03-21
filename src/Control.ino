@@ -10,7 +10,7 @@ void nivel_bateria(bool enLoop){
       set_color_RGB(0, 0, 0);
       switch (LIPO) {
         case LIPO_2S:
-          filtroBateria.Filter(map(analogRead(NIVEL_BATERIA), 2718, 2395, 100,0));
+          filtroBateria.Filter(map(analogRead(NIVEL_BATERIA), 2500, 2300, 100,0));
         break;
         case LIPO_3S:
           filtroBateria.Filter(map(analogRead(NIVEL_BATERIA), 4083, 2718, 100,0));
@@ -32,7 +32,7 @@ void nivel_bateria(bool enLoop){
   }else{
     switch (LIPO) {
       case LIPO_2S:
-        carga = map(analogRead(NIVEL_BATERIA), 2718, 2395, 100,0);
+        carga = map(analogRead(NIVEL_BATERIA), 2500, 2300, 100,0);
       break;
       case LIPO_3S:
         carga = map(analogRead(NIVEL_BATERIA), 4083, 2718, 100,0);
