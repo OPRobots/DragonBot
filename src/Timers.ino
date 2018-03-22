@@ -46,4 +46,8 @@ void handler_timer_BT() {
   }else{
     velocidadActual = 0;
   }
+
+  if(!enCompeticion || competicionIniciada){
+    Brushless.writeMicroseconds(map(velocidadSuccion, 0, 255, 1000, 2000));
+  }
 }
