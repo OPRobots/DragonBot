@@ -41,4 +41,9 @@ void inicia_timer_BT(){
 void handler_timer_BT() {
   CalibracionPID.update();
   nivel_bateria(true);
+  if(velocidadBase > 0){
+    velocidadActual = calcular_velocidad();
+  }else{
+    velocidadActual = 0;
+  }
 }

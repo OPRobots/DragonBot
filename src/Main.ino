@@ -112,8 +112,6 @@ float velocidadIzquierda  = 0;
 long ultimaLinea          = 0;
 long ultimaBateria        = 0;
 bool avisoBateria         = false;
-volatile long ticksDerecho = 0;
-volatile long ticksIzquierdo = 0;
 int intervaloAviso        = 500;
 int velocidadSuccion      = 0;
 
@@ -126,6 +124,17 @@ float errorAnterior = 0;
 float integralErrores = 0;
 float kp = 0, ki = 0, kd = 0;
 int correccion = 0;
+
+////////////////////////////
+// VARIABLES DE ENCODERS  //
+////////////////////////////
+float ticksMm = 0.7134f;
+float velocidadActual = 0;
+long ultimaVelocidad = 0;
+long ticksDerechoAnteriores = 0;
+long ticksIzquierdoAnteriores = 0;
+volatile long ticksDerecho = 0;
+volatile long ticksIzquierdo = 0;
 
 ///////////////////////////
 // VARIABLES DE SENSORES //
