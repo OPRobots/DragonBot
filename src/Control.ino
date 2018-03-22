@@ -6,61 +6,60 @@ void nivel_bateria(bool enLoop){
   int carga;
   byte r, g;
   if(enLoop){
-    if(millis()> (ultimaBateria+500)){
+    if(millis()> (ultimaBateria+intervaloAviso)){
       set_color_RGB(0, 0, 0);
       switch (LIPO) {
         case LIPO_2S:
-          filtroBateria.Filter(map(analogRead(NIVEL_BATERIA), 2500, 2300, 100,0));
+          filtroBateria.Filter(map(analogRead(NIVEL_BATERIA), 2500, 2340, 100,0));
         break;
         case LIPO_3S:
           filtroBateria.Filter(map(analogRead(NIVEL_BATERIA), 4083, 2718, 100,0));
         break;
       }
       carga = filtroBateria.Current();
-      if(carga <= 15 && carga > 5){
+      if(carga <= 15){
+        if (carga <= 5){
+          intervaloAviso = 100;
+        }else{
+          intervaloAviso = 500;
+        }
         avisoBateria = !avisoBateria;
         if(avisoBateria){
-            set_color_RGB(255, 0, 0);
-        }else{
-            set_color_RGB(0, 0, 0);
-        }
-      }else if (carga <= 5){
           set_color_RGB(255, 0, 0);
+        }else{
+          set_color_RGB(0, 0, 0);
+        }
       }
       ultimaBateria = millis();
     }
   }else{
-    switch (LIPO) {
-      case LIPO_2S:
-        carga = map(analogRead(NIVEL_BATERIA), 2500, 2300, 100,0);
-      break;
-      case LIPO_3S:
-        carga = map(analogRead(NIVEL_BATERIA), 4083, 2718, 100,0);
-      break;
-    }
-    filtroBateria.Filter(carga);
-    if(carga > 50){
-      r = map(carga, 51,100, 255,0);
-      g = 255;
-    }else if (carga < 50){
-      r = 255;
-      g = map(carga, 49,0, 255,0);
-    }else{
-      r = 255;
-      g = 255;
-    }
-    if(carga <= 15 || carga >= 85){
-      long millisInicial = millis();
-      do {
-        set_color_RGB(r, g, 0);
-        delay(200);
-        set_color_RGB(0,0,0);
-      } while((millis()-millisInicial) < 1000);
-    }else{
+    filtroBateria.Filter(0);
+    delay(500);
+    long millisInicial = millis();
+    do{
+      switch (LIPO) {
+        case LIPO_2S:
+          filtroBateria.Filter(map(analogRead(NIVEL_BATERIA), 2500, 2340, 100,0));
+        break;
+        case LIPO_3S:
+          filtroBateria.Filter(map(analogRead(NIVEL_BATERIA), 4083, 2718, 100,0));
+        break;
+      }
+      carga = filtroBateria.Current();
+      if(carga > 50){
+        r = map(carga, 51,100, 255,0);
+        g = 255;
+      }else if (carga < 50){
+        r = 255;
+        g = map(carga, 49,0, 255,0);
+      }else{
+        r = 255;
+        g = 255;
+      }
       set_color_RGB(r, g, 0);
-      delay(1000);
-      set_color_RGB(0,0,0);
-    }
+      delay(50);
+    }while((millis()-millisInicial) < 2000);
+    set_color_RGB(0,0,0);
   }
 
 }

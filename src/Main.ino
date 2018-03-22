@@ -114,6 +114,7 @@ long ultimaBateria        = 0;
 bool avisoBateria         = false;
 volatile long ticksDerecho = 0;
 volatile long ticksIzquierdo = 0;
+int intervaloAviso        = 500;
 int velocidadSuccion      = 0;
 
 //////////////////////////
