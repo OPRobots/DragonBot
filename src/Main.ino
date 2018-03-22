@@ -36,7 +36,7 @@
 // SENSORES //
 //////////////
 #define NUMERO_SENSORES 12
-#define TIEMPO_SIN_PISTA 500
+#define TIEMPO_SIN_PISTA 100
 #define SENSOR_1 0
 #define SENSOR_2 1
 #define SENSOR_3 2
