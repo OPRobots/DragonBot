@@ -4,8 +4,8 @@
 void inicia_timer_PID(){
     TimerPID.pause();
     TimerPID.setPeriod(250);
-    TimerPID.setMode(TIMER_CH2, TIMER_OUTPUT_COMPARE);
-    TimerPID.setCompare(TIMER_CH2, 1);
+    TimerPID.setMode(TIMER_CH1, TIMER_OUTPUT_COMPARE);
+    TimerPID.setCompare(TIMER_CH1, 1);
     TimerPID.attachInterrupt(1, handler_timer_PID);
     TimerPID.refresh();
     TimerPID.resume();
