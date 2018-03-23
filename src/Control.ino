@@ -101,13 +101,14 @@ int calcula_posicion_linea(int ultimaPosicion){
     }
 	}
 
-  if(sensoresDetectando > 0){
+  if(sensoresDetectando > 0 && sensoresDetectando < NUMERO_SENSORES){
     ultimaLinea = millis();
   }else if(millis()>(ultimaLinea+TIEMPO_SIN_PISTA)){
     kp = 0;
     ki = 0;
     kd = 0;
     velocidadBase = 0;
+    competicionIniciada = false;
   }
 
   if(sensoresDetectando > 0){
