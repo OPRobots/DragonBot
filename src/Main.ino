@@ -151,6 +151,9 @@ long ticksDerechoAnteriores = 0;
 long ticksIzquierdoAnteriores = 0;
 volatile long ticksDerecho = 0;
 volatile long ticksIzquierdo = 0;
+long ultimoMapeo = 0;
+long ticksMapeoDerechoAnteriores = 0;
+long ticksMapeoIzquierdoAnteriores = 0;
 
 ///////////////////////////
 // VARIABLES DE SENSORES //
@@ -198,6 +201,8 @@ void setup(){
 }
 
 void loop(){
+  mapeado_circuito();
+  delay(10);
   if(!enCompeticion || (enCompeticion && competicionIniciada)){
     if(!enCompeticion){
       if(btn_pulsado()){

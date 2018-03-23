@@ -215,3 +215,24 @@ float calcular_velocidad(){
   //   return velocidadActual;
   // }
 }
+
+/**
+ * Función para mapeado del circuito en busca de rectas para acelerar.
+ */
+void mapeado_circuito(){
+  if(millis()>(ultimoMapeo+60)){
+    int diferencia = abs((ticksDerecho-ticksMapeoDerechoAnteriores) - (ticksIzquierdo-ticksMapeoIzquierdoAnteriores));
+    if(diferencia<5){
+      // if(velocidadBase>0 && velocidadBase == 100)
+      // velocidadBase= 140;
+      // set_color_RGB(0,255,0);
+    }else{
+      // if(velocidadBase>0)
+      // velocidadBase=100;
+      // set_color_RGB(0,0,255);
+    }
+    ticksMapeoDerechoAnteriores = ticksDerecho;
+    ticksMapeoIzquierdoAnteriores = ticksIzquierdo;
+    ultimoMapeo = millis();
+  }
+}
