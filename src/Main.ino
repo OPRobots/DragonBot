@@ -205,7 +205,7 @@ void loop(){
   if(!enCompeticion || (enCompeticion && competicionIniciada)){
     if(!enCompeticion){
       if(btn_pulsado()){
-        Serial.println(posicionActual);
+        Serial.println(analogRead(NIVEL_BATERIA));
       }
     }
   }else if(enCompeticion){
