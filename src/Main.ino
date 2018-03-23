@@ -193,7 +193,6 @@ void setup(){
     enCompeticion = btn_pulsado();
     nivel_bateria(false);
     if(!enCompeticion){
-      inicia_brushless();
     }
     calibra_sensores();
     inicia_timers();
@@ -214,7 +213,8 @@ void loop(){
       delay(100);
       if(btn_pulsado()){
         // TODO: Asignación de configuraciones.
-        inicia_brushless();
+        kp = 0.03f;
+        kd = 4.0f;
         while(btn_pulsado()){
           set_color_RGB(random(200,255),0,0);
         }
@@ -229,6 +229,7 @@ void loop(){
         }
         competicionIniciada = true;
         set_color_RGB(0,0,0);
+        velocidadBase = 70;
       }
     }
   }
