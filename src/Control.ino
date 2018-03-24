@@ -108,7 +108,6 @@ int calcula_posicion_linea(int ultimaPosicion){
     ki = 0;
     kd = 0;
     velocidadBase = 0;
-    competicionIniciada = false;
   }
 
   if(sensoresDetectando > 0){
