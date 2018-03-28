@@ -156,8 +156,23 @@ long ticksIzquierdoAnteriores = 0;
 volatile long ticksDerecho = 0;
 volatile long ticksIzquierdo = 0;
 long ultimoMapeo = 0;
+
+//////////////////////
+// VARIABLES MAPEO  //
+//////////////////////
+#define NUMERO_SECTORES 2
+#define TIPO_SECTOR_RECTA 1
+#define TIPO_SECTOR_CURVA 2
+#define SECTOR_TICKS 0
+#define SECTOR_TIPO  1
+int tipoSector = TIPO_SECTOR_RECTA;
+int sectorActual = 0;
+bool mapeoRealizado = false;
+bool mapeoIniciado = false;
+int sectoresPista[NUMERO_SECTORES][2];
 long ticksMapeoDerechoAnteriores = 0;
 long ticksMapeoIzquierdoAnteriores = 0;
+bool ticksReseteados = true;
 
 ///////////////////////////
 // VARIABLES DE SENSORES //
@@ -191,6 +206,7 @@ HardwareTimer TimerPID(2);
 HardwareTimer TimerBT(3);
 PIDfromBT CalibracionPID(&kp, &ki, &kd, &velocidadBase, &posicionIdeal, &velocidadSuccion, DEBUG);
 ExponentialFilter<long> filtroBateria(15, 0);
+ExponentialFilter<long> filtroMapeo(50, 0);
 
 void setup(){
     inicia_todo();
@@ -204,7 +220,6 @@ void setup(){
 }
 
 void loop(){
-  mapeado_circuito();
   delay(10);
   if(!enCompeticion || (enCompeticion && competicionIniciada)){
     if(!enCompeticion){
@@ -231,6 +246,8 @@ void loop(){
             g = map(tiempoPasado, 0,1000, 0,255);
             set_color_RGB(r,g,0);
         }
+        ticksDerecho = 0;
+        ticksIzquierdo = 0;
         competicionIniciada = true;
         set_color_RGB(0,0,0);
         velocidadBase = 70;

@@ -27,7 +27,7 @@ void handler_timer_PID() {
  */
 void inicia_timer_BT(){
     TimerBT.pause();
-    TimerBT.setPeriod(50000);
+    TimerBT.setPeriod(100000);
     TimerBT.setMode(TIMER_CH1, TIMER_OUTPUT_COMPARE);
     TimerBT.setCompare(TIMER_CH1, 1);
     TimerBT.attachInterrupt(1, handler_timer_BT);
@@ -40,7 +40,12 @@ void inicia_timer_BT(){
  */
 void handler_timer_BT() {
   CalibracionPID.update();
-  nivel_bateria(true);
+  if(mapeoRealizado){
+    nivel_bateria(true);
+  }
+  if(!enCompeticion || competicionIniciada){
+    mapeado_circuito();
+  }
   if(velocidadBase > 0){
     velocidadActual = calcular_velocidad();
   }else{

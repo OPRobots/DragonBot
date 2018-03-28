@@ -285,19 +285,83 @@ float calcular_velocidad(){
  * Función para mapeado del circuito en busca de rectas para acelerar.
  */
 void mapeado_circuito(){
-  if(millis()>(ultimoMapeo+60)){
-    int diferencia = abs((ticksDerecho-ticksMapeoDerechoAnteriores) - (ticksIzquierdo-ticksMapeoIzquierdoAnteriores));
-    if(diferencia<5){
-      // if(velocidadBase>0 && velocidadBase == 100)
-      // velocidadBase= 140;
-      // set_color_RGB(0,255,0);
+  int diferencia;
+  if(mapeoRealizado){
+    diferencia = abs((ticksDerecho-ticksMapeoDerechoAnteriores) - (ticksIzquierdo-ticksMapeoIzquierdoAnteriores));
+    filtroMapeo.Filter(diferencia);
+    Serial.println(sectorActual);
+
+    switch (sectoresPista[sectorActual][SECTOR_TIPO]) {
+      case TIPO_SECTOR_RECTA:
+        velocidadBase = 120;
+      break;
+      case TIPO_SECTOR_CURVA:
+        velocidadBase = 70;
+      break;
+    }
+
+    if(ticksDerecho+800 >= sectoresPista[sectorActual][SECTOR_TICKS]){
+      ticksDerecho = 0;
+      ticksIzquierdo = 0;
+      sectorActual++;
+      if(sectorActual == NUMERO_SECTORES){
+        sectorActual = 0;
+        ticksReseteados = false;
+      }
     }else{
-      // if(velocidadBase>0)
-      // velocidadBase=100;
-      // set_color_RGB(0,0,255);
+      if(sectorActual == 0 && !ticksReseteados && filtroMapeo.Current()>25){
+        ticksReseteados = true;
+        ticksDerecho = 0;
+        ticksIzquierdo = 0;
+      }
     }
     ticksMapeoDerechoAnteriores = ticksDerecho;
     ticksMapeoIzquierdoAnteriores = ticksIzquierdo;
-    ultimoMapeo = millis();
+  }else{
+      diferencia = abs((ticksDerecho-ticksMapeoDerechoAnteriores) - (ticksIzquierdo-ticksMapeoIzquierdoAnteriores));
+      filtroMapeo.Filter(diferencia);
+
+      if(ticksDerecho > 50 && ticksIzquierdo > 50){
+        if(filtroMapeo.Current()<=25){
+          if(tipoSector == TIPO_SECTOR_CURVA && mapeoIniciado){
+            sectoresPista[sectorActual][SECTOR_TICKS] = ticksDerecho;
+            sectoresPista[sectorActual][SECTOR_TIPO] = tipoSector;
+            sectorActual++;
+            tipoSector = TIPO_SECTOR_RECTA;
+            ticksDerecho = 0;
+            ticksIzquierdo = 0;
+            set_color_RGB(0,255,0);
+          }
+        }else{
+          if(tipoSector == TIPO_SECTOR_RECTA && mapeoIniciado){
+            sectoresPista[sectorActual][SECTOR_TICKS] = ticksDerecho;
+            sectoresPista[sectorActual][SECTOR_TIPO] = tipoSector;
+            sectorActual++;
+            tipoSector = TIPO_SECTOR_CURVA;
+            ticksDerecho = 0;
+            ticksIzquierdo = 0;
+            set_color_RGB(0,0,255);
+          }else if(!mapeoIniciado){
+            mapeoIniciado = true;
+            ticksDerecho = 0;
+            ticksIzquierdo = 0;
+            sectorActual = 0;
+            tipoSector = TIPO_SECTOR_CURVA;
+            set_color_RGB(0,0,255);
+          }
+        }
+        if(sectorActual == NUMERO_SECTORES){
+          sectorActual = 0;
+          for (int i = 0; i < NUMERO_SECTORES; i++) {
+            Serial.print(sectoresPista[i][SECTOR_TICKS]);
+            Serial.print("\t");
+          }
+          Serial.println();
+          mapeoRealizado = true;
+          set_color_RGB(0,0,0);
+        }
+      }
+      ticksMapeoDerechoAnteriores = ticksDerecho;
+      ticksMapeoIzquierdoAnteriores = ticksIzquierdo;
   }
 }
