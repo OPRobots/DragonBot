@@ -80,8 +80,8 @@
 //////////////
 #define MOTOR_DERECHO_ENCODER_A PB5
 #define MOTOR_DERECHO_ENCODER_B PB4
-#define MOTOR_IZQUIERDO_ENCODER_A PB3
-#define MOTOR_IZQUIERDO_ENCODER_B PA15
+#define MOTOR_IZQUIERDO_ENCODER_A PA15
+#define MOTOR_IZQUIERDO_ENCODER_B PB3
 
 //////////////
 // MPU9250  //
@@ -147,6 +147,10 @@ int correccion = 0;
 float ticksMm = 0.7134f;
 float velocidadActual = 0;
 long ultimaVelocidad = 0;
+volatile bool estadoEncoderDerechoA = false;
+volatile bool estadoEncoderDerechoB = false;
+volatile bool estadoEncoderIzquierdoA = false;
+volatile bool estadoEncoderIzquierdoB = false;
 long ticksDerechoAnteriores = 0;
 long ticksIzquierdoAnteriores = 0;
 volatile long ticksDerecho = 0;

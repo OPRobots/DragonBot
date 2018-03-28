@@ -189,14 +189,80 @@ void dar_velocidad(int correccion) {
  * Función de interrupción para el canal A del encoder derecho
  */
 void encoder_derecho_A(){
-  ticksDerecho++;
+  estadoEncoderDerechoA = !estadoEncoderDerechoA;
+  if(estadoEncoderDerechoA){
+    if(estadoEncoderDerechoB){
+      ticksDerecho++;
+    }else{
+      ticksDerecho--;
+    }
+  }else{
+    if(estadoEncoderDerechoB){
+      ticksDerecho--;
+    }else{
+      ticksDerecho++;
+    }
+  }
+}
+
+/**
+ * Función de interrupción para el canal B del encoder derecho
+ */
+void encoder_derecho_B(){
+  estadoEncoderDerechoB = !estadoEncoderDerechoB;
+  if(estadoEncoderDerechoB){
+    if(estadoEncoderDerechoA){
+      ticksDerecho--;
+    }else{
+      ticksDerecho++;
+    }
+  }else{
+    if(estadoEncoderDerechoA){
+      ticksDerecho++;
+    }else{
+      ticksDerecho--;
+    }
+  }
 }
 
 /**
  * Función de interrupción para el canal A del encoder izquierdo
  */
 void encoder_izquierdo_A(){
-  ticksIzquierdo++;
+  estadoEncoderIzquierdoA = !estadoEncoderIzquierdoA;
+  if(estadoEncoderIzquierdoA){
+    if(estadoEncoderIzquierdoB){
+      ticksIzquierdo--;
+    }else{
+      ticksIzquierdo++;
+    }
+  }else{
+    if(estadoEncoderIzquierdoB){
+      ticksIzquierdo++;
+    }else{
+      ticksIzquierdo--;
+    }
+  }
+}
+
+/**
+ * Función de interrupción para el canal B del encoder izquierdo
+ */
+void encoder_izquierdo_B(){
+  estadoEncoderIzquierdoB = !estadoEncoderIzquierdoB;
+  if(estadoEncoderIzquierdoB){
+    if(estadoEncoderIzquierdoA){
+      ticksIzquierdo++;
+    }else{
+      ticksIzquierdo--;
+    }
+  }else{
+    if(estadoEncoderIzquierdoA){
+      ticksIzquierdo--;
+    }else{
+      ticksIzquierdo++;
+    }
+  }
 }
 
 /**
