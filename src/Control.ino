@@ -149,6 +149,11 @@ void dar_velocidad(int correccion) {
 	velocidadIzquierda = velocidadBase - correccion;
 	velocidadDerecha = velocidadBase + correccion;
 
+  if(velocidadBase > 0){
+    velocidadIzquierda  += COMPENSACION_IZQUIERDO;
+    velocidadDerecha    += COMPENSACION_DERECHO;
+  }
+
 	int pin_motor_derecho = MOTOR_DERECHO_ADELANTE;
 	int pin_motor_izquierdo = MOTOR_IZQUIERDO_ADELANTE;
 
