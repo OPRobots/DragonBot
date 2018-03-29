@@ -294,7 +294,6 @@ void mapeado_circuito(){
   if(mapeoRealizado){
     diferencia = abs((ticksDerecho-ticksMapeoDerechoAnteriores) - (ticksIzquierdo-ticksMapeoIzquierdoAnteriores));
     filtroMapeo.Filter(diferencia);
-    Serial.println(sectorActual);
 
     switch (sectoresPista[sectorActual][SECTOR_TIPO]) {
       case TIPO_SECTOR_RECTA:
