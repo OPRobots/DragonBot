@@ -61,11 +61,6 @@ void inicia_encoders(){
   pinMode(MOTOR_IZQUIERDO_ENCODER_A, INPUT_PULLUP);
   pinMode(MOTOR_IZQUIERDO_ENCODER_B, INPUT_PULLUP);
 
-  estadoEncoderDerechoA = !digitalRead(MOTOR_DERECHO_ENCODER_A);
-  estadoEncoderDerechoB = !digitalRead(MOTOR_DERECHO_ENCODER_B);
-  estadoEncoderIzquierdoA = !digitalRead(MOTOR_IZQUIERDO_ENCODER_A);
-  estadoEncoderIzquierdoB = !digitalRead(MOTOR_IZQUIERDO_ENCODER_B);
-
   attachInterrupt(MOTOR_DERECHO_ENCODER_A, encoder_derecho_A, CHANGE);
   attachInterrupt(MOTOR_DERECHO_ENCODER_B, encoder_derecho_B, CHANGE);
   attachInterrupt(MOTOR_IZQUIERDO_ENCODER_A, encoder_izquierdo_A, CHANGE);

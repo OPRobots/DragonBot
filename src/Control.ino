@@ -194,15 +194,14 @@ void dar_velocidad(int correccion) {
  * Función de interrupción para el canal A del encoder derecho
  */
 void encoder_derecho_A(){
-  estadoEncoderDerechoA = !estadoEncoderDerechoA;
-  if(estadoEncoderDerechoA){
-    if(estadoEncoderDerechoB){
+  if(digitalRead(MOTOR_DERECHO_ENCODER_A)){
+    if(!digitalRead(MOTOR_DERECHO_ENCODER_B)){
       ticksDerecho++;
     }else{
       ticksDerecho--;
     }
   }else{
-    if(estadoEncoderDerechoB){
+    if(!digitalRead(MOTOR_DERECHO_ENCODER_B)){
       ticksDerecho--;
     }else{
       ticksDerecho++;
@@ -214,15 +213,14 @@ void encoder_derecho_A(){
  * Función de interrupción para el canal B del encoder derecho
  */
 void encoder_derecho_B(){
-  estadoEncoderDerechoB = !estadoEncoderDerechoB;
-  if(estadoEncoderDerechoB){
-    if(estadoEncoderDerechoA){
+  if(digitalRead(MOTOR_DERECHO_ENCODER_B)){
+    if(!digitalRead(MOTOR_DERECHO_ENCODER_A)){
       ticksDerecho--;
     }else{
       ticksDerecho++;
     }
   }else{
-    if(estadoEncoderDerechoA){
+    if(!digitalRead(MOTOR_DERECHO_ENCODER_A)){
       ticksDerecho++;
     }else{
       ticksDerecho--;
@@ -234,15 +232,14 @@ void encoder_derecho_B(){
  * Función de interrupción para el canal A del encoder izquierdo
  */
 void encoder_izquierdo_A(){
-  estadoEncoderIzquierdoA = !estadoEncoderIzquierdoA;
-  if(estadoEncoderIzquierdoA){
-    if(estadoEncoderIzquierdoB){
+  if(digitalRead(MOTOR_IZQUIERDO_ENCODER_A)){
+    if(digitalRead(MOTOR_IZQUIERDO_ENCODER_B)){
       ticksIzquierdo--;
     }else{
       ticksIzquierdo++;
     }
   }else{
-    if(estadoEncoderIzquierdoB){
+    if(digitalRead(MOTOR_IZQUIERDO_ENCODER_B)){
       ticksIzquierdo++;
     }else{
       ticksIzquierdo--;
@@ -254,15 +251,14 @@ void encoder_izquierdo_A(){
  * Función de interrupción para el canal B del encoder izquierdo
  */
 void encoder_izquierdo_B(){
-  estadoEncoderIzquierdoB = !estadoEncoderIzquierdoB;
-  if(estadoEncoderIzquierdoB){
-    if(estadoEncoderIzquierdoA){
+  if(digitalRead(MOTOR_IZQUIERDO_ENCODER_B)){
+    if(digitalRead(MOTOR_IZQUIERDO_ENCODER_A)){
       ticksIzquierdo++;
     }else{
       ticksIzquierdo--;
     }
   }else{
-    if(estadoEncoderIzquierdoA){
+    if(digitalRead(MOTOR_IZQUIERDO_ENCODER_A)){
       ticksIzquierdo--;
     }else{
       ticksIzquierdo++;
