@@ -142,6 +142,7 @@ float kp                  = 0;
 float ki                  = 0;
 float kd                  = 0;
 int correccion            = 0;
+long ultimoControlBrushless = 0;
 
 ////////////////////////////
 // VARIABLES DE ENCODERS  //
@@ -157,7 +158,7 @@ long ticksDerechoAnteriores             = 0;
 long ticksIzquierdoAnteriores           = 0;
 volatile long ticksDerecho              = 0;
 volatile long ticksIzquierdo            = 0;
-long ultimoMapeo                        = 0;
+int contMapeo                           = 5;
 
 //////////////////////
 // VARIABLES MAPEO  //
@@ -205,7 +206,7 @@ bool competicionIniciada  = false;
 //////////////////////////////
 Servo Brushless;
 HardwareTimer TimerPID(2);
-HardwareTimer TimerBT(3);
+HardwareTimer TimerBrushless(3);
 PIDfromBT CalibracionPID(&kp, &ki, &kd, &velocidadBase, &posicionIdeal, &velocidadSuccion, DEBUG);
 ExponentialFilter<long> filtroBateria(15, 0);
 ExponentialFilter<long> filtroMapeo(50, 0);
@@ -214,15 +215,14 @@ void setup(){
     inicia_todo();
     enCompeticion = btn_pulsado();
     nivel_bateria(false);
-    if(!enCompeticion){
-    }
     calibra_sensores();
     inicia_timers();
     delay(100);
 }
 
 void loop(){
-  delay(10);
+  CalibracionPID.update();
+  delay(20);
   if(!enCompeticion || (enCompeticion && competicionIniciada)){
     if(!enCompeticion){
       if(btn_pulsado()){

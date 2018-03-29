@@ -23,36 +23,39 @@ void handler_timer_PID() {
 }
 
 /**
- * Función para configurar el Timer 3 para la calibración Serial-BT
+ * Función para configurar el Timer 3 para la creación de señal servo para el Brushless
  */
-void inicia_timer_BT(){
-    TimerBT.pause();
-    TimerBT.setPeriod(100000);
-    TimerBT.setMode(TIMER_CH1, TIMER_OUTPUT_COMPARE);
-    TimerBT.setCompare(TIMER_CH1, 1);
-    TimerBT.attachInterrupt(1, handler_timer_BT);
-    TimerBT.refresh();
-    TimerBT.resume();
+void inicia_timer_Brushless(){
+    inicia_brushless();
+    TimerBrushless.pause();
+    TimerBrushless.setPeriod(20000);
+    TimerBrushless.setMode(TIMER_CH1, TIMER_OUTPUT_COMPARE);
+    TimerBrushless.setCompare(TIMER_CH1, 1);
+    TimerBrushless.attachInterrupt(1, handler_timer_Brushless);
+    TimerBrushless.refresh();
+    TimerBrushless.resume();
 }
 
 /**
  * Función a la que llama el Timer 3 ajustar la configuración via Serial-BT
  */
-void handler_timer_BT() {
-  CalibracionPID.update();
-  if(mapeoRealizado){
+void handler_timer_Brushless() {
+  digitalWrite(MOTOR_SUCCION, HIGH);
+  delayMicroseconds(map(velocidadSuccion, 0, 255, 1000, 2000));
+  digitalWrite(MOTOR_SUCCION, LOW);
+
+  contMapeo--;
+
+  if(mapeoRealizado || velocidadSuccion > 0){
     nivel_bateria(true);
   }
-  if(!enCompeticion || competicionIniciada){
+  if(contMapeo == 0 && (!enCompeticion || competicionIniciada)){
+    contMapeo = 5;
     mapeado_circuito();
   }
   if(velocidadBase > 0){
     velocidadActual = calcular_velocidad();
   }else{
     velocidadActual = 0;
-  }
-
-  if(!enCompeticion || competicionIniciada){
-    Brushless.writeMicroseconds(map(velocidadSuccion, 0, 255, 1000, 2000));
   }
 }

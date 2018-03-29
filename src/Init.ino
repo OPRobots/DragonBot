@@ -42,7 +42,7 @@ void inicia_motores(){
 	pinMode(MOTOR_DERECHO_ATRAS      , OUTPUT);
 	pinMode(MOTOR_DERECHO_PWM        , OUTPUT);
 	pinMode(MOTOR_IZQUIERDO_ADELANTE , OUTPUT);
-	pinMode(MOTOR_IZQUIERDO_ATRAS	   , OUTPUT);
+  pinMode(MOTOR_IZQUIERDO_ATRAS	   , OUTPUT);
 	pinMode(MOTOR_IZQUIERDO_PWM	     , OUTPUT);
 
   //	Inicializa los motores a estado parado
@@ -113,12 +113,22 @@ void inicia_misc(){
  */
 void inicia_brushless(){
   set_color_RGB(random(200,255), random(200,255), 0);
-  Brushless.attach(MOTOR_SUCCION);
-  Brushless.writeMicroseconds(2000);
-  delay(5000);
-  Brushless.writeMicroseconds(1000);
-  delay(5000);
-    set_color_RGB(0, 0, 0);
+  pinMode(MOTOR_SUCCION, OUTPUT);
+  long millisIni = millis();
+  do{
+    digitalWrite(MOTOR_SUCCION, HIGH);
+    delay(2);
+    digitalWrite(MOTOR_SUCCION, LOW);
+    delay(18);
+  }while(millis()< millisIni+5000);
+  millisIni = millis();
+  do{
+    digitalWrite(MOTOR_SUCCION, HIGH);
+    delay(1);
+    digitalWrite(MOTOR_SUCCION, LOW);
+    delay(19);
+  }while(millis()< millisIni+5000);
+  set_color_RGB(0, 0, 0);
 }
 
 /**
@@ -126,5 +136,5 @@ void inicia_brushless(){
  */
 void inicia_timers(){
   inicia_timer_PID();
-  inicia_timer_BT();
+  inicia_timer_Brushless();
 }
