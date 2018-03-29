@@ -1,4 +1,20 @@
 /**
+ * Función para pausar todos los timers
+ */
+void pausa_timers(){
+  pausa_timer_PID();
+  pausa_timer_Brushless();
+}
+
+/**
+ * Función para reanudar todos los timers
+ */
+void reanuda_timers(){
+  reanuda_timer_PID();
+  reanuda_timer_Brushless();
+}
+
+/**
  * Función para configurar el Timer 2 para cálculo de posición y PID
  */
 void inicia_timer_PID(){
@@ -20,6 +36,21 @@ void handler_timer_PID() {
   if(!enCompeticion || competicionIniciada){
     dar_velocidad(correccion);
   }
+}
+
+/**
+ * Función para pausar el Timer encargado del PID
+ */
+void pausa_timer_PID(){
+  TimerPID.pause();
+}
+
+/**
+ * Función para reanudar el Timer encargado del PID. También lo refresca para iniciar limpio
+ */
+void reanuda_timer_PID(){
+  TimerPID.refresh();
+  TimerPID.resume();
 }
 
 /**
@@ -58,4 +89,19 @@ void handler_timer_Brushless() {
   }else{
     velocidadActual = 0;
   }
+}
+
+/**
+ * Función para pausar el Timer encargado del Brushless
+ */
+void pausa_timer_Brushless(){
+  TimerBrushless.pause();
+}
+
+/**
+ * Función para reanudar el Timer encargado del Brushless. También lo refresca para iniciar limpio
+ */
+void reanuda_timer_Brushless(){
+  TimerBrushless.refresh();
+  TimerBrushless.resume();
 }
