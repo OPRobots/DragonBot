@@ -94,10 +94,10 @@
 #define    GYRO_FULL_SCALE_1000_DPS   0x10
 #define    GYRO_FULL_SCALE_2000_DPS   0x18
 
-#define    ACC_FULL_SCALE_2_G        0x00
-#define    ACC_FULL_SCALE_4_G        0x08
-#define    ACC_FULL_SCALE_8_G        0x10
-#define    ACC_FULL_SCALE_16_G       0x18
+#define    ACC_FULL_SCALE_2_G         0x00
+#define    ACC_FULL_SCALE_4_G         0x08
+#define    ACC_FULL_SCALE_8_G         0x10
+#define    ACC_FULL_SCALE_16_G        0x18
 
 //////////
 // LEDS //
@@ -109,13 +109,13 @@
 /////////////
 // BOTONES //
 /////////////
-#define BTN PC13
+#define BTN         PC13
 #define BTN_CRUCETA PA6
 
 //////////
 // MISC //
 //////////
-#define CHOP_PIN PB0
+#define CHOP_PIN      PB0
 #define NIVEL_BATERIA PA0
 
 ///////////////
@@ -134,69 +134,71 @@ int velocidadSuccion      = 0;
 //////////////////////////
 // VARIABLES DE CONTROL //
 //////////////////////////
-int posicionActual = 0;
-int posicionIdeal = 0;
-float errorAnterior = 0;
-float integralErrores = 0;
-float kp = 0, ki = 0, kd = 0;
-int correccion = 0;
+int posicionActual        = 0;
+int posicionIdeal         = 0;
+float errorAnterior       = 0;
+float integralErrores     = 0;
+float kp                  = 0;
+float ki                  = 0;
+float kd                  = 0;
+int correccion            = 0;
 
 ////////////////////////////
 // VARIABLES DE ENCODERS  //
 ////////////////////////////
-float ticksMm = 0.7134f;
-float velocidadActual = 0;
-long ultimaVelocidad = 0;
-volatile bool estadoEncoderDerechoA = false;
-volatile bool estadoEncoderDerechoB = false;
-volatile bool estadoEncoderIzquierdoA = false;
-volatile bool estadoEncoderIzquierdoB = false;
-long ticksDerechoAnteriores = 0;
-long ticksIzquierdoAnteriores = 0;
-volatile long ticksDerecho = 0;
-volatile long ticksIzquierdo = 0;
-long ultimoMapeo = 0;
+float ticksMm                           = 0.6819f;
+float velocidadActual                   = 0;
+long ultimaVelocidad                    = 0;
+volatile bool estadoEncoderDerechoA     = false;
+volatile bool estadoEncoderDerechoB     = false;
+volatile bool estadoEncoderIzquierdoA   = false;
+volatile bool estadoEncoderIzquierdoB   = false;
+long ticksDerechoAnteriores             = 0;
+long ticksIzquierdoAnteriores           = 0;
+volatile long ticksDerecho              = 0;
+volatile long ticksIzquierdo            = 0;
+long ultimoMapeo                        = 0;
 
 //////////////////////
 // VARIABLES MAPEO  //
 //////////////////////
-#define NUMERO_SECTORES 2
-#define TIPO_SECTOR_RECTA 1
-#define TIPO_SECTOR_CURVA 2
-#define SECTOR_TICKS 0
-#define SECTOR_TIPO  1
-int tipoSector = TIPO_SECTOR_RECTA;
-int sectorActual = 0;
-bool mapeoRealizado = false;
-bool mapeoIniciado = false;
+#define NUMERO_SECTORES       2
+#define TIPO_SECTOR_RECTA     1
+#define TIPO_SECTOR_CURVA     2
+#define SECTOR_TICKS          0
+#define SECTOR_TIPO           1
+int tipoSector                = TIPO_SECTOR_RECTA;
+int sectorActual              = 0;
+bool mapeoRealizado           = false;
+bool mapeoIniciado            = false;
 int sectoresPista[NUMERO_SECTORES][2];
-long ticksMapeoDerechoAnteriores = 0;
-long ticksMapeoIzquierdoAnteriores = 0;
-bool ticksReseteados = true;
+long ticksMapeoDerechoAnteriores      = 0;
+long ticksMapeoIzquierdoAnteriores    = 0;
+bool ticksReseteados                  = true;
 
 ///////////////////////////
 // VARIABLES DE SENSORES //
 ///////////////////////////
-int pinesSensores[] = {SENSOR_1, SENSOR_2, SENSOR_3, SENSOR_4, SENSOR_5, SENSOR_6, SENSOR_7, SENSOR_8, SENSOR_9, SENSOR_10, SENSOR_11, SENSOR_12};
-int posicionMaxima = 6500;
-int posicionMinima = -6500;
-int valoresSensores[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-int valorSaturacionBajo = 80;
-int valorSaturacionAlto = 3000;
+int pinesSensores[]         = {SENSOR_1, SENSOR_2, SENSOR_3, SENSOR_4, SENSOR_5, SENSOR_6, SENSOR_7, SENSOR_8, SENSOR_9, SENSOR_10, SENSOR_11, SENSOR_12};
+int posicionMaxima          = 6500;
+int posicionMinima          = -6500;
+int valoresSensores[]       = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+int valorSaturacionBajo     = 80;
+int valorSaturacionAlto     = 3000;
 
 ///////////////////////////////
 // VARIABLES DE CALIBRACIÓN  //
 ///////////////////////////////
-int valoresCalibracionMinimos[] = {4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096};
-int valoresCalibracionMaximos[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-const int valorCalibradoMinimo = 0;
-const int valorCalibradoMaximo = 4000;
+int valoresCalibracionMinimos[]   = {4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096};
+int valoresCalibracionMaximos[]   = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+const int valorCalibradoMinimo    = 0;
+const int valorCalibradoMaximo    = 4000;
 
 ///////////////////////////////
 // VARIABLES DE COMPETICIÓN  //
 ///////////////////////////////
-bool enCompeticion = false;
-bool competicionIniciada = false;
+bool enCompeticion        = false;
+bool competicionIniciada  = false;
 
 //////////////////////////////
 // INICIALIZACION LIBRERIAS //
