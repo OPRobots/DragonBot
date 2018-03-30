@@ -6,7 +6,6 @@
  * https://github.com/robotaleh/PIDfromBT
  */
 #include <PIDfromBT.h>
-#include <Servo.h>
 #include <Wire.h>
 #include <MegunoLink.h>
 #include <Filter.h>
@@ -199,10 +198,81 @@ const int valorCalibradoMaximo    = 4000;
 bool enCompeticion        = false;
 bool competicionIniciada  = false;
 
+/////////////////////////////////////////
+// VARIABLES DE MENÚ DE CONFIGURACIÓN  //
+/////////////////////////////////////////
+bool modoMenu = false;
+#define NUMERO_COMBINACIONES        10
+#define CRUCETA_ARRIBA              1460
+#define CRUCETA_ABAJO               475
+#define CRUCETA_DERECHA             860
+#define CRUCETA_IZQUIERDA           2040
+#define CRUCETA_ARRIBA_ABAJO        1670
+#define CRUCETA_DERECHA_IZQUIERDA   2280
+#define CRUCETA_ARRIBA_DERECHA      1840
+#define CRUCETA_DERECHA_ABAJO       1160
+#define CRUCETA_ABAJO_IZQUIERDA     2170
+#define CRUCETA_IZQUIERDA_ARRIBA    2490
+int crucetaCombinaciones[] = {CRUCETA_ARRIBA,
+                            CRUCETA_ABAJO,
+                            CRUCETA_DERECHA,
+                            CRUCETA_IZQUIERDA,
+                            CRUCETA_ARRIBA_ABAJO,
+                            CRUCETA_DERECHA_IZQUIERDA,
+                            CRUCETA_ARRIBA_DERECHA,
+                            CRUCETA_DERECHA_ABAJO,
+                            CRUCETA_ABAJO_IZQUIERDA,
+                            CRUCETA_IZQUIERDA_ARRIBA};
+
+#define MENU_PRINCIPAL 0
+#define MENU_PID 1
+#define MENU_VELOCIDAD 2
+#define MENU_SUCCION 3
+#define MENU_PISTA 4
+#define MENU_FINAL 5
+
+#define NUMERO_MENU_PRINCIPAL 4
+#define NUMERO_MENU_PID 3
+#define NUMERO_MENU_VELOCIDAD 3
+#define NUMERO_MENU_SUCCION 3
+#define NUMERO_MENU_PISTA 1
+#define NUMERO_MENU_MAXIMO 4
+
+float menuKp = 0.03f;
+float menuKi = 0;
+float menuKd = 3.5f;
+
+int menuVelocidadBase = 70;
+int menuVelocidadCurvas = 70;
+int menuVelocidadRectas = 140;
+
+int menuSuccionBase = 70;
+int menuSuccionCurvas = 70;
+int menuSuccionRectas = 140;
+
+int menuActual = MENU_PRINCIPAL;
+int menuSeleccion[NUMERO_MENU_PRINCIPAL+1];
+bool forzarMenu = true;
+bool menuSeleccionVolver = false;
+bool menuSeleccionModificar = false;
+
+String menuPrincipal[] = {"PID", "Velocidad", "Succión", "Pista"};
+String menuPID[] = {"Proporcional", "Integral", "Derivativa"};
+float *menuConfigPID[] = {&menuKp, &menuKi, &menuKd};
+float menuConfigCambioPID[] = {0.001f, 0.001f, 0.05f};
+String menuVelocidad[] = {"Base", "Rectas", "Curvas"};
+int *menuConfigVelocidad[] = {&menuVelocidadBase, &menuVelocidadCurvas, &menuVelocidadRectas};
+int menuConfigCambioVelocidad[] = {5, 5, 5};
+String menuSuccion[] = {"Base", "Rectas", "Curvas"};
+int *menuConfigSuccion[] = {&menuSuccionBase, &menuSuccionCurvas, &menuSuccionRectas};
+int menuConfigCambioSuccion[] = {5, 5, 5};
+String menuPista[] = {"Sectores"};
+int menuConfigPista[] = {NUMERO_SECTORES};
+
+
 //////////////////////////////
 // INICIALIZACION LIBRERIAS //
 //////////////////////////////
-Servo Brushless;
 HardwareTimer TimerPID(2);
 HardwareTimer TimerBrushless(3);
 PIDfromBT CalibracionPID(&kp, &ki, &kd, &velocidadBase, &posicionIdeal, &velocidadSuccion, DEBUG);
@@ -220,7 +290,10 @@ void setup(){
 
 void loop(){
   CalibracionPID.update();
-  delay(20);
+  btn_cruceta(forzarMenu);
+  if(forzarMenu){
+    forzarMenu = !forzarMenu;
+  }
   if(!enCompeticion || (enCompeticion && competicionIniciada)){
     if(!enCompeticion){
       if(btn_pulsado()){
