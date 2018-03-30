@@ -2,66 +2,65 @@
  * Función para controlar nivel de carga de la LiPo durante el funcionamiento
  * @param  enLoop Indica si se ha llamado a la función desde el loop, para efectuar la comprobación con intervalo
  */
-void nivel_bateria(bool enLoop){
+void nivel_bateria(bool enLoop) {
   int carga;
   byte r, g;
-  if(enLoop){
-    if(millis()> (ultimaBateria+intervaloAviso)){
+  if (enLoop) {
+    if (millis() > (ultimaBateria + intervaloAviso)) {
       set_color_RGB(0, 0, 0);
       switch (LIPO) {
-        case LIPO_2S:
-          filtroBateria.Filter(map(analogRead(NIVEL_BATERIA), 2500, 2300, 100,0));
+      case LIPO_2S:
+        filtroBateria.Filter(map(analogRead(NIVEL_BATERIA), 2500, 2300, 100, 0));
         break;
-        case LIPO_3S:
-          filtroBateria.Filter(map(analogRead(NIVEL_BATERIA), 4083, 2718, 100,0));
+      case LIPO_3S:
+        filtroBateria.Filter(map(analogRead(NIVEL_BATERIA), 4083, 2718, 100, 0));
         break;
       }
       carga = filtroBateria.Current();
-      if(carga <= 15){
-        if (carga <= 5){
+      if (carga <= 15) {
+        if (carga <= 5) {
           intervaloAviso = 100;
-        }else{
+        } else {
           intervaloAviso = 500;
         }
         avisoBateria = !avisoBateria;
-        if(avisoBateria){
+        if (avisoBateria) {
           set_color_RGB(255, 0, 0);
-        }else{
+        } else {
           set_color_RGB(0, 0, 0);
         }
       }
       ultimaBateria = millis();
     }
-  }else{
+  } else {
     filtroBateria.Filter(0);
     delay(500);
     long millisInicial = millis();
-    do{
+    do {
       switch (LIPO) {
-        case LIPO_2S:
-          filtroBateria.Filter(map(analogRead(NIVEL_BATERIA), 2500, 2300, 100,0));
+      case LIPO_2S:
+        filtroBateria.Filter(map(analogRead(NIVEL_BATERIA), 2500, 2300, 100, 0));
         break;
-        case LIPO_3S:
-          filtroBateria.Filter(map(analogRead(NIVEL_BATERIA), 4083, 2718, 100,0));
+      case LIPO_3S:
+        filtroBateria.Filter(map(analogRead(NIVEL_BATERIA), 4083, 2718, 100, 0));
         break;
       }
       carga = filtroBateria.Current();
-      if(carga > 50){
-        r = map(carga, 51,100, 255,0);
+      if (carga > 50) {
+        r = map(carga, 51, 100, 255, 0);
         g = 255;
-      }else if (carga < 50){
+      } else if (carga < 50) {
         r = 255;
-        g = map(carga, 49,0, 255,0);
-      }else{
+        g = map(carga, 49, 0, 255, 0);
+      } else {
         r = 255;
         g = 255;
       }
       set_color_RGB(r, g, 0);
       delay(50);
-    }while((millis()-millisInicial) < 2000);
-    set_color_RGB(0,0,0);
+    } while ((millis() - millisInicial) < 2000);
+    set_color_RGB(0, 0, 0);
   }
-
 }
 
 /**
@@ -69,13 +68,13 @@ void nivel_bateria(bool enLoop){
  * @param  ultimaPosicion Última posición calculada para usar en caso de pérdida de pista
  * @return [int]          Posición actual sobre la línea
  */
-int calcular_posicion(int ultimaPosicion){
+int calcular_posicion(int ultimaPosicion) {
   switch (PISTA) {
-    case MODO_LINEA:
-      return calcula_posicion_linea(ultimaPosicion);
+  case MODO_LINEA:
+    return calcula_posicion_linea(ultimaPosicion);
     break;
-    case MODO_DEGRADADO:
-      // TODO: añadir función de cálculo de posición para degradados.
+  case MODO_DEGRADADO:
+    // TODO: añadir función de cálculo de posición para degradados.
     break;
   }
   return 0;
@@ -86,7 +85,7 @@ int calcular_posicion(int ultimaPosicion){
  * @param  ultimaPosicion Última posición calculada para usar en caso de pérdida de línea
  * @return [int]           Posición actual sobre la línea
  */
-int calcula_posicion_linea(int ultimaPosicion){
+int calcula_posicion_linea(int ultimaPosicion) {
   lectura_sensores_calibrados();
 
   unsigned long sumaSensoresPonderados = 0;
@@ -94,26 +93,26 @@ int calcula_posicion_linea(int ultimaPosicion){
   int sensoresDetectando = 0;
 
   for (int sensor = 0; sensor < NUMERO_SENSORES; sensor++) {
-		sumaSensoresPonderados += (sensor + 1) * valoresSensores[sensor] * 1000L;
-		sumaSensores += (long)valoresSensores[sensor];
-    if(valoresSensores[sensor] > ((valorCalibradoMaximo-valorCalibradoMinimo)/3*2.0f)){
+    sumaSensoresPonderados += (sensor + 1) * valoresSensores[sensor] * 1000L;
+    sumaSensores += (long)valoresSensores[sensor];
+    if (valoresSensores[sensor] > ((valorCalibradoMaximo - valorCalibradoMinimo) / 3 * 2.0f)) {
       sensoresDetectando++;
     }
-	}
+  }
 
-  if(sensoresDetectando > 0 && sensoresDetectando < NUMERO_SENSORES){
+  if (sensoresDetectando > 0 && sensoresDetectando < NUMERO_SENSORES) {
     ultimaLinea = millis();
-  }else if(millis()>(ultimaLinea+TIEMPO_SIN_PISTA)){
+  } else if (millis() > (ultimaLinea + TIEMPO_SIN_PISTA)) {
     kp = 0;
     ki = 0;
     kd = 0;
     velocidadBase = 0;
   }
 
-  if(sensoresDetectando > 0){
-    return ((sumaSensoresPonderados/sumaSensores)-(NUMERO_SENSORES+1)*(float)(1000/2));
-  }else{
-    return (ultimaPosicion > 0)? (1000 * (NUMERO_SENSORES +1) /2) : -(1000 * (NUMERO_SENSORES +1) /2);
+  if (sensoresDetectando > 0) {
+    return ((sumaSensoresPonderados / sumaSensores) - (NUMERO_SENSORES + 1) * (float)(1000 / 2));
+  } else {
+    return (ultimaPosicion > 0) ? (1000 * (NUMERO_SENSORES + 1) / 2) : -(1000 * (NUMERO_SENSORES + 1) / 2);
   }
 }
 
@@ -122,17 +121,17 @@ int calcula_posicion_linea(int ultimaPosicion){
  * @param  posicionActual Posición actual sobre la pista.
  * @return [int]          Corrección que se debe aplicar al control de la velocidad.
  */
-int calcular_PID(int posicionActual){
+int calcular_PID(int posicionActual) {
   float p = 0;
   float i = 0;
   float d = 0;
   int error = 0;
   error = posicionIdeal - posicionActual;
   p = kp * error;
-  if (error < 100){
+  if (error < 100) {
     integralErrores += error;
     i = ki * integralErrores;
-  }else{
+  } else {
     i = 0;
     integralErrores = 0;
   }
@@ -146,64 +145,64 @@ int calcular_PID(int posicionActual){
  * @param correccion Parámetro calculado por el PID para seguir la posición deseada en la pista
  */
 void dar_velocidad(int correccion) {
-	velocidadIzquierda = velocidadBase - correccion;
-	velocidadDerecha = velocidadBase + correccion;
+  velocidadIzquierda = velocidadBase - correccion;
+  velocidadDerecha = velocidadBase + correccion;
 
-  if(velocidadBase > 0){
-    velocidadIzquierda  += COMPENSACION_IZQUIERDO;
-    velocidadDerecha    += COMPENSACION_DERECHO;
+  if (velocidadBase > 0) {
+    velocidadIzquierda += COMPENSACION_IZQUIERDO;
+    velocidadDerecha += COMPENSACION_DERECHO;
   }
 
-	int pin_motor_derecho = MOTOR_DERECHO_ADELANTE;
-	int pin_motor_izquierdo = MOTOR_IZQUIERDO_ADELANTE;
+  int pin_motor_derecho = MOTOR_DERECHO_ADELANTE;
+  int pin_motor_izquierdo = MOTOR_IZQUIERDO_ADELANTE;
 
-	if (velocidadDerecha > velocidadMaxima) {
-		velocidadDerecha = velocidadMaxima;
-		pin_motor_derecho = MOTOR_DERECHO_ADELANTE;
-	} else if (velocidadDerecha < 0) {
-		velocidadDerecha = abs(velocidadDerecha);
-		if (velocidadDerecha > velocidadMaxima) {
-			velocidadDerecha = velocidadMaxima;
-		}
-		pin_motor_derecho = MOTOR_DERECHO_ATRAS;
-	}
-	if (velocidadIzquierda > velocidadMaxima) {
-		velocidadIzquierda = velocidadMaxima;
-		pin_motor_izquierdo = MOTOR_IZQUIERDO_ADELANTE;
-	} else if (velocidadIzquierda < 0) {
-		velocidadIzquierda = abs(velocidadIzquierda);
-		if (velocidadIzquierda > velocidadMaxima) {
-			velocidadIzquierda = velocidadMaxima;
-		}
-		pin_motor_izquierdo = MOTOR_IZQUIERDO_ATRAS;
-	}
+  if (velocidadDerecha > velocidadMaxima) {
+    velocidadDerecha = velocidadMaxima;
+    pin_motor_derecho = MOTOR_DERECHO_ADELANTE;
+  } else if (velocidadDerecha < 0) {
+    velocidadDerecha = abs(velocidadDerecha);
+    if (velocidadDerecha > velocidadMaxima) {
+      velocidadDerecha = velocidadMaxima;
+    }
+    pin_motor_derecho = MOTOR_DERECHO_ATRAS;
+  }
+  if (velocidadIzquierda > velocidadMaxima) {
+    velocidadIzquierda = velocidadMaxima;
+    pin_motor_izquierdo = MOTOR_IZQUIERDO_ADELANTE;
+  } else if (velocidadIzquierda < 0) {
+    velocidadIzquierda = abs(velocidadIzquierda);
+    if (velocidadIzquierda > velocidadMaxima) {
+      velocidadIzquierda = velocidadMaxima;
+    }
+    pin_motor_izquierdo = MOTOR_IZQUIERDO_ATRAS;
+  }
 
-	digitalWrite(MOTOR_DERECHO_ADELANTE, LOW);
-	digitalWrite(MOTOR_DERECHO_ATRAS, LOW);
-	digitalWrite(MOTOR_IZQUIERDO_ADELANTE, LOW);
-	digitalWrite(MOTOR_IZQUIERDO_ATRAS, LOW);
+  digitalWrite(MOTOR_DERECHO_ADELANTE, LOW);
+  digitalWrite(MOTOR_DERECHO_ATRAS, LOW);
+  digitalWrite(MOTOR_IZQUIERDO_ADELANTE, LOW);
+  digitalWrite(MOTOR_IZQUIERDO_ATRAS, LOW);
 
-	digitalWrite(pin_motor_derecho, HIGH);
-	digitalWrite(pin_motor_izquierdo, HIGH);
+  digitalWrite(pin_motor_derecho, HIGH);
+  digitalWrite(pin_motor_izquierdo, HIGH);
 
-	analogWrite(MOTOR_DERECHO_PWM   , velocidadDerecha);
-	analogWrite(MOTOR_IZQUIERDO_PWM , velocidadIzquierda);
+  analogWrite(MOTOR_DERECHO_PWM, velocidadDerecha);
+  analogWrite(MOTOR_IZQUIERDO_PWM, velocidadIzquierda);
 }
 
 /**
  * Función de interrupción para el canal A del encoder derecho
  */
-void encoder_derecho_A(){
-  if(digitalRead(MOTOR_DERECHO_ENCODER_A)){
-    if(!digitalRead(MOTOR_DERECHO_ENCODER_B)){
+void encoder_derecho_A() {
+  if (digitalRead(MOTOR_DERECHO_ENCODER_A)) {
+    if (!digitalRead(MOTOR_DERECHO_ENCODER_B)) {
       ticksDerecho++;
-    }else{
+    } else {
       ticksDerecho--;
     }
-  }else{
-    if(!digitalRead(MOTOR_DERECHO_ENCODER_B)){
+  } else {
+    if (!digitalRead(MOTOR_DERECHO_ENCODER_B)) {
       ticksDerecho--;
-    }else{
+    } else {
       ticksDerecho++;
     }
   }
@@ -212,17 +211,17 @@ void encoder_derecho_A(){
 /**
  * Función de interrupción para el canal B del encoder derecho
  */
-void encoder_derecho_B(){
-  if(digitalRead(MOTOR_DERECHO_ENCODER_B)){
-    if(!digitalRead(MOTOR_DERECHO_ENCODER_A)){
+void encoder_derecho_B() {
+  if (digitalRead(MOTOR_DERECHO_ENCODER_B)) {
+    if (!digitalRead(MOTOR_DERECHO_ENCODER_A)) {
       ticksDerecho--;
-    }else{
+    } else {
       ticksDerecho++;
     }
-  }else{
-    if(!digitalRead(MOTOR_DERECHO_ENCODER_A)){
+  } else {
+    if (!digitalRead(MOTOR_DERECHO_ENCODER_A)) {
       ticksDerecho++;
-    }else{
+    } else {
       ticksDerecho--;
     }
   }
@@ -231,17 +230,17 @@ void encoder_derecho_B(){
 /**
  * Función de interrupción para el canal A del encoder izquierdo
  */
-void encoder_izquierdo_A(){
-  if(digitalRead(MOTOR_IZQUIERDO_ENCODER_A)){
-    if(digitalRead(MOTOR_IZQUIERDO_ENCODER_B)){
+void encoder_izquierdo_A() {
+  if (digitalRead(MOTOR_IZQUIERDO_ENCODER_A)) {
+    if (digitalRead(MOTOR_IZQUIERDO_ENCODER_B)) {
       ticksIzquierdo--;
-    }else{
+    } else {
       ticksIzquierdo++;
     }
-  }else{
-    if(digitalRead(MOTOR_IZQUIERDO_ENCODER_B)){
+  } else {
+    if (digitalRead(MOTOR_IZQUIERDO_ENCODER_B)) {
       ticksIzquierdo++;
-    }else{
+    } else {
       ticksIzquierdo--;
     }
   }
@@ -250,17 +249,17 @@ void encoder_izquierdo_A(){
 /**
  * Función de interrupción para el canal B del encoder izquierdo
  */
-void encoder_izquierdo_B(){
-  if(digitalRead(MOTOR_IZQUIERDO_ENCODER_B)){
-    if(digitalRead(MOTOR_IZQUIERDO_ENCODER_A)){
+void encoder_izquierdo_B() {
+  if (digitalRead(MOTOR_IZQUIERDO_ENCODER_B)) {
+    if (digitalRead(MOTOR_IZQUIERDO_ENCODER_A)) {
       ticksIzquierdo++;
-    }else{
+    } else {
       ticksIzquierdo--;
     }
-  }else{
-    if(digitalRead(MOTOR_IZQUIERDO_ENCODER_A)){
+  } else {
+    if (digitalRead(MOTOR_IZQUIERDO_ENCODER_A)) {
       ticksIzquierdo--;
-    }else{
+    } else {
       ticksIzquierdo++;
     }
   }
@@ -270,13 +269,13 @@ void encoder_izquierdo_B(){
  * Función para calcular la velocidad del robot en m/s
  * @return Velocidad en m/s del robot, actualizada cada segundo
  */
-float calcular_velocidad(){
+float calcular_velocidad() {
   // if(millis()>=(ultimaVelocidad + 1000)){
-    float velocidad = ((((ticksDerecho-ticksDerechoAnteriores)/(float)(millis()-ultimaVelocidad))*ticksMm) + (((ticksDerecho-ticksDerechoAnteriores)/(float)(millis()-ultimaVelocidad))*ticksMm))/2.0f;
-    ultimaVelocidad = millis();
-    ticksDerechoAnteriores = ticksDerecho;
-    ticksIzquierdoAnteriores = ticksIzquierdo;
-    return velocidad;
+  float velocidad = ((((ticksDerecho - ticksDerechoAnteriores) / (float)(millis() - ultimaVelocidad)) * ticksMm) + (((ticksDerecho - ticksDerechoAnteriores) / (float)(millis() - ultimaVelocidad)) * ticksMm)) / 2.0f;
+  ultimaVelocidad = millis();
+  ticksDerechoAnteriores = ticksDerecho;
+  ticksIzquierdoAnteriores = ticksIzquierdo;
+  return velocidad;
   // }else{
   //   return velocidadActual;
   // }
@@ -285,31 +284,31 @@ float calcular_velocidad(){
 /**
  * Función para mapeado del circuito en busca de rectas para acelerar.
  */
-void mapeado_circuito(){
+void mapeado_circuito() {
   int diferencia;
-  if(mapeoRealizado){
-    diferencia = abs((ticksDerecho-ticksMapeoDerechoAnteriores) - (ticksIzquierdo-ticksMapeoIzquierdoAnteriores));
+  if (mapeoRealizado) {
+    diferencia = abs((ticksDerecho - ticksMapeoDerechoAnteriores) - (ticksIzquierdo - ticksMapeoIzquierdoAnteriores));
     filtroMapeo.Filter(diferencia);
 
     switch (sectoresPista[sectorActual][SECTOR_TIPO]) {
-      case TIPO_SECTOR_RECTA:
-        velocidadBase = 120;
+    case TIPO_SECTOR_RECTA:
+      velocidadBase = 120;
       break;
-      case TIPO_SECTOR_CURVA:
-        velocidadBase = 70;
+    case TIPO_SECTOR_CURVA:
+      velocidadBase = 70;
       break;
     }
 
-    if(ticksDerecho+800 >= sectoresPista[sectorActual][SECTOR_TICKS]){
+    if (ticksDerecho + 800 >= sectoresPista[sectorActual][SECTOR_TICKS]) {
       ticksDerecho = 0;
       ticksIzquierdo = 0;
       sectorActual++;
-      if(sectorActual == NUMERO_SECTORES){
+      if (sectorActual == NUMERO_SECTORES) {
         sectorActual = 0;
         ticksReseteados = false;
       }
-    }else{
-      if(sectorActual == 0 && !ticksReseteados && filtroMapeo.Current()>25){
+    } else {
+      if (sectorActual == 0 && !ticksReseteados && filtroMapeo.Current() > 25) {
         ticksReseteados = true;
         ticksDerecho = 0;
         ticksIzquierdo = 0;
@@ -317,51 +316,51 @@ void mapeado_circuito(){
     }
     ticksMapeoDerechoAnteriores = ticksDerecho;
     ticksMapeoIzquierdoAnteriores = ticksIzquierdo;
-  }else{
-      diferencia = abs((ticksDerecho-ticksMapeoDerechoAnteriores) - (ticksIzquierdo-ticksMapeoIzquierdoAnteriores));
-      filtroMapeo.Filter(diferencia);
+  } else {
+    diferencia = abs((ticksDerecho - ticksMapeoDerechoAnteriores) - (ticksIzquierdo - ticksMapeoIzquierdoAnteriores));
+    filtroMapeo.Filter(diferencia);
 
-      if(ticksDerecho > 50 && ticksIzquierdo > 50){
-        if(filtroMapeo.Current()<=25){
-          if(tipoSector == TIPO_SECTOR_CURVA && mapeoIniciado){
-            sectoresPista[sectorActual][SECTOR_TICKS] = ticksDerecho;
-            sectoresPista[sectorActual][SECTOR_TIPO] = tipoSector;
-            sectorActual++;
-            tipoSector = TIPO_SECTOR_RECTA;
-            ticksDerecho = 0;
-            ticksIzquierdo = 0;
-            set_color_RGB(0,255,0);
-          }
-        }else{
-          if(tipoSector == TIPO_SECTOR_RECTA && mapeoIniciado){
-            sectoresPista[sectorActual][SECTOR_TICKS] = ticksDerecho;
-            sectoresPista[sectorActual][SECTOR_TIPO] = tipoSector;
-            sectorActual++;
-            tipoSector = TIPO_SECTOR_CURVA;
-            ticksDerecho = 0;
-            ticksIzquierdo = 0;
-            set_color_RGB(0,0,255);
-          }else if(!mapeoIniciado){
-            mapeoIniciado = true;
-            ticksDerecho = 0;
-            ticksIzquierdo = 0;
-            sectorActual = 0;
-            tipoSector = TIPO_SECTOR_CURVA;
-            set_color_RGB(0,0,255);
-          }
+    if (ticksDerecho > 50 && ticksIzquierdo > 50) {
+      if (filtroMapeo.Current() <= 25) {
+        if (tipoSector == TIPO_SECTOR_CURVA && mapeoIniciado) {
+          sectoresPista[sectorActual][SECTOR_TICKS] = ticksDerecho;
+          sectoresPista[sectorActual][SECTOR_TIPO] = tipoSector;
+          sectorActual++;
+          tipoSector = TIPO_SECTOR_RECTA;
+          ticksDerecho = 0;
+          ticksIzquierdo = 0;
+          set_color_RGB(0, 255, 0);
         }
-        if(sectorActual == NUMERO_SECTORES){
+      } else {
+        if (tipoSector == TIPO_SECTOR_RECTA && mapeoIniciado) {
+          sectoresPista[sectorActual][SECTOR_TICKS] = ticksDerecho;
+          sectoresPista[sectorActual][SECTOR_TIPO] = tipoSector;
+          sectorActual++;
+          tipoSector = TIPO_SECTOR_CURVA;
+          ticksDerecho = 0;
+          ticksIzquierdo = 0;
+          set_color_RGB(0, 0, 255);
+        } else if (!mapeoIniciado) {
+          mapeoIniciado = true;
+          ticksDerecho = 0;
+          ticksIzquierdo = 0;
           sectorActual = 0;
-          for (int i = 0; i < NUMERO_SECTORES; i++) {
-            Serial.print(sectoresPista[i][SECTOR_TICKS]);
-            Serial.print("\t");
-          }
-          Serial.println();
-          mapeoRealizado = true;
-          set_color_RGB(0,0,0);
+          tipoSector = TIPO_SECTOR_CURVA;
+          set_color_RGB(0, 0, 255);
         }
       }
-      ticksMapeoDerechoAnteriores = ticksDerecho;
-      ticksMapeoIzquierdoAnteriores = ticksIzquierdo;
+      if (sectorActual == NUMERO_SECTORES) {
+        sectorActual = 0;
+        for (int i = 0; i < NUMERO_SECTORES; i++) {
+          Serial.print(sectoresPista[i][SECTOR_TICKS]);
+          Serial.print("\t");
+        }
+        Serial.println();
+        mapeoRealizado = true;
+        set_color_RGB(0, 0, 0);
+      }
+    }
+    ticksMapeoDerechoAnteriores = ticksDerecho;
+    ticksMapeoIzquierdoAnteriores = ticksIzquierdo;
   }
 }

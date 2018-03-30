@@ -2,18 +2,18 @@
 /**
  * Función para iniciar y configurar el giroscopio y acelerómetro del MPU9250
  */
-void inicia_MPU9250(){
+void inicia_MPU9250() {
   I2CwriteByte(MPU9250_ADDRESS, 26, ACC_FULL_SCALE_16_G);
   I2CwriteByte(MPU9250_ADDRESS, 27, GYRO_FULL_SCALE_2000_DPS);
 }
 
-void lectura_raw(){
+void lectura_raw() {
   uint8_t bufferDatos[14];
   I2Cread(MPU9250_ADDRESS, 0x3B, 14, bufferDatos);
 
-  float ax = (-(bufferDatos[0] << 8 | bufferDatos[1]))/5030.0f;
-  float ay = (-(bufferDatos[2] << 8 | bufferDatos[3]))/5030.0f;
-  float az = (bufferDatos[4] << 8 | bufferDatos[5])/5030.0f;
+  float ax = (-(bufferDatos[0] << 8 | bufferDatos[1])) / 5030.0f;
+  float ay = (-(bufferDatos[2] << 8 | bufferDatos[3])) / 5030.0f;
+  float az = (bufferDatos[4] << 8 | bufferDatos[5]) / 5030.0f;
 
   // int16_t gx = -(bufferDatos[8] << 8 | bufferDatos[9]);
   // int16_t gy = -(bufferDatos[10] << 8 | bufferDatos[11]);
@@ -34,10 +34,7 @@ void lectura_raw(){
   Serial.print("\n");
 
   delay(2500);
-
 }
-
-
 
 /**
  * Función auxiliar de lectura para el MPU9250
@@ -46,8 +43,7 @@ void lectura_raw(){
  * @param numeroBytes
  * @param bufferDatos
  */
-void I2Cread(uint8_t direccion, uint8_t registro, uint8_t numeroBytes, uint8_t* bufferDatos)
-{
+void I2Cread(uint8_t direccion, uint8_t registro, uint8_t numeroBytes, uint8_t *bufferDatos) {
   Wire.beginTransmission(direccion);
   Wire.write(registro);
   Wire.endTransmission();
@@ -55,7 +51,7 @@ void I2Cread(uint8_t direccion, uint8_t registro, uint8_t numeroBytes, uint8_t* 
   Wire.requestFrom(direccion, numeroBytes);
   uint8_t index = 0;
   while (Wire.available())
-  bufferDatos[index++] = Wire.read();
+    bufferDatos[index++] = Wire.read();
 }
 
 /**
@@ -64,8 +60,7 @@ void I2Cread(uint8_t direccion, uint8_t registro, uint8_t numeroBytes, uint8_t* 
  * @param registro
  * @param datos
  */
-void I2CwriteByte(uint8_t direccion, uint8_t registro, uint8_t datos)
-{
+void I2CwriteByte(uint8_t direccion, uint8_t registro, uint8_t datos) {
   Wire.beginTransmission(direccion);
   Wire.write(registro);
   Wire.write(datos);
