@@ -148,7 +148,7 @@ long ultimoControlBrushless = 0;
 ////////////////////////////
 // VARIABLES DE ENCODERS  //
 ////////////////////////////
-float ticksMm = 0.6819f;
+float ticksMm = 1.444f;
 float velocidadActual = 0;
 long ultimaVelocidad = 0;
 long ticksDerechoAnteriores = 0;
