@@ -80,7 +80,7 @@ void handler_timer_Brushless() {
   if (mapeoRealizado || velocidadSuccion > 0) {
     nivel_bateria(true);
   }
-  if (contMapeo == 0 && (!enCompeticion || competicionIniciada)) {
+  if (contMapeo <= 0 && (!enCompeticion || competicionIniciada)) {
     contMapeo = 5;
     mapeado_circuito();
   }
