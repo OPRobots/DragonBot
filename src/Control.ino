@@ -107,6 +107,7 @@ int calcula_posicion_linea(int ultimaPosicion) {
     ki = 0;
     kd = 0;
     velocidadBase = 0;
+    velocidadSuccion = 0;
   }
 
   if (sensoresDetectando > 0) {
@@ -285,6 +286,7 @@ float calcular_velocidad() {
  * Función para mapeado del circuito en busca de rectas para acelerar.
  */
 void mapeado_circuito() {
+  // 5213 1598
   int diferencia;
   if (mapeoRealizado) {
     diferencia = abs((ticksDerecho - ticksMapeoDerechoAnteriores) - (ticksIzquierdo - ticksMapeoIzquierdoAnteriores));
@@ -293,26 +295,36 @@ void mapeado_circuito() {
     switch (sectoresPista[sectorActual][SECTOR_TIPO]) {
     case TIPO_SECTOR_RECTA:
       velocidadBase = 120;
+      velocidadSuccion = 0;
+      if (mediaDiferenciaRecta == 0) {
+        mediaDiferenciaRecta = filtroMapeo.Current();
+      } else {
+        mediaDiferenciaRecta = (mediaDiferenciaRecta + diferencia) / 2;
+      }
       break;
     case TIPO_SECTOR_CURVA:
+      mediaDiferenciaRecta = 0;
       velocidadBase = 70;
+      velocidadSuccion = 0;
       break;
     }
 
-    if (ticksDerecho + 800 >= sectoresPista[sectorActual][SECTOR_TICKS]) {
+    if (ticksDerecho >= sectoresPista[sectorActual][SECTOR_TICKS]) {
       ticksDerecho = 0;
       ticksIzquierdo = 0;
       sectorActual++;
+      filtroMapeo.SetCurrent(0);
       if (sectorActual == NUMERO_SECTORES) {
         sectorActual = 0;
         ticksReseteados = false;
       }
-    } else {
-      if (sectorActual == 0 && !ticksReseteados && filtroMapeo.Current() > 25) {
-        ticksReseteados = true;
-        ticksDerecho = 0;
-        ticksIzquierdo = 0;
-      }
+    }
+    if (sectorActual == 0 && !ticksReseteados && filtroMapeo.Current() > (mediaDiferenciaRecta + 10)) {
+      ticksReseteados = true;
+      ticksDerecho = 700;
+      ticksIzquierdo = 700;
+      mediaDiferenciaRecta = 0;
+      Serial.println("reset");
     }
     ticksMapeoDerechoAnteriores = ticksDerecho;
     ticksMapeoIzquierdoAnteriores = ticksIzquierdo;
@@ -320,9 +332,10 @@ void mapeado_circuito() {
     diferencia = abs((ticksDerecho - ticksMapeoDerechoAnteriores) - (ticksIzquierdo - ticksMapeoIzquierdoAnteriores));
     filtroMapeo.Filter(diferencia);
 
-    if (ticksDerecho > 50 && ticksIzquierdo > 50) {
+    if (ticksDerecho > 200 && ticksIzquierdo > 200) {
       if (filtroMapeo.Current() <= 25) {
         if (tipoSector == TIPO_SECTOR_CURVA && mapeoIniciado) {
+          Serial.println(filtroMapeo.Current());
           sectoresPista[sectorActual][SECTOR_TICKS] = ticksDerecho;
           sectoresPista[sectorActual][SECTOR_TIPO] = tipoSector;
           sectorActual++;
@@ -333,7 +346,7 @@ void mapeado_circuito() {
         }
       } else {
         if (tipoSector == TIPO_SECTOR_RECTA && mapeoIniciado) {
-          sectoresPista[sectorActual][SECTOR_TICKS] = ticksDerecho;
+          sectoresPista[sectorActual][SECTOR_TICKS] = ticksDerecho-700;
           sectoresPista[sectorActual][SECTOR_TIPO] = tipoSector;
           sectorActual++;
           tipoSector = TIPO_SECTOR_CURVA;
@@ -357,6 +370,8 @@ void mapeado_circuito() {
         }
         Serial.println();
         mapeoRealizado = true;
+        ticksIzquierdo = 700;
+        ticksDerecho = 700;
         set_color_RGB(0, 0, 0);
       }
     }

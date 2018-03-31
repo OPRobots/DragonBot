@@ -173,6 +173,7 @@ int sectoresPista[NUMERO_SECTORES][2];
 long ticksMapeoDerechoAnteriores = 0;
 long ticksMapeoIzquierdoAnteriores = 0;
 bool ticksReseteados = true;
+int mediaDiferenciaRecta = 0;
 
 ///////////////////////////
 // VARIABLES DE SENSORES //
@@ -320,6 +321,8 @@ void loop() {
         }
         ticksDerecho = 0;
         ticksIzquierdo = 0;
+        ticksMapeoDerechoAnteriores = 0;
+        ticksMapeoIzquierdoAnteriores = 0;
         competicionIniciada = true;
         set_color_RGB(0, 0, 0);
         velocidadBase = 70;
