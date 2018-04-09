@@ -138,11 +138,16 @@ int velocidadSuccion = 0;
 int posicionActual = 0;
 int posicionIdeal = 0;
 float errorAnterior = 0;
+float errorFrontalAnterior = 0;
 float integralErrores = 0;
 float kp = 0;
 float ki = 0;
 float kd = 0;
+float kpFrontal = 0.15f;
+float kiFrontal = 0;
+float kdFrontal = 4.0f;
 int correccion = 0;
+int correccionFrontal = 0;
 long ultimoControlBrushless = 0;
 
 ////////////////////////////
@@ -184,6 +189,8 @@ int posicionMinima = -6500;
 int valoresSensores[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 int valorSaturacionBajo = 80;
 int valorSaturacionAlto = 3000;
+#define SENSOR_FRONTAL_IDEAL 800;
+int valorSensorFrontal = 0;
 
 ///////////////////////////////
 // VARIABLES DE CALIBRACIÓN  //

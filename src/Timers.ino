@@ -32,9 +32,12 @@ void inicia_timer_PID() {
  */
 void handler_timer_PID() {
   posicionActual = calcular_posicion(posicionActual);
+  valorSensorFrontal =  analogRead(SENSOR_FRONTAL);
   correccion = calcular_PID(posicionActual);
+  correccionFrontal = calcular_PID_frontal(valorSensorFrontal);
+
   if (!enCompeticion || competicionIniciada) {
-    dar_velocidad(correccion);
+    dar_velocidad(correccion, correccionFrontal);
   }
 }
 

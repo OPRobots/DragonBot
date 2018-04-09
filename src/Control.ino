@@ -141,13 +141,37 @@ int calcular_PID(int posicionActual) {
   return p + i + d;
 }
 
+int calcular_PID_frontal(int valorSensorFrontal) {
+  float p = 0;
+  float i = 0;
+  float d = 0;
+  int errorFrontal = 0;
+  errorFrontal = 1500 - valorSensorFrontal;
+  if (errorFrontal < 0 && velocidadBase > 0) {
+    p = kpFrontal * errorFrontal;
+    if (errorFrontal < 100) {
+      integralErrores += errorFrontal;
+      i = kiFrontal * integralErrores;
+    } else {
+      i = 0;
+      integralErrores = 0;
+    }
+    d = kdFrontal * (errorFrontal - errorFrontalAnterior);
+    errorFrontalAnterior = errorFrontal;
+    return p + i + d;
+  } else {
+    errorFrontalAnterior = 0;
+    return 0;
+  }
+}
+
 /**
  * Función para asignar velocidad a los motores teniendo en cuenta la corrección calculada por el PID
  * @param correccion Parámetro calculado por el PID para seguir la posición deseada en la pista
  */
-void dar_velocidad(int correccion) {
-  velocidadIzquierda = velocidadBase - correccion;
-  velocidadDerecha = velocidadBase + correccion;
+void dar_velocidad(int correccion, int correccionFrontal) {
+  velocidadIzquierda = velocidadBase - correccion + correccionFrontal;
+  velocidadDerecha = velocidadBase + correccion + correccionFrontal;
 
   if (velocidadBase > 0) {
     velocidadIzquierda += COMPENSACION_IZQUIERDO;
