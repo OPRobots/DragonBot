@@ -187,7 +187,7 @@ int pinesSensores[] = {SENSOR_1, SENSOR_2, SENSOR_3, SENSOR_4, SENSOR_5, SENSOR_
 int posicionMaxima = 6500;
 int posicionMinima = -6500;
 int valoresSensores[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-int valorSaturacionBajo = 80;
+int valorSaturacionBajo = 500;
 int valorSaturacionAlto = 3000;
 #define SENSOR_FRONTAL_IDEAL 800;
 int valorSensorFrontal = 0;
