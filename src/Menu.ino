@@ -67,6 +67,10 @@ void btn_cruceta() {
         *menuConfigSuccion[menuSeleccion[menuActual]] += menuConfigCambioSuccion[menuSeleccion[menuActual]];
         btn_cruceta_pulsado = true;
         break;
+      case MENU_PISTA:
+        sectoresPista[menuSeleccion[menuActual] - 1][SECTOR_TICKS] += menuConfigCambioPista[menuSeleccion[menuActual]];
+        btn_cruceta_pulsado = true;
+        break;
       }
 
       break;
@@ -82,6 +86,10 @@ void btn_cruceta() {
         break;
       case MENU_SUCCION:
         *menuConfigSuccion[menuSeleccion[menuActual]] -= menuConfigCambioSuccion[menuSeleccion[menuActual]];
+        btn_cruceta_pulsado = true;
+        break;
+      case MENU_PISTA:
+        sectoresPista[menuSeleccion[menuActual] - 1][SECTOR_TICKS] -= menuConfigCambioPista[menuSeleccion[menuActual]];
         btn_cruceta_pulsado = true;
         break;
       }
@@ -247,22 +255,6 @@ void mostrar_menu() {
   } else {
     Serial.println("Volver");
   }
-  for (int extra = menuItem; extra < NUMERO_MENU_MAXIMO; extra++) {
-    Serial.println();
-  }
-}
-
-/**
- * Función para encontrar el botón pulsado de la cruceta con un +-50 de error en las mediciones
- */
-int calcular_btn_cruceta(int valorBtn) {
-  for (int combinacion = 0; combinacion < NUMERO_COMBINACIONES; combinacion++) {
-    if (valorBtn > (crucetaCombinaciones[combinacion] - 50) && valorBtn < (crucetaCombinaciones[combinacion] + 50)) {
-      return crucetaCombinaciones[combinacion];
-    }
-  }
-  return 0;
-} }
   for (int extra = menuItem; extra < NUMERO_MENU_MAXIMO; extra++) {
     Serial.println();
   }
