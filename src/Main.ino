@@ -130,7 +130,11 @@ long ultimaLinea = 0;
 long ultimaBateria = 0;
 bool avisoBateria = false;
 int intervaloAviso = 500;
-int velocidadSuccion = 0;
+int velocidadSuccionBase = 0;
+int velocidadSuccionCurvas = 0;
+int velocidadSuccionRectas = 0;
+int velocidadCurvas = 0;
+int velocidadRectas = 0;
 
 //////////////////////////
 // VARIABLES DE CONTROL //
@@ -265,16 +269,17 @@ bool menuSeleccionModificar = false;
 
 String menuPrincipal[] = {"PID", "Velocidad", "Succión", "Pista"};
 String menuPID[] = {"Proporcional", "Integral", "Derivativa"};
-float *menuConfigPID[] = {&menuKp, &menuKi, &menuKd};
+float *menuConfigPID[] = {&kp, &ki, &kd};
 float menuConfigCambioPID[] = {0.001f, 0.001f, 0.05f};
 String menuVelocidad[] = {"Base", "Rectas", "Curvas"};
-int *menuConfigVelocidad[] = {&menuVelocidadBase, &menuVelocidadCurvas, &menuVelocidadRectas};
+int *menuConfigVelocidad[] = {&velocidadBase, &velocidadCurvas, &velocidadRectas};
 int menuConfigCambioVelocidad[] = {5, 5, 5};
 String menuSuccion[] = {"Base", "Rectas", "Curvas"};
-int *menuConfigSuccion[] = {&menuSuccionBase, &menuSuccionCurvas, &menuSuccionRectas};
+int *menuConfigSuccion[] = {&velocidadSuccionBase, &velocidadSuccionCurvas, &velocidadSuccionRectas};
 int menuConfigCambioSuccion[] = {5, 5, 5};
 String menuPista[] = {"Sectores"};
 int menuConfigPista[] = {NUMERO_SECTORES};
+int menuConfigCambioPista[] = {0, 5, 5};
 
 //////////////////////////////
 // INICIALIZACION LIBRERIAS //
