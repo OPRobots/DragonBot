@@ -294,7 +294,6 @@ void setup() {
   inicia_todo();
   enCompeticion = btn_pulsado();
   nivel_bateria(false);
-  calibra_sensores();
   inicia_timers();
   delay(100);
 }

@@ -33,7 +33,7 @@ void btn_cruceta() {
 
       break;
     case CRUCETA_DERECHA_IZQUIERDA:
-
+      calibra_sensores();
       break;
     case CRUCETA_ARRIBA_DERECHA:
 
