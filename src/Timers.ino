@@ -72,12 +72,12 @@ void inicia_timer_Brushless() {
  */
 void handler_timer_Brushless() {
   digitalWrite(MOTOR_SUCCION, HIGH);
-  delayMicroseconds(map(velocidadSuccion, 0, 255, 1000, 2000));
+  delayMicroseconds(map(velocidadSuccionBase, 0, 255, 1000, 2000));
   digitalWrite(MOTOR_SUCCION, LOW);
 
   contMapeo--;
 
-  if (mapeoRealizado || velocidadSuccion > 0) {
+  if (mapeoRealizado || velocidadSuccionBase > 0) {
     nivel_bateria(true);
   }
   if (contMapeo <= 0 && velocidadBase > 0) {

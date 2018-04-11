@@ -280,7 +280,7 @@ void robot_modo_menu() {
   pausa_timers();
   competicionIniciada = false;
   velocidadBase = 0;
-  velocidadSuccion = 0;
+  velocidadSuccionBase = 0;
   kp = 0;
   ki = 0;
   kd = 0;

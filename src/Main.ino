@@ -285,7 +285,7 @@ int menuConfigCambioPista[] = {0, 5, 5};
 //////////////////////////////
 HardwareTimer TimerPID(2);
 HardwareTimer TimerBrushless(3);
-PIDfromBT CalibracionPID(&kp, &ki, &kd, &velocidadBase, &posicionIdeal, &velocidadSuccion, DEBUG);
+PIDfromBT CalibracionPID(&kp, &ki, &kd, &velocidadBase, &posicionIdeal, &velocidadSuccionBase, DEBUG);
 ExponentialFilter<long> filtroBateria(15, 0);
 ExponentialFilter<long> filtroMapeo(50, 0);
 

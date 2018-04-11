@@ -107,7 +107,7 @@ int calcula_posicion_linea(int ultimaPosicion) {
     ki = 0;
     kd = 0;
     velocidadBase = 0;
-    velocidadSuccion = 0;
+    velocidadSuccionBase = 0;
   }
 
   if (sensoresDetectando > 0) {
@@ -318,8 +318,8 @@ void mapeado_circuito() {
 
     switch (sectoresPista[sectorActual][SECTOR_TIPO]) {
     case TIPO_SECTOR_RECTA:
-      velocidadBase = 120;
-      velocidadSuccion = 0;
+      velocidadBase = velocidadRectas;
+      velocidadSuccionBase = velocidadSuccionRectas;
       if (mediaDiferenciaRecta == 0) {
         mediaDiferenciaRecta = filtroMapeo.Current();
       } else {
@@ -328,8 +328,8 @@ void mapeado_circuito() {
       break;
     case TIPO_SECTOR_CURVA:
       mediaDiferenciaRecta = 0;
-      velocidadBase = 70;
-      velocidadSuccion = 0;
+      velocidadBase = velocidadCurvas;
+      velocidadSuccionBase = velocidadSuccionCurvas;
       break;
     }
 
