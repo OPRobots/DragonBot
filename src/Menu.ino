@@ -1,5 +1,9 @@
-
-void btn_cruceta(bool forzarMenu) {
+/** 
+ * Comprueba si algún botón de la cruceta está pulsado y actua en consecuencia.
+ * Nota: Si se pulsa IZQUIERDA-DERECHA se entra en modo menú, suspendiendo todas las demás funciones del robot.
+ * @return 	 [void] 
+ */
+void btn_cruceta() {
   bool btn_cruceta_pulsado = false;
   int menuAnterior = menuActual;
   if (!menuSeleccionModificar) {
@@ -135,6 +139,10 @@ void btn_cruceta(bool forzarMenu) {
   }
 }
 
+/** 
+ * Muestra el menú por Serial, indicando la opción seleccionada y sus opciones 
+ * @return 	 [void] 
+ */
 void mostrar_menu() {
   String tituloMenu = "";
   int numeroItemsMenu = 0;
