@@ -35,10 +35,7 @@ void handler_timer_PID() {
   valorSensorFrontal =  analogRead(SENSOR_FRONTAL);
   correccion = calcular_PID(posicionActual);
   correccionFrontal = calcular_PID_frontal(valorSensorFrontal);
-
-  if (!enCompeticion || competicionIniciada) {
-    dar_velocidad(correccion, correccionFrontal);
-  }
+  dar_velocidad(correccion, correccionFrontal);
 }
 
 /**
@@ -83,7 +80,7 @@ void handler_timer_Brushless() {
   if (mapeoRealizado || velocidadSuccion > 0) {
     nivel_bateria(true);
   }
-  if (contMapeo <= 0 && (!enCompeticion || competicionIniciada)) {
+  if (contMapeo <= 0 && velocidadBase > 0) {
     contMapeo = 5;
     mapeado_circuito();
   }

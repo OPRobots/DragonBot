@@ -207,7 +207,6 @@ const int valorCalibradoMaximo = 4000;
 ///////////////////////////////
 // VARIABLES DE COMPETICIÓN  //
 ///////////////////////////////
-bool enCompeticion = false;
 bool competicionIniciada = false;
 
 /////////////////////////////////////////
@@ -292,7 +291,6 @@ ExponentialFilter<long> filtroMapeo(50, 0);
 
 void setup() {
   inicia_todo();
-  enCompeticion = btn_pulsado();
   nivel_bateria(false);
   inicia_timers();
   delay(100);
@@ -302,13 +300,7 @@ void loop() {
   CalibracionPID.update();
   btn_cruceta();
   delay(100);
-  if (!enCompeticion || (enCompeticion && competicionIniciada)) {
-    if (!enCompeticion) {
-     /*  if (btn_pulsado()) {
-        Serial.println(analogRead(NIVEL_BATERIA));
-      } */
-    }
-  } else if (enCompeticion) {
+   if (!competicionIniciada) {
     if (!btn_pulsado()) {
       delay(100);
       if (btn_pulsado()) {

@@ -278,9 +278,7 @@ int calcular_btn_cruceta(int valorBtn) {
  */
 void robot_modo_menu() {
   pausa_timers();
-  if (enCompeticion) {
-    competicionIniciada = false;
-  }
+  competicionIniciada = false;
   velocidadBase = 0;
   velocidadSuccion = 0;
   kp = 0;
