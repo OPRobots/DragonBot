@@ -209,7 +209,6 @@ bool competicionIniciada = false;
 /////////////////////////////////////////
 // VARIABLES DE MENÚ DE CONFIGURACIÓN  //
 /////////////////////////////////////////
-bool modoMenu = false;
 #define NUMERO_COMBINACIONES 10
 #define CRUCETA_ARRIBA 1460
 #define CRUCETA_ABAJO 475
@@ -260,7 +259,7 @@ int menuSuccionRectas = 140;
 
 int menuActual = MENU_PRINCIPAL;
 int menuSeleccion[NUMERO_MENU_PRINCIPAL + 1];
-bool forzarMenu = true;
+bool modoMenu = false;
 bool menuSeleccionVolver = false;
 bool menuSeleccionModificar = false;
 
@@ -297,15 +296,13 @@ void setup() {
 
 void loop() {
   CalibracionPID.update();
-  btn_cruceta(forzarMenu);
-  if (forzarMenu) {
-    forzarMenu = !forzarMenu;
-  }
+  btn_cruceta();
+  delay(100);
   if (!enCompeticion || (enCompeticion && competicionIniciada)) {
     if (!enCompeticion) {
-      if (btn_pulsado()) {
+     /*  if (btn_pulsado()) {
         Serial.println(analogRead(NIVEL_BATERIA));
-      }
+      } */
     }
   } else if (enCompeticion) {
     if (!btn_pulsado()) {

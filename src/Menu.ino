@@ -35,7 +35,10 @@ void btn_cruceta(bool forzarMenu) {
 
       break;
     case CRUCETA_DERECHA_ABAJO:
-
+      if (!modoMenu) {
+        btn_cruceta_pulsado = true;
+        robot_modo_menu();
+      }
       break;
     case CRUCETA_ABAJO_IZQUIERDA:
 
@@ -88,7 +91,7 @@ void btn_cruceta(bool forzarMenu) {
     }
   }
 
-  if (btn_cruceta_pulsado || forzarMenu) {
+  if (btn_cruceta_pulsado && modoMenu) {
     if (menuAnterior != MENU_PRINCIPAL && menuActual != MENU_PRINCIPAL && menuAnterior != menuActual) {
       menuActual = menuAnterior;
       btn_cruceta_pulsado = false;
@@ -126,8 +129,7 @@ void btn_cruceta(bool forzarMenu) {
       btn_cruceta_pulsado = false;
     }
   }
-  if (btn_cruceta_pulsado || forzarMenu) {
-
+  if (btn_cruceta_pulsado && modoMenu) {
     mostrar_menu();
     delay(250);
   }
@@ -252,4 +254,38 @@ int calcular_btn_cruceta(int valorBtn) {
     }
   }
   return 0;
+} }
+  for (int extra = menuItem; extra < NUMERO_MENU_MAXIMO; extra++) {
+    Serial.println();
+  }
+}
+
+/**
+ * Función para encontrar el botón pulsado de la cruceta con un +-50 de error en las mediciones
+ */
+int calcular_btn_cruceta(int valorBtn) {
+  for (int combinacion = 0; combinacion < NUMERO_COMBINACIONES; combinacion++) {
+    if (valorBtn > (crucetaCombinaciones[combinacion] - 50) && valorBtn < (crucetaCombinaciones[combinacion] + 50)) {
+      return crucetaCombinaciones[combinacion];
+    }
+  }
+  return 0;
+}
+
+/** 
+ * Pausa los timers y restablece los ajustes del robot a sus valores default 
+ * @return 	 [void] 
+ */
+void robot_modo_menu() {
+  pausa_timers();
+  if (enCompeticion) {
+    competicionIniciada = false;
+  }
+  velocidadBase = 0;
+  velocidadSuccion = 0;
+  kp = 0;
+  ki = 0;
+  kd = 0;
+  velocidadActual = 0;
+  modoMenu = true;
 }
