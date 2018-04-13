@@ -284,3 +284,12 @@ void robot_modo_menu() {
   velocidadMs = 0;
   modoMenu = true;
 }
+
+/** 
+ * Reanuda los timers y restablece los ajustes del robot a los valores configurados
+ * @return 	 [void] 
+ */
+void robot_modo_normal() {
+  reanuda_timers();
+  modoMenu = false;
+}
