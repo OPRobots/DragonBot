@@ -10,7 +10,6 @@
 #include <PIDfromBT.h>
 #include <Wire.h>
 
-
 ////////////
 // MODOS  //
 ////////////
@@ -146,9 +145,9 @@ int posicionIdeal = 0;
 float errorAnterior = 0;
 float errorFrontalAnterior = 0;
 float integralErrores = 0;
-float kp = 0;
+float kp = 0.03f;
 float ki = 0;
-float kd = 0;
+float kd = 4.0f;
 float kpFrontal = 0.15f;
 float kiFrontal = 0;
 float kdFrontal = 4.0f;
@@ -302,15 +301,13 @@ void loop() {
   CalibracionPID.update();
   btn_cruceta();
   delay(100);
-   if (!competicionIniciada) {
+  if (!competicionIniciada) {
     if (!btn_pulsado()) {
       delay(100);
       if (btn_pulsado()) {
         // TODO: Asignación de configuraciones.
-        kp = 0.03f;
-        kd = 4.0f;
         while (btn_pulsado()) {
-          set_color_RGB(random(200, 255), 0, 0);
+          set_color_RGB(random(100, 255), 0, 0);
         }
         long millisIniciales = millis();
         int tiempoPasado = 5;
