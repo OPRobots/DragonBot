@@ -106,8 +106,8 @@ int calcula_posicion_linea(int ultimaPosicion) {
     kp = 0;
     ki = 0;
     kd = 0;
-    velocidadBase = 0;
-    velocidadSuccionBase = 0;
+    velocidad = 0;
+    velocidadSuccion = 0;
   }
 
   if (sensoresDetectando > 0) {
@@ -147,7 +147,7 @@ int calcular_PID_frontal(int valorSensorFrontal) {
   float d = 0;
   int errorFrontal = 0;
   errorFrontal = 1500 - valorSensorFrontal;
-  if (errorFrontal < 0 && velocidadBase > 0) {
+  if (errorFrontal < 0 && velocidad > 0) {
     p = kpFrontal * errorFrontal;
     if (errorFrontal < 100) {
       integralErrores += errorFrontal;
@@ -170,10 +170,10 @@ int calcular_PID_frontal(int valorSensorFrontal) {
  * @param correccion Parámetro calculado por el PID para seguir la posición deseada en la pista
  */
 void dar_velocidad(int correccion, int correccionFrontal) {
-  velocidadIzquierda = velocidadBase - correccion + correccionFrontal;
-  velocidadDerecha = velocidadBase + correccion + correccionFrontal;
+  velocidadIzquierda = velocidad - correccion + correccionFrontal;
+  velocidadDerecha = velocidad + correccion + correccionFrontal;
 
-  if (velocidadBase > 0) {
+  if (velocidad > 0) {
     velocidadIzquierda += COMPENSACION_IZQUIERDO;
     velocidadDerecha += COMPENSACION_DERECHO;
   }
@@ -295,15 +295,11 @@ void encoder_izquierdo_B() {
  * @return Velocidad en m/s del robot, actualizada cada segundo
  */
 float calcular_velocidad() {
-  // if(millis()>=(ultimaVelocidad + 1000)){
   float velocidad = ((((ticksDerecho - ticksDerechoAnteriores) / (float)(millis() - ultimaVelocidad)) * ticksMm) + (((ticksDerecho - ticksDerechoAnteriores) / (float)(millis() - ultimaVelocidad)) * ticksMm)) / 2.0f;
   ultimaVelocidad = millis();
   ticksDerechoAnteriores = ticksDerecho;
   ticksIzquierdoAnteriores = ticksIzquierdo;
   return velocidad;
-  // }else{
-  //   return velocidadActual;
-  // }
 }
 
 /**
@@ -318,7 +314,7 @@ void mapeado_circuito() {
 
     switch (sectoresPista[sectorActual][SECTOR_TIPO]) {
     case TIPO_SECTOR_RECTA:
-      velocidadBase = velocidadRectas;
+      velocidad = velocidadRectas;
       velocidadSuccionBase = velocidadSuccionRectas;
       if (mediaDiferenciaRecta == 0) {
         mediaDiferenciaRecta = filtroMapeo.Current();
@@ -328,7 +324,7 @@ void mapeado_circuito() {
       break;
     case TIPO_SECTOR_CURVA:
       mediaDiferenciaRecta = 0;
-      velocidadBase = velocidadCurvas;
+      velocidad = velocidadCurvas;
       velocidadSuccionBase = velocidadSuccionCurvas;
       break;
     }

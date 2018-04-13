@@ -122,7 +122,8 @@
 ///////////////
 // VARIABLES //
 ///////////////
-int velocidadBase = 0;
+int velocidad = 0;
+int velocidadSuccion = 0;
 int velocidadMaxima = 255;
 float velocidadDerecha = 0;
 float velocidadIzquierda = 0;
@@ -130,11 +131,12 @@ long ultimaLinea = 0;
 long ultimaBateria = 0;
 bool avisoBateria = false;
 int intervaloAviso = 500;
-int velocidadSuccionBase = 0;
-int velocidadSuccionCurvas = 0;
-int velocidadSuccionRectas = 0;
-int velocidadCurvas = 0;
-int velocidadRectas = 0;
+int velocidadBase = 70;
+int velocidadCurvas = 80;
+int velocidadRectas = 120;
+int velocidadSuccionBase = 50;
+int velocidadSuccionCurvas = 100;
+int velocidadSuccionRectas = 30;
 
 //////////////////////////
 // VARIABLES DE CONTROL //
@@ -158,7 +160,7 @@ long ultimoControlBrushless = 0;
 // VARIABLES DE ENCODERS  //
 ////////////////////////////
 float ticksMm = 1.444f;
-float velocidadActual = 0;
+float velocidadMs = 0;
 long ultimaVelocidad = 0;
 long ticksDerechoAnteriores = 0;
 long ticksIzquierdoAnteriores = 0;
@@ -285,7 +287,7 @@ int menuConfigCambioPista[] = {0, 5, 5};
 //////////////////////////////
 HardwareTimer TimerPID(2);
 HardwareTimer TimerBrushless(3);
-PIDfromBT CalibracionPID(&kp, &ki, &kd, &velocidadBase, &posicionIdeal, &velocidadSuccionBase, DEBUG);
+PIDfromBT CalibracionPID(&kp, &ki, &kd, &velocidad, &posicionIdeal, &velocidadSuccion, DEBUG);
 ExponentialFilter<long> filtroBateria(15, 0);
 ExponentialFilter<long> filtroMapeo(50, 0);
 
@@ -318,6 +320,9 @@ void loop() {
           r = map(tiempoPasado, 0, 5000, 255, 0);
           g = map(tiempoPasado, 0, 1000, 0, 255);
           set_color_RGB(r, g, 0);
+          if (tiempoPasado / 1000 > 2 && velocidadSuccion == 0) {
+            velocidadSuccion = velocidadSuccionBase;
+          }
         }
         ticksDerecho = 0;
         ticksIzquierdo = 0;
@@ -325,7 +330,7 @@ void loop() {
         ticksMapeoIzquierdoAnteriores = 0;
         competicionIniciada = true;
         set_color_RGB(0, 0, 0);
-        velocidadBase = 70;
+        velocidad = velocidadBase;
       }
     }
   }

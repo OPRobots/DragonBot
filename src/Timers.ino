@@ -72,22 +72,22 @@ void inicia_timer_Brushless() {
  */
 void handler_timer_Brushless() {
   digitalWrite(MOTOR_SUCCION, HIGH);
-  delayMicroseconds(map(velocidadSuccionBase, 0, 255, 1000, 2000));
+  delayMicroseconds(map(velocidadSuccion, 0, 255, 1000, 2000));
   digitalWrite(MOTOR_SUCCION, LOW);
 
   contMapeo--;
 
-  if (mapeoRealizado || velocidadSuccionBase > 0) {
+  if (mapeoRealizado || velocidadSuccion > 0) {
     nivel_bateria(true);
   }
-  if (contMapeo <= 0 && velocidadBase > 0) {
+  if (contMapeo <= 0 && velocidad > 0) {
     contMapeo = 5;
     mapeado_circuito();
   }
-  if (velocidadBase > 0) {
-    velocidadActual = calcular_velocidad();
+  if (velocidad > 0) {
+    velocidadMs = calcular_velocidad();
   } else {
-    velocidadActual = 0;
+    velocidadMs = 0;
   }
 }
 
