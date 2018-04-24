@@ -91,8 +91,36 @@ int calcula_posicion_linea(int ultimaPosicion) {
   unsigned long sumaSensoresPonderados = 0;
   unsigned long sumaSensores = 0;
   int sensoresDetectando = 0;
+  int numeroLineas = 0;
+  bool sensorAnteriorDetectando = false;
 
   for (int sensor = 0; sensor < NUMERO_SENSORES; sensor++) {
+    if (!sensorAnteriorDetectando && valoresSensores[sensor] > 0) {
+      numeroLineas++;
+    }
+  }
+  sensorAnteriorDetectando = false;
+
+  for (int sensor = 0; sensor < NUMERO_SENSORES; sensor++) {
+
+    if (numeroLineas == 1) {
+      if (!sensorAnteriorDetectando && valoresSensores[sensor] > 0) {
+        inicioLineaAnterior = sensor;
+      } else if (sensorAnteriorDetectando && valoresSensores[sensor] == 0) {
+        finLineaAnterior = sensor - 1;
+      }
+    } else {
+      if (!sensorAnteriorDetectando && valoresSensores[sensor] > 0) {
+        if (abs(inicioLineaAnterior - sensor) > 1) {
+          valoresSensores[sensor] = 0;
+        } else {
+          inicioLineaAnterior = sensor;
+        }
+      } else if (sensorAnteriorDetectando && valoresSensores[sensor] == 0) {
+        finLineaAnterior = sensor - 1;
+      }
+    }
+    sensorAnteriorDetectando = valoresSensores[sensor] > 0;
     sumaSensoresPonderados += (sensor + 1) * valoresSensores[sensor] * 1000L;
     sumaSensores += (long)valoresSensores[sensor];
     if (valoresSensores[sensor] > ((valorCalibradoMaximo - valorCalibradoMinimo) / 3 * 2.0f)) {
