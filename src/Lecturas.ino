@@ -27,7 +27,7 @@ int mux_analog_read_map(byte canalMux, int sensor) {
 void lectura_sensores_calibrados() {
   for (int sensor = 0; sensor < NUMERO_SENSORES; sensor++) {
     valoresSensores[sensor] = mux_analog_read_map(pinesSensores[sensor], sensor);
-    if (valoresSensores[sensor] > valorSaturacionAlto) {
+    if (valoresSensores[sensor] >= valorSaturacionAlto) {
       valoresSensores[sensor] = valorCalibradoMaximo;
     }
     if (valoresSensores[sensor] <= valorSaturacionBajo) {
