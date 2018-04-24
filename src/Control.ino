@@ -121,6 +121,7 @@ int calcula_posicion_linea(int ultimaPosicion) {
       }
     }
     sensorAnteriorDetectando = valoresSensores[sensor] > 0;
+
     sumaSensoresPonderados += (sensor + 1) * valoresSensores[sensor] * 1000L;
     sumaSensores += (long)valoresSensores[sensor];
     if (valoresSensores[sensor] > ((valorCalibradoMaximo - valorCalibradoMinimo) / 3 * 2.0f)) {
@@ -131,11 +132,13 @@ int calcula_posicion_linea(int ultimaPosicion) {
   if (sensoresDetectando > 0 && sensoresDetectando < NUMERO_SENSORES) {
     ultimaLinea = millis();
   } else if (millis() > (ultimaLinea + TIEMPO_SIN_PISTA)) {
-    kp = 0;
-    ki = 0;
-    kd = 0;
+    // kp = 0;
+    // ki = 0;
+    // kd = 0;
     velocidad = 0;
     velocidadSuccion = 0;
+    competicionIniciada = false;
+    set_color_RGB(0, 0, 0);
   }
 
   if (sensoresDetectando > 0) {
@@ -166,7 +169,13 @@ int calcular_PID(int posicionActual) {
   }
   d = kd * (error - errorAnterior);
   errorAnterior = error;
+  if (velocidad > 0) {
   return p + i + d;
+  } else {
+    errorAnterior = 0;
+    integralErrores = 0;
+    return 0;
+  }
 }
 
 int calcular_PID_frontal(int valorSensorFrontal) {
@@ -186,7 +195,13 @@ int calcular_PID_frontal(int valorSensorFrontal) {
     }
     d = kdFrontal * (errorFrontal - errorFrontalAnterior);
     errorFrontalAnterior = errorFrontal;
+    if (velocidad > 0) {
     return p + i + d;
+  } else {
+    errorFrontalAnterior = 0;
+      integralErrores = 0;
+      return 0;
+    }
   } else {
     errorFrontalAnterior = 0;
     return 0;
@@ -394,7 +409,7 @@ void mapeado_circuito() {
         }
       } else {
         if (tipoSector == TIPO_SECTOR_RECTA && mapeoIniciado) {
-          sectoresPista[sectorActual][SECTOR_TICKS] = ticksDerecho-700;
+          sectoresPista[sectorActual][SECTOR_TICKS] = ticksDerecho - 700;
           sectoresPista[sectorActual][SECTOR_TIPO] = tipoSector;
           sectorActual++;
           tipoSector = TIPO_SECTOR_CURVA;
