@@ -20,8 +20,14 @@ void btn_cruceta() {
       if (!menuSeleccionVolver) {
         menuActual = menuSeleccion[menuActual] + 1;
       } else {
-        menuSeleccionVolver = false;
-        menuActual = MENU_PRINCIPAL;
+        if (menuActual != MENU_PRINCIPAL) {
+          menuSeleccionVolver = false;
+          menuActual = MENU_PRINCIPAL;
+        } else {
+          menuSeleccionVolver = false;
+          menuActual = MENU_PRINCIPAL;
+          robot_modo_normal();
+        }
       }
       btn_cruceta_pulsado = true;
       break;
@@ -33,7 +39,7 @@ void btn_cruceta() {
 
       break;
     case CRUCETA_DERECHA_IZQUIERDA:
-      calibra_sensores();
+    
       break;
     case CRUCETA_ARRIBA_DERECHA:
 
@@ -168,7 +174,7 @@ void mostrar_menu() {
     numeroItemsMenu = NUMERO_MENU_VELOCIDAD;
     break;
   case MENU_SUCCION:
-    tituloMenu = "SUCCIÓN";
+    tituloMenu = "SUCCION";
     numeroItemsMenu = NUMERO_MENU_SUCCION;
     break;
   case MENU_PISTA:
@@ -176,16 +182,16 @@ void mostrar_menu() {
     numeroItemsMenu = NUMERO_MENU_PISTA;
     break;
   }
-  Serial.print("MENÚ ");
+  Serial.print("MENU ");
   Serial.println(tituloMenu);
   Serial.println("*********************");
   int menuItem;
   for (menuItem = 0; menuItem < numeroItemsMenu; menuItem++) {
     if (menuSeleccion[menuActual] == menuItem) {
       if (!menuSeleccionModificar) {
-        Serial.print("· ");
+        Serial.print("- ");
       } else {
-        Serial.print("× ");
+        Serial.print("+ ");
       }
     } else {
       Serial.print("  ");
@@ -226,9 +232,9 @@ void mostrar_menu() {
     for (int sector = menuItem; sector < NUMERO_SECTORES + menuItem; sector++) {
       if (menuSeleccion[menuActual] == sector) {
         if (!menuSeleccionModificar) {
-          Serial.print("· ");
+          Serial.print("- ");
         } else {
-          Serial.print("× ");
+          Serial.print("+ ");
         }
       } else {
         Serial.print("  ");
@@ -245,7 +251,7 @@ void mostrar_menu() {
   }
 
   if (menuSeleccion[menuActual] == menuItem) {
-    Serial.print("· ");
+    Serial.print("- ");
     menuSeleccionVolver = true;
   } else {
     Serial.print("  ");

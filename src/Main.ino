@@ -249,25 +249,13 @@ int crucetaCombinaciones[] = {CRUCETA_ARRIBA,
 #define NUMERO_MENU_PISTA 1
 #define NUMERO_MENU_MAXIMO 4
 
-float menuKp = 0.03f;
-float menuKi = 0;
-float menuKd = 3.5f;
-
-int menuVelocidadBase = 70;
-int menuVelocidadCurvas = 70;
-int menuVelocidadRectas = 140;
-
-int menuSuccionBase = 70;
-int menuSuccionCurvas = 70;
-int menuSuccionRectas = 140;
-
 int menuActual = MENU_PRINCIPAL;
 int menuSeleccion[NUMERO_MENU_PRINCIPAL + 1];
 bool modoMenu = false;
 bool menuSeleccionVolver = false;
 bool menuSeleccionModificar = false;
 
-String menuPrincipal[] = {"PID", "Velocidad", "Succión", "Pista"};
+String menuPrincipal[] = {"PID", "Velocidad", "Succion", "Pista"};
 String menuPID[] = {"Proporcional", "Integral", "Derivativa"};
 float *menuConfigPID[] = {&kp, &ki, &kd};
 float menuConfigCambioPID[] = {0.001f, 0.001f, 0.05f};
@@ -299,9 +287,9 @@ void setup() {
 
 void loop() {
   CalibracionPID.update();
-  btn_cruceta();
-  delay(100);
+  delay(50);
   if (!competicionIniciada) {
+  btn_cruceta();
     if (!btn_pulsado()) {
       delay(100);
       if (btn_pulsado()) {
