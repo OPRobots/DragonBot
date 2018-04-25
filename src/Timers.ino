@@ -43,6 +43,14 @@ void handler_timer_PID() {
  */
 void pausa_timer_PID() {
   TimerPID.pause();
+  errorAnterior = 0;
+  correccion = 0;
+  integralErrores = 0;
+  errorFrontalAnterior = 0;
+  correccionFrontal = 0;
+  velocidad = 0;
+  velocidadSuccion = 0;
+  velocidadMs = 0;
 }
 
 /**
