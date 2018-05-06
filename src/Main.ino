@@ -244,6 +244,8 @@ int valoresCalibracionMinimos[] = {4096, 4096, 4096, 4096, 4096, 4096, 4096, 409
 int valoresCalibracionMaximos[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 int valorCalibradoMaximo;
 int valorCalibradoMinimo;
+// int valoresCalibracionMaximos[] = {2263, 2429, 2312, 2333, 2399, 2592, 2257, 2385, 2912, 3512, 3471, 3972};
+// int valoresCalibracionMinimos[] = {197, 201, 199, 198, 201, 204, 196, 202, 202, 208, 195, 207};
 
 ///////////////////////////////
 // VARIABLES DE COMPETICIÓN  //
@@ -328,16 +330,36 @@ void setup() {
 }
 
 void loop() {
+
+  /*
+  ////////////////////////////////////////
+  // LOG DE SENSORES Y CÁLCULO DE LÍNEA //
+  ////////////////////////////////////////
+
+   for (int sensor = 0; sensor < NUMERO_SENSORES; sensor++) {
+    int lectura = mux_analog_read(pinesSensores[sensor]);
+    Serial.print(lectura);
+    Serial.print(" (");
+    Serial.print(map(lectura, valoresCalibracionMinimos[sensor], valoresCalibracionMaximos[sensor], valorCalibradoMinimo, valorCalibradoMaximo););
+    Serial.print(")");
+    Serial.print("\t");
+  }
+  Serial.print("=>");
+  posicionActual = calcular_posicion(posicionActual);
+  Serial.println(posicionActual); 
+  */
+
+  // return;
+
   CalibracionPID.update();
   delay(50);
   if (!competicionIniciada) {
-  btn_cruceta();
+    btn_cruceta();
     if (!btn_pulsado()) {
       delay(100);
       if (btn_pulsado()) {
-        // TODO: Asignación de configuraciones.
+        set_color_RGB(255, 0, 0);
         while (btn_pulsado()) {
-          set_color_RGB(random(100, 255), 0, 0);
         }
         long millisIniciales = millis();
         int tiempoPasado = 5;
