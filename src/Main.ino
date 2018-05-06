@@ -22,6 +22,16 @@
 #define LIPO_2S 1
 #define LIPO_3S 2
 
+#define CALIBRADO_MAXIMO_SENSORES_LINEA 4000
+#define CALIBRADO_MINIMO_SENSORES_LINEA 0
+#define SATURACION_MAXIMO_SENSORES_LINEA 3000
+#define SATURACION_MINIMO_SENSORES_LINEA 2000
+
+#define CALIBRADO_MAXIMO_SENSORES_DEGRADADO 2000
+#define CALIBRADO_MINIMO_SENSORES_DEGRADADO 0
+#define SATURACION_MAXIMO_SENSORES_DEGRADADO 2000
+#define SATURACION_MINIMO_SENSORES_DEGRADADO 5
+
 ///////////////////
 // CONFIGURACION //
 ///////////////////
@@ -188,12 +198,13 @@ int mediaDiferenciaRecta = 0;
 ///////////////////////////
 // VARIABLES DE SENSORES //
 ///////////////////////////
+int valorSaturacionBajo;
+int valorSaturacionAlto;
 int pinesSensores[] = {SENSOR_1, SENSOR_2, SENSOR_3, SENSOR_4, SENSOR_5, SENSOR_6, SENSOR_7, SENSOR_8, SENSOR_9, SENSOR_10, SENSOR_11, SENSOR_12};
 int posicionMaxima = 6500;
 int posicionMinima = -6500;
 int valoresSensores[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-int valorSaturacionBajo = 500;
-int valorSaturacionAlto = 3000;
+int valoresSensoresRaw[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 #define SENSOR_FRONTAL_IDEAL 800;
 int valorSensorFrontal = 0;
 
@@ -202,8 +213,8 @@ int valorSensorFrontal = 0;
 ///////////////////////////////
 int valoresCalibracionMinimos[] = {4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096};
 int valoresCalibracionMaximos[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-const int valorCalibradoMinimo = 0;
-const int valorCalibradoMaximo = 4000;
+int valorCalibradoMaximo;
+int valorCalibradoMinimo;
 
 ///////////////////////////////
 // VARIABLES DE COMPETICIÓN  //
@@ -281,6 +292,8 @@ ExponentialFilter<long> filtroMapeo(50, 0);
 void setup() {
   inicia_todo();
   nivel_bateria(false);
+  calibra_sensores();
+  delay(100);
   inicia_timers();
   delay(100);
 }

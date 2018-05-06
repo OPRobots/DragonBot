@@ -5,12 +5,26 @@
 void calibra_sensores() {
   switch (PISTA) {
   case MODO_LINEA:
+    valorSaturacionBajo = SATURACION_MINIMO_SENSORES_LINEA;
+    valorSaturacionAlto = SATURACION_MAXIMO_SENSORES_LINEA;
+    valorCalibradoMaximo = CALIBRADO_MAXIMO_SENSORES_LINEA;
+    valorCalibradoMinimo = CALIBRADO_MINIMO_SENSORES_LINEA;
+    posicionMaxima = 6500;
+    posicionMinima = -6500;
     calibrado_sensores_linea();
     break;
   case MODO_DEGRADADO:
+    valorSaturacionBajo = SATURACION_MINIMO_SENSORES_DEGRADADO;
+    valorSaturacionAlto = SATURACION_MAXIMO_SENSORES_DEGRADADO;
+    valorCalibradoMaximo = CALIBRADO_MAXIMO_SENSORES_DEGRADADO;
+    valorCalibradoMinimo = CALIBRADO_MINIMO_SENSORES_DEGRADADO;
+    posicionMaxima = 200;
+    posicionMinima = -200;
     calibrado_sensores_degradado();
     break;
   }
+  CalibracionPID.setMaxIdeal(posicionMaxima);
+  CalibracionPID.setMinIdeal(posicionMinima);
   delay(300);
 }
 
