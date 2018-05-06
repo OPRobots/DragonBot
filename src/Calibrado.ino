@@ -49,6 +49,24 @@ void calibrado_sensores_linea() {
     }
   }
 
+  for (int sensor = 0; sensor < NUMERO_SENSORES; sensor++) {
+
+    Serial.print("valoresCalibracionMaximos[");
+    Serial.print(sensor);
+    Serial.print("] = ");
+    Serial.print(valoresCalibracionMaximos[sensor]);
+    Serial.print(";\n");
+  }
+
+  for (int sensor = 0; sensor < NUMERO_SENSORES; sensor++) {
+
+    Serial.print("valoresCalibracionMinimos[");
+    Serial.print(sensor);
+    Serial.print("] = ");
+    Serial.print(valoresCalibracionMinimos[sensor]);
+    Serial.print(";\n");
+  }
+
   set_color_RGB(0, 0, 0);
 }
 
