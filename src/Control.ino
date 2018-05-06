@@ -74,7 +74,7 @@ int calcular_posicion(int ultimaPosicion) {
     return calcula_posicion_linea(ultimaPosicion);
     break;
   case MODO_DEGRADADO:
-    // TODO: añadir función de cálculo de posición para degradados.
+    return calcula_posicion_degradado(ultimaPosicion);
     break;
   }
   return 0;
@@ -149,6 +149,106 @@ int calcula_posicion_linea(int ultimaPosicion) {
 }
 
 /**
+ * Función para realizar el cálculo de la posición en base a la lectura de los sensores.
+ * @param  ultimaPosicion Última posición calculada para usar en caso de pérdida de degradado
+ * @return [int]           Posición actual sobre el degradado
+ */
+int calcula_posicion_degradado(int ultimaPosicion) {
+  lectura_sensores_calibrados();
+  int posicionesSensores[NUMERO_SENSORES];
+  int posicionSensores = 0;
+  int numeroSensoresPista = 0;
+  int sensorPistaInicial = -1;
+  int sensorPistaFinal = -1;
+  int posicion = 0;
+
+  for (int sensor = 0; sensor < NUMERO_SENSORES; sensor++) {
+    bool rangoEncontrado = false;
+    bool sensorEnPista = false;
+    int rangoInicio = 0;
+    int rangoFinal = 0;
+
+    // BUSCAR SENSORES EN PISTA
+    if (valoresSensoresRaw[sensor] >= valoresCalibracionMinimos[sensor]) {
+      if (sensorPistaInicial < 0) {
+        sensorPistaInicial = sensor;
+      } else {
+        sensorPistaFinal = sensor;
+      }
+      sensorEnPista = true;
+      numeroSensoresPista++;
+    }
+
+    if (sensorEnPista) {
+      // BUSCAR RANGO DE CALIBRADO
+      for (int calibrado = 0; (calibrado < NUMERO_CALIBRACIONES_DEGRADADO && !rangoEncontrado); calibrado++) {
+        if (calibrado != NUMERO_CALIBRACIONES_DEGRADADO - 1) {
+          if (valoresSensores[sensor] <= calibradoDegradado[calibrado][sensor] && valoresSensores[sensor] >= calibradoDegradado[calibrado + 1][sensor]) {
+            rangoEncontrado = true;
+            rangoInicio = calibrado;
+            rangoFinal = calibrado + 1;
+          }
+        }
+      }
+
+      // CALCULAR DISTANCIA
+      if (rangoEncontrado) {
+        posicionesSensores[sensor] = map(valoresSensores[sensor], calibradoDegradado[rangoInicio][sensor], calibradoDegradado[rangoFinal][sensor], rangoInicio * 1000, rangoFinal * 1000);
+      } else {
+        if (valoresSensores[sensor] > calibradoDegradado[0][sensor]) {
+          posicionesSensores[sensor] = 0;
+        } else {
+          posicionesSensores[sensor] = 20000;
+        }
+      }
+
+      // ASIGNAR OFFSET EN FUCIÓN DE NUMERO DE SENSOR
+      posicionesSensores[sensor] += (((numeroSensoresPista + 1) / 2.0f) - (sensor + 1)) * 1000;
+      posicionSensores += posicionesSensores[sensor];
+    }
+  }
+
+  if (sensorPistaFinal < 0) {
+    sensorPistaFinal = NUMERO_SENSORES - 1;
+  }
+  if (numeroSensoresPista > 1) {
+    posicion = posicionDegradadoMaxima - (posicionSensores / numeroSensoresPista);
+    posicion = posicion / 100;
+  } else {
+    posicion = 200;
+  }
+  // for (int sensor = 0; sensor < NUMERO_SENSORES; sensor++) {
+  //   Serial.print(posicionesSensores[sensor]);
+  //   Serial.print("\t");
+  // }
+
+  // DAR SIGNO EN FUNCIÓN DE SENSORES DE EXTREMO
+
+  if (numeroSensoresPista > 0) {
+    ultimaLinea = millis();
+  } else if (millis() > (ultimaLinea + TIEMPO_SIN_PISTA)) {
+    // kp = 0;
+    // ki = 0;
+    // kd = 0;
+    velocidad = 0;
+    velocidadSuccion = 0;
+    competicionIniciada = false;
+    set_color_RGB(0, 0, 0);
+  }
+
+  if (numeroSensoresPista > 1 && abs(ultimaPosicion) < 50) {
+    if (valoresSensores[sensorPistaInicial] > valoresSensores[sensorPistaFinal]) {
+      posicion = -posicion;
+    }
+  } else {
+    if (ultimaPosicion < 0) {
+      posicion = -posicion;
+    }
+  }
+  return posicion;
+}
+
+/**
  * Función para calcular la corrección a aplicar a los motores para mantenerse en la posición deseada de la pista.
  * @param  posicionActual Posición actual sobre la pista.
  * @return [int]          Corrección que se debe aplicar al control de la velocidad.
@@ -159,6 +259,9 @@ int calcular_PID(int posicionActual) {
   float d = 0;
   int error = 0;
   error = posicionIdeal - posicionActual;
+  if (PISTA == MODO_DEGRADADO) {
+    error = -error;
+  }
   p = kp * error;
   if (error < 100) {
     integralErrores += error;
@@ -169,8 +272,8 @@ int calcular_PID(int posicionActual) {
   }
   d = kd * (error - errorAnterior);
   errorAnterior = error;
-  if (velocidad > 0) {
-  return p + i + d;
+  if (true || velocidad > 0) {
+    return p + i + d;
   } else {
     errorAnterior = 0;
     integralErrores = 0;
@@ -196,9 +299,9 @@ int calcular_PID_frontal(int valorSensorFrontal) {
     d = kdFrontal * (errorFrontal - errorFrontalAnterior);
     errorFrontalAnterior = errorFrontal;
     if (velocidad > 0) {
-    return p + i + d;
-  } else {
-    errorFrontalAnterior = 0;
+      return p + i + d;
+    } else {
+      errorFrontalAnterior = 0;
       integralErrores = 0;
       return 0;
     }

@@ -19,7 +19,7 @@ void reanuda_timers() {
  */
 void inicia_timer_PID() {
   TimerPID.pause();
-  TimerPID.setPeriod(250);
+  TimerPID.setPeriod(1000);
   TimerPID.setMode(TIMER_CH1, TIMER_OUTPUT_COMPARE);
   TimerPID.setCompare(TIMER_CH1, 1);
   TimerPID.attachInterrupt(1, handler_timer_PID);
@@ -34,7 +34,7 @@ void handler_timer_PID() {
   posicionActual = calcular_posicion(posicionActual);
   valorSensorFrontal =  analogRead(SENSOR_FRONTAL);
   correccion = calcular_PID(posicionActual);
-  correccionFrontal = calcular_PID_frontal(valorSensorFrontal);
+  // correccionFrontal = calcular_PID_frontal(valorSensorFrontal);
   dar_velocidad(correccion, correccionFrontal);
 }
 
@@ -88,12 +88,12 @@ void handler_timer_Brushless() {
   if (mapeoRealizado || velocidadSuccion > 0) {
     nivel_bateria(true);
   }
-  if (contMapeo <= 0 && velocidad > 0) {
+  if (contMapeo <= 0 && velocidad > 0 && MAPEO_CIRCUITO) {
     contMapeo = 5;
     mapeado_circuito();
   }
   if (velocidad > 0) {
-    velocidadMs = calcular_velocidad();
+    // velocidadMs = calcular_velocidad();
   } else {
     velocidadMs = 0;
   }

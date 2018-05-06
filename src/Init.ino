@@ -2,8 +2,6 @@
  * Función para iniciar todos los componentes del robot.
  */
 void inicia_todo() {
-  CalibracionPID.setMaxIdeal(posicionMaxima);
-  CalibracionPID.setMinIdeal(posicionMinima);
   Serial.begin(9600);
   while (!Serial) {
   }

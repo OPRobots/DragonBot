@@ -8,7 +8,8 @@ int mux_analog_read(byte canalMux) {
   digitalWrite(MUX_CANAL_1, bitRead(canalMux, 1));
   digitalWrite(MUX_CANAL_2, bitRead(canalMux, 2));
   digitalWrite(MUX_CANAL_3, bitRead(canalMux, 3));
-  return analogRead(MUX_LECTURA);
+  valoresSensoresRaw[canalMux] = analogRead(MUX_LECTURA);
+  return valoresSensoresRaw[canalMux];
 }
 
 /**
