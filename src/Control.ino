@@ -91,42 +91,35 @@ int calcula_posicion_linea(int ultimaPosicion) {
   unsigned long sumaSensoresPonderados = 0;
   unsigned long sumaSensores = 0;
   int sensoresDetectando = 0;
-  int numeroLineas = 0;
-  bool sensorAnteriorDetectando = false;
+  int numLineas = 0;
+  bool detectandoAnterior = false;
 
-  for (int sensor = 0; sensor < NUMERO_SENSORES; sensor++) {
-    if (!sensorAnteriorDetectando && valoresSensores[sensor] > 0) {
-      numeroLineas++;
-    }
-  }
-  sensorAnteriorDetectando = false;
-
-  for (int sensor = 0; sensor < NUMERO_SENSORES; sensor++) {
-
-    if (numeroLineas == 1) {
-      if (!sensorAnteriorDetectando && valoresSensores[sensor] > 0) {
-        inicioLineaAnterior = sensor;
-      } else if (sensorAnteriorDetectando && valoresSensores[sensor] == 0) {
-        finLineaAnterior = sensor - 1;
-      }
-    } else {
-      if (!sensorAnteriorDetectando && valoresSensores[sensor] > 0) {
-        if (abs(inicioLineaAnterior - sensor) > 1) {
+  for (int sensor = 0; (sensor < NUMERO_SENSORES && numLineas < 2); sensor++) {
+    if (!((sensor >= lineaPrincipal[0] && sensor <= lineaPrincipal[1]) || abs(sensor - lineaPrincipal[0]) <= 1 || abs(sensor - lineaPrincipal[1]) <= 1)) {
+      if (LINEA == LINEA_NEGRA) {
           valoresSensores[sensor] = 0;
         } else {
-          inicioLineaAnterior = sensor;
-        }
-      } else if (sensorAnteriorDetectando && valoresSensores[sensor] == 0) {
-        finLineaAnterior = sensor - 1;
+        valoresSensores[sensor] = valorCalibradoMaximo;
       }
+    }else if(valoresSensores[sensor] > valorSaturacionBajo){
+      sensoresDetectando++;
+        }
+    if (!detectandoAnterior && valoresSensores[sensor] > valorSaturacionBajo) {
+      detectandoAnterior = true;
+      lineaPrincipal[0] = sensor;
+      numLineas++;
+    } else if (detectandoAnterior && valoresSensores[sensor] <= valorSaturacionBajo) {
+      lineaPrincipal[1] = sensor - 1;
+      detectandoAnterior = false;
+      }
+    if (sensor == NUMERO_SENSORES - 1 && detectandoAnterior && valoresSensores[sensor] > valorSaturacionBajo) {
+      lineaPrincipal[1] = sensor;
     }
-    sensorAnteriorDetectando = valoresSensores[sensor] > 0;
-
     sumaSensoresPonderados += (sensor + 1) * valoresSensores[sensor] * 1000L;
     sumaSensores += (long)valoresSensores[sensor];
-    if (valoresSensores[sensor] > ((valorCalibradoMaximo - valorCalibradoMinimo) / 3 * 2.0f)) {
-      sensoresDetectando++;
     }
+  if (lineaPrincipal[1] == -1) {
+    lineaPrincipal[1] = NUMERO_SENSORES - 1;
   }
 
   if (sensoresDetectando > 0 && sensoresDetectando < NUMERO_SENSORES) {
@@ -141,10 +134,14 @@ int calcula_posicion_linea(int ultimaPosicion) {
     set_color_RGB(0, 0, 0);
   }
 
+  if (numLineas <= 1) {
   if (sensoresDetectando > 0) {
     return ((sumaSensoresPonderados / sumaSensores) - (NUMERO_SENSORES + 1) * (float)(1000 / 2));
   } else {
     return (ultimaPosicion > 0) ? (1000 * (NUMERO_SENSORES + 1) / 2) : -(1000 * (NUMERO_SENSORES + 1) / 2);
+  }
+  } else {
+    return ultimaPosicion;
   }
 }
 

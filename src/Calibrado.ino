@@ -4,7 +4,7 @@
  */
 void calibra_sensores() {
   switch (PISTA) {
-  case MODO_LINEA:
+  case MODO_LINEA: {
     valorSaturacionBajo = SATURACION_MINIMO_SENSORES_LINEA;
     valorSaturacionAlto = SATURACION_MAXIMO_SENSORES_LINEA;
     valorCalibradoMaximo = CALIBRADO_MAXIMO_SENSORES_LINEA;
@@ -12,7 +12,50 @@ void calibra_sensores() {
     posicionMaxima = 6500;
     posicionMinima = -6500;
     calibrado_sensores_linea();
-    break;
+
+    while (!btn_pulsado()) {
+      set_color_RGB(0, 0, 255);
+    }
+    // Esperar hasta encontrar una sola línea centrada
+    int numLineas = 0;
+    bool detectandoAnterior = false;
+    do {
+      set_color_RGB(255, 0, 0);
+      numLineas = 0;
+      detectandoAnterior = false;
+      lectura_sensores_calibrados();
+      for (int sensor = 0; sensor < NUMERO_SENSORES; sensor++) {
+        if (!detectandoAnterior && valoresSensores[sensor] > valorSaturacionBajo) {
+          detectandoAnterior = true;
+          lineaPrincipal[0] = sensor;
+          numLineas++;
+        } else if (detectandoAnterior && valoresSensores[sensor] <= valorSaturacionBajo) {
+          lineaPrincipal[1] = sensor - 1;
+          detectandoAnterior = false;
+        }
+        if (sensor == NUMERO_SENSORES - 1 && detectandoAnterior && valoresSensores[sensor] > valorSaturacionBajo) {
+          lineaPrincipal[1] = sensor;
+        }
+        Serial.print(valoresSensores[sensor]);
+    // Serial.print(" (");
+    // Serial.print(valoresSensores[sensor]);
+    // Serial.print(")");
+    Serial.print("\t");
+      }
+      Serial.print("\n");
+
+      delay(100);
+    } while (numLineas != 1 || abs(lineaPrincipal[0] - lineaPrincipal[1]) > 3);
+    delay(250);
+    Serial.print("Linea principal: ");
+    Serial.print(lineaPrincipal[0]);
+    Serial.print("\t");
+    Serial.print(lineaPrincipal[1]);
+    Serial.println();
+    set_color_RGB(0, 255, 0);
+    delay(250);
+    
+  } break;
   case MODO_DEGRADADO:
     valorSaturacionBajo = SATURACION_MINIMO_SENSORES_DEGRADADO;
     valorSaturacionAlto = SATURACION_MAXIMO_SENSORES_DEGRADADO;

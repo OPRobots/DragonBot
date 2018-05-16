@@ -167,6 +167,7 @@ float kdFrontal = 4.0f;
 int correccion = 0;
 int correccionFrontal = 0;
 long ultimoControlBrushless = 0;
+int lineaPrincipal[] = {-1,-1};
 
 ////////////////////////////
 // VARIABLES DE ENCODERS  //
