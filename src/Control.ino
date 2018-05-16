@@ -46,7 +46,10 @@ void nivel_bateria(bool enLoop) {
         break;
       }
       carga = filtroBateria.Current();
-      if (carga > 50) {
+      if(carga >= 75){
+        r = 0;
+        g = 255;
+      }else if (carga > 50) {
         r = map(carga, 51, 100, 255, 0);
         g = 255;
       } else if (carga < 50) {
