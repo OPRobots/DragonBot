@@ -1,3 +1,61 @@
+void btn_cruceta_simple() {
+  bool btnPulsado = false;
+  switch (calcular_btn_cruceta(analogRead(BTN_CRUCETA))) {
+  case CRUCETA_ARRIBA:
+    velocidadBase = 190;
+    velocidadSuccionBase = 120;
+    kp = 0.03f;
+    ki = 0;
+    kd = 4.0f;
+    kpFrontal = 0;
+    kiFrontal = 0;
+    kdFrontal = 0;
+    set_color_RGB(255, 0, 0);
+    btnPulsado = true;
+    break;
+  case CRUCETA_ABAJO:
+    velocidadBase = 230;
+    velocidadSuccionBase = 160;
+    kp = 0.03f;
+    ki = 0;
+    kd = 4.0f;
+    kpFrontal = 0;
+    kiFrontal = 0;
+    kdFrontal = 0;
+    set_color_RGB(255, 0, 255);
+    btnPulsado = true;
+    break;
+  case CRUCETA_DERECHA:
+    velocidadBase = 120;
+    velocidadSuccionBase = 50;
+    kp = 0.03f;
+    ki = 0;
+    kd = 4.0f;
+    kpFrontal = 0;
+    kiFrontal = 0;
+    kdFrontal = 0;
+    set_color_RGB(0, 255, 0);
+    btnPulsado = true;
+    break;
+  case CRUCETA_IZQUIERDA:
+    velocidadBase = 160;
+    velocidadSuccionBase = 90;
+    kp = 0.03f;
+    ki = 0;
+    kd = 4.0f;
+    kpFrontal = 0;
+    kiFrontal = 0;
+    kdFrontal = 0;
+    set_color_RGB(255, 255, 0);
+    btnPulsado = true;
+    break;
+  }
+  if (btnPulsado) {
+    delay(1000);
+    set_color_RGB(0, 0, 0);
+  }
+}
+
 /** 
  * Comprueba si algún botón de la cruceta está pulsado y actua en consecuencia.
  * Nota: Si se pulsa IZQUIERDA-DERECHA se entra en modo menú, suspendiendo todas las demás funciones del robot.
@@ -39,7 +97,7 @@ void btn_cruceta() {
 
       break;
     case CRUCETA_DERECHA_IZQUIERDA:
-    
+
       break;
     case CRUCETA_ARRIBA_DERECHA:
 
