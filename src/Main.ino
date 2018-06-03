@@ -24,17 +24,18 @@
 
 #define CALIBRADO_MAXIMO_SENSORES_LINEA 4000
 #define CALIBRADO_MINIMO_SENSORES_LINEA 0
-#define SATURACION_MAXIMO_SENSORES_LINEA 3000
-#define SATURACION_MINIMO_SENSORES_LINEA 2000
+#define SATURACION_MAXIMO_SENSORES_LINEA 1001
+#define SATURACION_MINIMO_SENSORES_LINEA 1000
 
-#define CALIBRADO_MAXIMO_SENSORES_DEGRADADO 2000
+#define CALIBRADO_MAXIMO_SENSORES_DEGRADADO 4000
 #define CALIBRADO_MINIMO_SENSORES_DEGRADADO 0
-#define SATURACION_MAXIMO_SENSORES_DEGRADADO 2000
+#define SATURACION_MAXIMO_SENSORES_DEGRADADO 4000
 #define SATURACION_MINIMO_SENSORES_DEGRADADO 5
 
 ///////////////////
 // CONFIGURACION //
 ///////////////////
+#define MILLIS_INICIO 5000
 #define PISTA MODO_LINEA
 #define LINEA LINEA_NEGRA
 #define LIPO LIPO_2S
@@ -47,7 +48,8 @@
 // SENSORES //
 //////////////
 #define NUMERO_SENSORES 12
-#define TIEMPO_SIN_PISTA 100
+#define NUMERO_SENSORES_LATERALES 2
+#define TIEMPO_SIN_PISTA 150
 #define SENSOR_1 0
 #define SENSOR_2 1
 #define SENSOR_3 2
@@ -81,8 +83,8 @@
 #define MOTOR_DERECHO_ADELANTE PB15
 #define MOTOR_DERECHO_ATRAS PB14
 #define MOTOR_DERECHO_PWM PA8
-#define MOTOR_IZQUIERDO_ADELANTE PB12
-#define MOTOR_IZQUIERDO_ATRAS PB13
+#define MOTOR_IZQUIERDO_ADELANTE PB13
+#define MOTOR_IZQUIERDO_ATRAS PB12
 #define MOTOR_IZQUIERDO_PWM PB8
 #define MOTOR_SUCCION PB9
 #define COMPENSACION_DERECHO 0
@@ -155,6 +157,8 @@ int velocidadSuccionRectas = 30;
 //////////////////////////
 int posicionActual = 0;
 int posicionIdeal = 0;
+int posicionIdealObjetivo;
+int posicionIdealStep = 0;
 float errorAnterior = 0;
 float errorFrontalAnterior = 0;
 float integralErrores = 0;
@@ -167,7 +171,13 @@ float kdFrontal = 4.0f;
 int correccion = 0;
 int correccionFrontal = 0;
 long ultimoControlBrushless = 0;
-int lineaPrincipal[] = {-1,-1};
+int lineaPrincipal[] = {-1, -1};
+bool mantenerCorreccion = false;
+int valoresSensoresLaterales[NUMERO_SENSORES_LATERALES];
+long ultimaDeteccionLateral[NUMERO_SENSORES_LATERALES];
+long ultimaDeteccionFrontal = 0;
+bool cambioCarril = false;
+long ultimoCambioCarril;
 
 ////////////////////////////
 // VARIABLES DE ENCODERS  //
@@ -204,39 +214,18 @@ int mediaDiferenciaRecta = 0;
 int valorSaturacionBajo;
 int valorSaturacionAlto;
 int pinesSensores[] = {SENSOR_1, SENSOR_2, SENSOR_3, SENSOR_4, SENSOR_5, SENSOR_6, SENSOR_7, SENSOR_8, SENSOR_9, SENSOR_10, SENSOR_11, SENSOR_12};
+int pinesSensoresLaterales[] = {SENSOR_IZQUIERDO, SENSOR_DERECHO};
 int posicionMaxima = 6500;
 int posicionMinima = -6500;
 int posicionDegradadoMaxima = 0;
 int valoresSensores[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 int valoresSensoresRaw[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-#define SENSOR_FRONTAL_IDEAL 800;
+#define SENSOR_FRONTAL_IDEAL 750;
 int valorSensorFrontal = 0;
 int inicioLineaAnterior = 0;
 int finLineaAnterior = 0;
 #define NUMERO_CALIBRACIONES_DEGRADADO 21
-int calibradoDegradado[NUMERO_CALIBRACIONES_DEGRADADO][NUMERO_SENSORES] = {
-    {3649, 3628, 3883, 3736, 3814, 3893, 3768, 3785, 4000, 3732, 3448, 3468},
-    {3530, 3781, 3790, 3803, 3866, 3831, 3678, 3835, 3990, 3828, 3738, 3477},
-    {3834, 3664, 3789, 3804, 3770, 3782, 3693, 3800, 3949, 3866, 3666, 3398},
-    {3510, 3527, 3682, 3690, 3636, 3582, 3632, 3906, 3980, 3765, 3528, 3340},
-    {3385, 3539, 3596, 3667, 3680, 3585, 3600, 3669, 3865, 3589, 3364, 3239},
-    {3285, 3270, 3447, 3396, 3391, 3424, 3406, 3389, 3725, 3350, 3185, 3189},
-    {3085, 3144, 3188, 3100, 3249, 3257, 3213, 3226, 3285, 3073, 3103, 3100},
-    {2860, 2904, 2811, 2886, 2956, 3016, 2937, 3021, 3121, 2829, 2843, 2963},
-    {2629, 2513, 2525, 2558, 2774, 2711, 2609, 2628, 2696, 2458, 2539, 2688},
-    {2275, 2314, 2336, 2318, 2270, 2467, 2415, 2460, 2238, 2357, 2433, 2421},
-    {2164, 2034, 2063, 1879, 2226, 2118, 2111, 1995, 2193, 1942, 2101, 2165},
-    {1846, 1791, 1875, 1710, 1905, 1973, 1753, 1856, 1914, 1742, 1822, 1873},
-    {1555, 1508, 1621, 1458, 1622, 1759, 1592, 1615, 1670, 1488, 1491, 1629},
-    {1373, 1235, 1412, 1302, 1446, 1473, 1301, 1266, 1126, 1206, 1306, 1212},
-    {1094, 1031, 1116, 1140, 1269, 1224, 1114, 1104, 1042, 997, 1078, 1066},
-    {834, 828, 941, 602, 793, 1041, 908, 1010, 905, 764, 843, 1043},
-    {748, 553, 623, 578, 646, 678, 701, 766, 964, 577, 687, 835},
-    {618, 412, 417, 158, 394, 553, 361, 609, 871, 486, 447, 642},
-    {326, 330, 256, 0, 372, 387, 254, 431, 357, 317, 402, 389},
-    {152, 121, 132, 0, 0, 198, 238, 190, 167, 0, 141, 360},
-    {0, 0, 248, 0, 225, 498, 379, 211, 285, 254, 148, 156},
-};
+int calibradoDegradado[NUMERO_CALIBRACIONES_DEGRADADO][NUMERO_SENSORES];
 
 ///////////////////////////////
 // VARIABLES DE CALIBRACIÓN  //
@@ -320,6 +309,7 @@ HardwareTimer TimerBrushless(3);
 PIDfromBT CalibracionPID(&kp, &ki, &kd, &velocidad, &posicionIdeal, &velocidadSuccion, DEBUG);
 ExponentialFilter<long> filtroBateria(15, 0);
 ExponentialFilter<long> filtroMapeo(50, 0);
+ExponentialFilter<long> filtroPosicion(12, 0);
 
 void setup() {
   inicia_todo();
@@ -329,33 +319,70 @@ void setup() {
   inicia_timers();
   delay(100);
 }
-
+long tiempo = 0;
+int numeroSensoresPista;
 void loop() {
 
-  /*
   ////////////////////////////////////////
   // LOG DE SENSORES Y CÁLCULO DE LÍNEA //
   ////////////////////////////////////////
 
-   for (int sensor = 0; sensor < NUMERO_SENSORES; sensor++) {
-    int lectura = mux_analog_read(pinesSensores[sensor]);
-    Serial.print(lectura);
-    Serial.print(" (");
-    Serial.print(map(lectura, valoresCalibracionMinimos[sensor], valoresCalibracionMaximos[sensor], valorCalibradoMinimo, valorCalibradoMaximo););
-    Serial.print(")");
+  /*  for (int sensor = 0; sensor < NUMERO_SENSORES; sensor++) {
+    // int lectura = mux_analog_read(pinesSensores[sensor]);
+    Serial.print(valoresSensores[sensor]);
+    // Serial.print(" (");
+    // Serial.print(valoresSensores[sensor]);
+    // Serial.print(")");
     Serial.print("\t");
   }
   Serial.print("=>");
-  posicionActual = calcular_posicion(posicionActual);
-  Serial.println(posicionActual); 
-  */
+  // posicionActual = calcular_posicion(posicionActual);
+  Serial.print(posicionActual);
+    Serial.print("\t(");
+    Serial.print(lineaPrincipal[0]);
+    Serial.print(" - ");
+    Serial.print(lineaPrincipal[1]);
+    Serial.print(" - ");
+    Serial.print(sensoresDetectando);
+    Serial.print(")\n");
+  delay(100); */
 
-  // return;
+  ////////////////////////////////////////////
+  // LOG DE SENSORES Y CÁLCULO DE DEGRADADO //
+  ////////////////////////////////////////////
+  // lectura_sensores_calibrados();
+   for (int sensor = 0; sensor < NUMERO_SENSORES; sensor++) {
+    Serial.print(valoresSensores[sensor]);
+    Serial.print("\t");
+  }
+  // Serial.print(posicionIdealObjetivo);
+  // Serial.print("\t");
+  // Serial.print(posicionIdealStep);
+  // Serial.print(posicionIdeal);
+  // Serial.print("\t");
+  // Serial.print(numeroSensoresPista);
+  // Serial.print("\t");
+  // Serial.print(posicionActual);
+  // Serial.print("\t");
+  // Serial.print(correccion);
+  // Serial.print("\n");
+  // Serial.print(valoresSensoresLaterales[0]);
+  // Serial.print("\t");
+  // Serial.print(valoresSensoresLaterales[1]);
+  // Serial.print("\t");
+  // Serial.print(valorSensorFrontal);
+  Serial.print("\n");
+  // //   // Serial.println(analogRead(SENSOR_FRONTAL));
+  delay(100);
 
-  CalibracionPID.update();
-  delay(50);
+  // //   // set_color_RGB(0, 0, 255);
+
+  return;
+
+  // CalibracionPID.update();
+  delay(100);
   if (!competicionIniciada) {
-    btn_cruceta();
+    btn_cruceta_simple();
     if (!btn_pulsado()) {
       delay(100);
       if (btn_pulsado()) {
@@ -364,16 +391,16 @@ void loop() {
         }
         long millisIniciales = millis();
         int tiempoPasado = 5;
-        while (millis() < (millisIniciales + 5000)) {
+        while (millis() < (millisIniciales + MILLIS_INICIO)) {
           tiempoPasado = millis() - millisIniciales;
           byte r = 0, g = 0;
-          r = map(tiempoPasado, 0, 5000, 255, 0);
+          r = map(tiempoPasado, 0, MILLIS_INICIO, 255, 0);
           g = map(tiempoPasado, 0, 1000, 0, 255);
           set_color_RGB(r, g, 0);
-          if (tiempoPasado / 1000 > 2 && velocidadSuccion == 0) {
-            velocidadSuccion = velocidadSuccionBase;
+          if (tiempoPasado > MILLIS_INICIO * 0.75f && velocidadSuccion == 0) {
           }
         }
+        velocidadSuccion = velocidadSuccionBase;
         ticksDerecho = 0;
         ticksIzquierdo = 0;
         ticksMapeoDerechoAnteriores = 0;
