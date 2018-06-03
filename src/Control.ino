@@ -342,12 +342,11 @@ int calcular_PID_frontal(int valorSensorFrontal) {
  * @param correccion Parámetro calculado por el PID para seguir la posición deseada en la pista
  */
 void dar_velocidad(int correccion, int correccionFrontal) {
-  velocidadIzquierda = velocidad - correccion + correccionFrontal;
-  velocidadDerecha = velocidad + correccion + correccionFrontal;
-
+  velocidadIzquierda = velocidad;
+  velocidadDerecha = velocidad;
   if (velocidad > 0) {
-    velocidadIzquierda += COMPENSACION_IZQUIERDO;
-    velocidadDerecha += COMPENSACION_DERECHO;
+    velocidadIzquierda = velocidadIzquierda - correccion + correccionFrontal;
+    velocidadDerecha = velocidadDerecha + correccion + correccionFrontal;
   }
 
   int pin_motor_derecho = MOTOR_DERECHO_ADELANTE;
