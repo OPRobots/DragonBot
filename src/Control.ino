@@ -310,26 +310,28 @@ int calcular_PID_frontal(int valorSensorFrontal) {
   float i = 0;
   float d = 0;
   int errorFrontal = 0;
-  errorFrontal = 1500 - valorSensorFrontal;
-  if (errorFrontal < 0 && velocidad > 0) {
+  int suma = 0;
+  errorFrontal = 500 - valorSensorFrontal;
+  if (errorFrontal < 0  && velocidad > 0 && (valorSensorFrontal < 800 || correccionFrontal != 0) && valorSensorFrontal > 400) {
     p = kpFrontal * errorFrontal;
-    if (errorFrontal < 100) {
-      integralErrores += errorFrontal;
-      i = kiFrontal * integralErrores;
-    } else {
-      i = 0;
-      integralErrores = 0;
-    }
-    d = kdFrontal * (errorFrontal - errorFrontalAnterior);
     errorFrontalAnterior = errorFrontal;
-    if (velocidad > 0) {
-      return p + i + d;
+    if (ultimaDeteccionFrontal == 0) {
+      ultimaDeteccionFrontal = millis();
+      return 0;
     } else {
-      errorFrontalAnterior = 0;
-      integralErrores = 0;
+      if (millis() - ultimaDeteccionFrontal > 200) {
+        cambio_carril();
+        set_color_RGB(0, 255, 0);
+        suma = p + i + d;
+        return abs(suma) > velocidad ? -velocidad : suma;
+      } else {
       return 0;
     }
+    }
   } else {
+
+    ultimaDeteccionFrontal = 0;
+    set_color_RGB(0, 0, 0);
     errorFrontalAnterior = 0;
     return 0;
   }
