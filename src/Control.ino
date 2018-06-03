@@ -157,19 +157,24 @@ int calcula_posicion_degradado(int ultimaPosicion) {
   lectura_sensores_calibrados();
   int posicionesSensores[NUMERO_SENSORES];
   int posicionSensores = 0;
-  int numeroSensoresPista = 0;
+  numeroSensoresPista = 0;
   int sensorPistaInicial = -1;
   int sensorPistaFinal = -1;
   int posicion = 0;
 
-  for (int sensor = 0; sensor < NUMERO_SENSORES; sensor++) {
+  for (int sensor = 5; sensor <= 7; sensor++) {
     bool rangoEncontrado = false;
     bool sensorEnPista = false;
     int rangoInicio = 0;
     int rangoFinal = 0;
+    mantenerCorreccion = false;
 
     // BUSCAR SENSORES EN PISTA
-    if (valoresSensoresRaw[sensor] >= valoresCalibracionMinimos[sensor]) {
+    if (valoresSensores[sensor] > 0) {
+      if (valoresSensores[sensor] == 4000) {
+        mantenerCorreccion = true;
+        return ultimaPosicion;
+      }
       if (sensorPistaInicial < 0) {
         sensorPistaInicial = sensor;
       } else {
@@ -178,6 +183,8 @@ int calcula_posicion_degradado(int ultimaPosicion) {
       sensorEnPista = true;
       numeroSensoresPista++;
     }
+    // numeroSensoresPista = 4;
+    // sensorEnPista = true;
 
     if (sensorEnPista) {
       // BUSCAR RANGO DE CALIBRADO
@@ -209,18 +216,14 @@ int calcula_posicion_degradado(int ultimaPosicion) {
   }
 
   if (sensorPistaFinal < 0) {
-    sensorPistaFinal = NUMERO_SENSORES - 1;
+    sensorPistaFinal = 7;
   }
-  if (numeroSensoresPista > 1) {
+  if (numeroSensoresPista > 0) {
     posicion = posicionDegradadoMaxima - (posicionSensores / numeroSensoresPista);
     posicion = posicion / 100;
   } else {
-    posicion = 200;
+    posicion = 250;
   }
-  // for (int sensor = 0; sensor < NUMERO_SENSORES; sensor++) {
-  //   Serial.print(posicionesSensores[sensor]);
-  //   Serial.print("\t");
-  // }
 
   // DAR SIGNO EN FUNCIÓN DE SENSORES DE EXTREMO
 
@@ -236,7 +239,7 @@ int calcula_posicion_degradado(int ultimaPosicion) {
     set_color_RGB(0, 0, 0);
   }
 
-  if (numeroSensoresPista > 1 && abs(ultimaPosicion) < 50) {
+  if (numeroSensoresPista >= 2) {
     if (valoresSensores[sensorPistaInicial] > valoresSensores[sensorPistaFinal]) {
       posicion = -posicion;
     }
@@ -245,7 +248,23 @@ int calcula_posicion_degradado(int ultimaPosicion) {
       posicion = -posicion;
     }
   }
-  return posicion;
+
+  bool negativo = posicion < 0 ? true : false;
+  posicion = map(abs(posicion), 150, 220, 0, 6500) / 100 * 100;
+  posicion = negativo ? -posicion : posicion;
+
+  // Evita cambios de signo en los extremos de la pista
+  if ((ultimaPosicion < 0 && posicion >= 0) || (ultimaPosicion >= 0 && posicion < 0)) {
+    if (abs(posicion) > 2000 || abs(ultimaPosicion) > 2000) {
+      if (posicionIdeal != 0) {
+        posicion = -posicion;
+}
+    }
+  }
+
+  bool negativo = posicion < 0 ? true : false;
+  posicion = map(abs(posicion), 150, 220, 0, 6500) / 100 * 100;
+  return negativo ? -posicion : posicion;
 }
 
 /**
