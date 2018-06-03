@@ -49,6 +49,20 @@ void lectura_sensores_calibrados() {
   }
 }
 
+void lectura_sensores_laterales(){
+  for(int sensor = 0; sensor < NUMERO_SENSORES_LATERALES;sensor++){
+    bool lectura = mux_digital_read(pinesSensoresLaterales[sensor]);
+    if(!lectura){
+      valoresSensoresLaterales[sensor] = true;
+      ultimaDeteccionLateral[sensor] = millis();
+    }else{
+      if(millis()-ultimaDeteccionLateral[sensor] > 2000){
+        valoresSensoresLaterales[sensor] = false;
+      }
+    }
+  }
+}
+
 /**
  * Función de lectura del botón, pasando el valor a lógica positiva.
  * @return [bool]		Indica si el botón está pulsado.
