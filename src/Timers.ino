@@ -19,7 +19,7 @@ void reanuda_timers() {
  */
 void inicia_timer_PID() {
   TimerPID.pause();
-  TimerPID.setPeriod(1000);
+  TimerPID.setPeriod(500);
   TimerPID.setMode(TIMER_CH1, TIMER_OUTPUT_COMPARE);
   TimerPID.setCompare(TIMER_CH1, 1);
   TimerPID.attachInterrupt(1, handler_timer_PID);
@@ -32,9 +32,7 @@ void inicia_timer_PID() {
  */
 void handler_timer_PID() {
   posicionActual = calcular_posicion(posicionActual);
-  valorSensorFrontal =  analogRead(SENSOR_FRONTAL);
   correccion = calcular_PID(posicionActual);
-  // correccionFrontal = calcular_PID_frontal(valorSensorFrontal);
   dar_velocidad(correccion, correccionFrontal);
 }
 
@@ -79,6 +77,15 @@ void inicia_timer_Brushless() {
  * Función a la que llama el Timer 3 ajustar la configuración via Serial-BT
  */
 void handler_timer_Brushless() {
+  // lectura_sensores_laterales();
+
+  // if (velocidad > 0) {
+  //   valorSensorFrontal = analogRead(SENSOR_FRONTAL);
+  //   correccionFrontal = calcular_PID_frontal(valorSensorFrontal);
+  // }
+
+  // cambio_ideal();
+
   digitalWrite(MOTOR_SUCCION, HIGH);
   delayMicroseconds(map(velocidadSuccion, 0, 255, 1000, 2000));
   digitalWrite(MOTOR_SUCCION, LOW);
