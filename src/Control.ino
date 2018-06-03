@@ -101,12 +101,12 @@ int calcula_posicion_linea(int ultimaPosicion) {
     if (!((sensor >= lineaPrincipal[0] && sensor <= lineaPrincipal[1]) || abs(sensor - lineaPrincipal[0]) <= 1 || abs(sensor - lineaPrincipal[1]) <= 1)) {
       if (LINEA == LINEA_NEGRA) {
         valoresSensores[sensor] = valorCalibradoMinimo;
-        } else {
+      } else {
         valoresSensores[sensor] = valorCalibradoMaximo;
       }
     } else if (valoresSensores[sensor] > valorSaturacionBajo) {
       sensoresDetectando++;
-        }
+    }
     if (!detectandoAnterior && valoresSensores[sensor] > valorSaturacionBajo) {
       detectandoAnterior = true;
       lineaPrincipal[0] = sensor;
@@ -114,13 +114,13 @@ int calcula_posicion_linea(int ultimaPosicion) {
     } else if (detectandoAnterior && valoresSensores[sensor] <= valorSaturacionBajo) {
       lineaPrincipal[1] = sensor - 1;
       detectandoAnterior = false;
-      }
+    }
     if (sensor == NUMERO_SENSORES - 1 && detectandoAnterior && valoresSensores[sensor] > valorSaturacionBajo) {
       lineaPrincipal[1] = sensor;
     }
     sumaSensoresPonderados += (sensor + 1) * valoresSensores[sensor] * 1000L;
     sumaSensores += (long)valoresSensores[sensor];
-    }
+  }
   if (lineaPrincipal[1] == -1) {
     lineaPrincipal[1] = NUMERO_SENSORES - 1;
   }
@@ -138,11 +138,11 @@ int calcula_posicion_linea(int ultimaPosicion) {
   }
 
   if (numLineas <= 1) {
-  if (sensoresDetectando > 0) {
-    return ((sumaSensoresPonderados / sumaSensores) - (NUMERO_SENSORES + 1) * (float)(1000 / 2));
-  } else {
-    return (ultimaPosicion > 0) ? (1000 * (NUMERO_SENSORES + 1) / 2) : -(1000 * (NUMERO_SENSORES + 1) / 2);
-  }
+    if (sensoresDetectando > 0) {
+      return ((sumaSensoresPonderados / sumaSensores) - (NUMERO_SENSORES + 1) * (float)(1000 / 2));
+    } else {
+      return (ultimaPosicion > 0) ? (1000 * (NUMERO_SENSORES + 1) / 2) : -(1000 * (NUMERO_SENSORES + 1) / 2);
+    }
   } else {
     return ultimaPosicion;
   }
@@ -258,7 +258,7 @@ int calcula_posicion_degradado(int ultimaPosicion) {
     if (abs(posicion) > 2000 || abs(ultimaPosicion) > 2000) {
       if (posicionIdeal != 0) {
         posicion = -posicion;
-}
+      }
     }
   }
 
@@ -325,8 +325,8 @@ int calcular_PID_frontal(int valorSensorFrontal) {
         suma = p + i + d;
         return abs(suma) > velocidad ? -velocidad : suma;
       } else {
-      return 0;
-    }
+        return 0;
+      }
     }
   } else {
 
@@ -568,5 +568,34 @@ void mapeado_circuito() {
     }
     ticksMapeoDerechoAnteriores = ticksDerecho;
     ticksMapeoIzquierdoAnteriores = ticksIzquierdo;
+  }
+}
+
+void cambio_carril() {
+  if (millis() - ultimoCambioCarril > 2000) {
+    if (posicionActual > 0 && !valoresSensoresLaterales[0]) {
+
+      posicionIdealObjetivo = -posicionIdeal;
+      posicionIdealStep = -posicionIdeal / 25;
+      ultimoCambioCarril = millis();
+    } else if (posicionActual < 0 && !valoresSensoresLaterales[1]) {
+
+      posicionIdealObjetivo = -posicionIdeal;
+      posicionIdealStep = -posicionIdeal / 25;
+      ultimoCambioCarril = millis();
+    }
+  }
+}
+void cambio_ideal() {
+  if (posicionIdeal != posicionIdealObjetivo) {
+    // if ((posicionIdeal < 0 && posicionIdealObjetivo > 0) || (posicionIdeal > 0 && posicionIdealObjetivo < 0)) {
+    posicionIdeal += posicionIdealStep;
+    /* } else {
+      if (abs(posicionIdeal) < abs(posicionIdealObjetivo)) {
+        posicionIdeal -= posicionIdealStep;
+      } else {
+        posicionIdeal = posicionIdealObjetivo;
+      }
+    } */
   }
 }
