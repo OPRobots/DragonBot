@@ -46,10 +46,10 @@ void nivel_bateria(bool enLoop) {
         break;
       }
       carga = filtroBateria.Current();
-      if(carga >= 75){
+      if (carga >= 75) {
         r = 0;
         g = 255;
-      }else if (carga > 50) {
+      } else if (carga > 50) {
         r = map(carga, 51, 100, 255, 0);
         g = 255;
       } else if (carga < 50) {
@@ -100,11 +100,11 @@ int calcula_posicion_linea(int ultimaPosicion) {
   for (int sensor = 0; (sensor < NUMERO_SENSORES && numLineas < 2); sensor++) {
     if (!((sensor >= lineaPrincipal[0] && sensor <= lineaPrincipal[1]) || abs(sensor - lineaPrincipal[0]) <= 1 || abs(sensor - lineaPrincipal[1]) <= 1)) {
       if (LINEA == LINEA_NEGRA) {
-          valoresSensores[sensor] = 0;
+        valoresSensores[sensor] = valorCalibradoMinimo;
         } else {
         valoresSensores[sensor] = valorCalibradoMaximo;
       }
-    }else if(valoresSensores[sensor] > valorSaturacionBajo){
+    } else if (valoresSensores[sensor] > valorSaturacionBajo) {
       sensoresDetectando++;
         }
     if (!detectandoAnterior && valoresSensores[sensor] > valorSaturacionBajo) {
