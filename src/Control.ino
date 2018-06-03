@@ -278,6 +278,11 @@ int calcular_PID(int posicionActual) {
   float d = 0;
   int error = 0;
   error = posicionIdeal - posicionActual;
+
+  if (mantenerCorreccion) {
+    return correccion;
+  }
+
   if (PISTA == MODO_DEGRADADO) {
     error = -error;
   }
