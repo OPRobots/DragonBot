@@ -26,7 +26,7 @@ int mux_digital_read(byte canalMux) {
  * @return [int]    Lectura analógica del sensor indicado.
  */
 int mux_analog_read_map(byte canalMux, int sensor) {
-  int valorRaw = mux_analog_read(canalMux)
+  int valorRaw = mux_analog_read(canalMux);
   valoresSensoresRaw[sensor] = valorRaw;
   return map(valorRaw, valoresCalibracionMinimos[sensor], valoresCalibracionMaximos[sensor], valorCalibradoMinimo, valorCalibradoMaximo);
 }
