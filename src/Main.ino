@@ -397,10 +397,10 @@ void loop() {
           r = map(tiempoPasado, 0, MILLIS_INICIO, 255, 0);
           g = map(tiempoPasado, 0, 1000, 0, 255);
           set_color_RGB(r, g, 0);
-          if (tiempoPasado > MILLIS_INICIO * 0.75f && velocidadSuccion == 0) {
+          if ((tiempoPasado > MILLIS_INICIO * 0.75f || MILLIS_INICIO == 0) && velocidadSuccion == 0) {
+            velocidadSuccion = velocidadSuccionBase;
           }
         }
-        velocidadSuccion = velocidadSuccionBase;
         ticksDerecho = 0;
         ticksIzquierdo = 0;
         ticksMapeoDerechoAnteriores = 0;
