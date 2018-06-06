@@ -249,10 +249,6 @@ int calcula_posicion_degradado(int ultimaPosicion) {
     }
   }
 
-  bool negativo = posicion < 0 ? true : false;
-  posicion = map(abs(posicion), 150, 220, 0, 6500) / 100 * 100;
-  posicion = negativo ? -posicion : posicion;
-
   // Evita cambios de signo en los extremos de la pista
   if ((ultimaPosicion < 0 && posicion >= 0) || (ultimaPosicion >= 0 && posicion < 0)) {
     if (abs(posicion) > 2000 || abs(ultimaPosicion) > 2000) {
