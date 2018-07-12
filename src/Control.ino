@@ -34,7 +34,6 @@ void nivel_bateria(bool enLoop) {
     }
   } else {
     filtroBateria.Filter(0);
-    delay(500);
     long millisInicial = millis();
     do {
       switch (LIPO) {
@@ -59,9 +58,10 @@ void nivel_bateria(bool enLoop) {
         r = 255;
         g = 255;
       }
+      delay(1);
+    } while ((millis() - millisInicial) < 500);
       set_color_RGB(r, g, 0);
-      delay(50);
-    } while ((millis() - millisInicial) < 2000);
+    delay(2000);
     set_color_RGB(0, 0, 0);
   }
 }
