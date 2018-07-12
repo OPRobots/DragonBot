@@ -182,18 +182,19 @@ long ultimoCambioCarril;
 ////////////////////////////
 // VARIABLES DE ENCODERS  //
 ////////////////////////////
+#define ENCODER_PPR 119
+#define RUEDAS_RADIO 0.01275
 float ticksMm = 1.444f;
 float velocidadMs = 0;
-long ultimaVelocidad = 0;
 long ticksDerechoAnteriores = 0;
 long ticksIzquierdoAnteriores = 0;
 volatile long ticksDerecho = 0;
 volatile long ticksIzquierdo = 0;
-int contMapeo = 5;
 
 //////////////////////
 // VARIABLES MAPEO  //
 //////////////////////
+int contMapeo = 5;
 #define TIPO_SECTOR_RECTA 1
 #define TIPO_SECTOR_CURVA 2
 #define SECTOR_TICKS 0

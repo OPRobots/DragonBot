@@ -99,11 +99,7 @@ void handler_timer_Brushless() {
     contMapeo = 5;
     mapeado_circuito();
   }
-  if (velocidad > 0) {
-    // velocidadMs = calcular_velocidad();
-  } else {
-    velocidadMs = 0;
-  }
+  velocidadMs = calcular_velocidad();
 }
 
 /**

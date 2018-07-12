@@ -459,14 +459,17 @@ void encoder_izquierdo_B() {
 
 /**
  * Función para calcular la velocidad del robot en m/s
- * @return Velocidad en m/s del robot, actualizada cada segundo
+ * @return Velocidad en m/s del robot, actualizada cada 20ms
  */
 float calcular_velocidad() {
-  float velocidad = ((((ticksDerecho - ticksDerechoAnteriores) / (float)(millis() - ultimaVelocidad)) * ticksMm) + (((ticksDerecho - ticksDerechoAnteriores) / (float)(millis() - ultimaVelocidad)) * ticksMm)) / 2.0f;
-  ultimaVelocidad = millis();
+
+  float velocidadAngularDerecha = (2 * 3.1416f * (ticksDerecho - ticksDerechoAnteriores)) / (ENCODER_PPR * 0.02f);
+  float velocidadAngularIzquierda = (2 * 3.1416f * (ticksIzquierdo - ticksIzquierdoAnteriores)) / (ENCODER_PPR * 0.02f);
+  float velocidadAngular = (velocidadAngularIzquierda + velocidadAngularDerecha) / 2.0f;
+
   ticksDerechoAnteriores = ticksDerecho;
   ticksIzquierdoAnteriores = ticksIzquierdo;
-  return velocidad;
+  return velocidadAngular * (float)RUEDAS_RADIO;
 }
 
 /**
