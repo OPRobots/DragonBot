@@ -63,7 +63,7 @@ void reanuda_timer_PID() {
  * Función para configurar el Timer 3 para la creación de señal servo para el Brushless
  */
 void inicia_timer_Brushless() {
-  inicia_brushless();
+  // inicia_brushless();
   TimerBrushless.pause();
   TimerBrushless.setPeriod(20000);
   TimerBrushless.setMode(TIMER_CH1, TIMER_OUTPUT_COMPARE);
@@ -100,6 +100,12 @@ void handler_timer_Brushless() {
     mapeado_circuito();
   }
   velocidadMs = calcular_velocidad();
+  if(velocidadMsIdeal > 0 || velocidadMs > 0){
+    velocidad += ajustar_velocidad_encoders();
+    if(velocidadMsIdeal == 0 && velocidadMs < 0.25){
+      velocidad = 0;
+    }
+  }
 }
 
 /**

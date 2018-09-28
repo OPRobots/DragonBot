@@ -31,6 +31,16 @@ void nivel_bateria(bool enLoop) {
         }
       }
       ultimaBateria = millis();
+    }else{
+      if(velocidad >= 255 /* && abs(velocidadMs-velocidadMsIdeal)>0.25 */){
+        if(!avisoBateria){
+          set_color_RGB(0, 255, 255);
+        }
+      }else{
+        if(!avisoBateria){
+          set_color_RGB(0, 0, 0);
+        }
+      }
     }
   } else {
     filtroBateria.Filter(0);
@@ -98,39 +108,50 @@ int calcula_posicion_linea(int ultimaPosicion) {
   bool detectandoAnterior = false;
 
   for (int sensor = 0; (sensor < NUMERO_SENSORES && numLineas < 2); sensor++) {
+
+    // Satura todos los sensores salvo la línea principal y sus adyacentes para eliminar falsas lecturas en los sensores de los extremos
     if (!((sensor >= lineaPrincipal[0] && sensor <= lineaPrincipal[1]) || abs(sensor - lineaPrincipal[0]) <= 1 || abs(sensor - lineaPrincipal[1]) <= 1)) {
       if (LINEA == LINEA_NEGRA) {
         valoresSensores[sensor] = valorCalibradoMinimo;
       } else {
         valoresSensores[sensor] = valorCalibradoMaximo;
       }
-    } else if (valoresSensores[sensor] > valorSaturacionBajo) {
+    } else if (valoresSensores[sensor] > umbralesCalibracionSensores[sensor]) {
       sensoresDetectando++;
     }
-    if (!detectandoAnterior && valoresSensores[sensor] > valorSaturacionBajo) {
+
+    // Busca la nueva línea principal. Por la regla anterior, solo podría ser el mismo o +-1 sensor.
+    if (!detectandoAnterior && valoresSensores[sensor] > umbralesCalibracionSensores[sensor]) {
       detectandoAnterior = true;
       lineaPrincipal[0] = sensor;
       numLineas++;
-    } else if (detectandoAnterior && valoresSensores[sensor] <= valorSaturacionBajo) {
+    } else if (detectandoAnterior && valoresSensores[sensor] <= umbralesCalibracionSensores[sensor]) {
       lineaPrincipal[1] = sensor - 1;
       detectandoAnterior = false;
     }
-    if (sensor == NUMERO_SENSORES - 1 && detectandoAnterior && valoresSensores[sensor] > valorSaturacionBajo) {
+    // Si es el último sensor y el anterior estaba detectando, lo asigna como fin de línea principal.
+    if (sensor == NUMERO_SENSORES - 1 && detectandoAnterior && valoresSensores[sensor] > umbralesCalibracionSensores[sensor]) {
       lineaPrincipal[1] = sensor;
     }
+
+    // Realiza los cálculos para la posición
     sumaSensoresPonderados += (sensor + 1) * valoresSensores[sensor] * 1000L;
     sumaSensores += (long)valoresSensores[sensor];
   }
-  if (lineaPrincipal[1] == -1) {
-    lineaPrincipal[1] = NUMERO_SENSORES - 1;
-  }
 
+
+  /* if (lineaPrincipal[1] == -1) {
+    lineaPrincipal[1] = NUMERO_SENSORES - 1;
+  } */
+
+  // Comprueba el tiempo sin pista y se para automáticamente para evitar daños
   if (sensoresDetectando > 0 && sensoresDetectando < NUMERO_SENSORES) {
     ultimaLinea = millis();
   } else if (millis() > (ultimaLinea + TIEMPO_SIN_PISTA)) {
     // kp = 0;
     // ki = 0;
     // kd = 0;
+    velocidadMsIdeal = 0;
     velocidad = 0;
     velocidadSuccion = 0;
     competicionIniciada = false;
@@ -338,6 +359,9 @@ int calcular_PID_frontal(int valorSensorFrontal) {
  * @param correccion Parámetro calculado por el PID para seguir la posición deseada en la pista
  */
 void dar_velocidad(int correccion, int correccionFrontal) {
+  if(velocidad > 200){
+    velocidad = 200;
+  }
   velocidadIzquierda = velocidad;
   velocidadDerecha = velocidad;
   if (velocidad > 0) {
@@ -470,6 +494,19 @@ float calcular_velocidad() {
   ticksDerechoAnteriores = ticksDerecho;
   ticksIzquierdoAnteriores = ticksIzquierdo;
   return velocidadAngular * (float)RUEDAS_RADIO;
+}
+
+/**
+ * Función para calcular la velocidad del robot en PWM para asignar a los motores
+ * @return Velocidad en PWM del robot, actualizada cada 20ms a partir de los m/s de consigna
+ */
+int ajustar_velocidad_encoders(){
+  float errorVelocidad = velocidadMsIdeal - velocidadMs;
+  float p = kpVelocidad * errorVelocidad;
+  float d = kdVelocidad * (errorVelocidad-ultimoErrorVelocidad);
+  ultimoErrorVelocidad = errorVelocidad;
+  
+  return p + d;
 }
 
 /**

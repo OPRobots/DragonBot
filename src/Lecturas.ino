@@ -49,6 +49,15 @@ void lectura_sensores_calibrados() {
   }
 }
 
+void lectura_sensores(){
+   for (int sensor = 0; sensor < NUMERO_SENSORES; sensor++) {
+    valoresSensores[sensor] = mux_analog_read(pinesSensores[sensor]);
+    if (LINEA == LINEA_BLANCA) {
+      valoresSensores[sensor] = valorCalibradoMaximo - valoresSensores[sensor];
+    }
+  }
+}
+
 void lectura_sensores_laterales(){
   for(int sensor = 0; sensor < NUMERO_SENSORES_LATERALES;sensor++){
     bool lectura = mux_digital_read(pinesSensoresLaterales[sensor]);

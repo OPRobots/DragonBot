@@ -129,6 +129,6 @@ void inicia_brushless() {
  * Configuración de todos los Timers en uso
  */
 void inicia_timers() {
-  // inicia_timer_PID();
+  inicia_timer_PID();
   inicia_timer_Brushless();
 }

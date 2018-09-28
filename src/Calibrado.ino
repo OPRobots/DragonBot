@@ -11,7 +11,8 @@ void calibra_sensores() {
     valorCalibradoMinimo = CALIBRADO_MINIMO_SENSORES_LINEA;
     posicionMaxima = 6500;
     posicionMinima = -6500;
-    calibrado_sensores_linea();
+    // calibrado_sensores_linea();
+    calibrado_sensores_linea_digital();
     buscar_linea_principal();
 
     // TODO: Ajustar las saturaciones a partir de los valores de lectura de los sensores.
@@ -30,6 +31,8 @@ void calibra_sensores() {
   CalibracionPID.setMaxIdeal(posicionMaxima);
   CalibracionPID.setMinIdeal(posicionMinima);
   delay(300);
+  ticksDerecho = 0;
+  ticksIzquierdo = 0;
 }
 
 /**
@@ -54,8 +57,9 @@ void calibrado_sensores_linea() {
       }
     }
 
-    for (int sensor = 0; sensor < NUMERO_SENSORES; sensor++) {
+    set_color_RGB(0, 0, 0);
 
+    for (int sensor = 0; sensor < NUMERO_SENSORES; sensor++) {
       Serial.print("valoresCalibracionMaximos[");
       Serial.print(sensor);
       Serial.print("] = ");
@@ -64,7 +68,6 @@ void calibrado_sensores_linea() {
     }
 
     for (int sensor = 0; sensor < NUMERO_SENSORES; sensor++) {
-
       Serial.print("valoresCalibracionMinimos[");
       Serial.print(sensor);
       Serial.print("] = ");
@@ -74,6 +77,24 @@ void calibrado_sensores_linea() {
   }
 
   set_color_RGB(0, 0, 0);
+}
+
+/**
+ * Función de calibrado de sensores para línea.
+ * Realiza una calibración simple de valores máximos y mínimos durante el tiempo de calibración establecido y calcula el umbral de detección en base a ello.
+ */
+void calibrado_sensores_linea_digital() {
+  calibrado_sensores_linea();
+  for (int sensor = 0; sensor < NUMERO_SENSORES; sensor++) {
+    umbralesCalibracionSensores[sensor] = valoresCalibracionMinimos[sensor] + (valoresCalibracionMaximos[sensor] - valoresCalibracionMinimos[sensor]) / 2.0f;
+    umbralesCalibracionSensores[sensor] = map(umbralesCalibracionSensores[sensor], valoresCalibracionMinimos[sensor], valoresCalibracionMaximos[sensor], valorCalibradoMinimo, valorCalibradoMaximo);
+
+    Serial.print("umbralesCalibracionSensores[");
+    Serial.print(sensor);
+    Serial.print("] = ");
+    Serial.print(umbralesCalibracionSensores[sensor]);
+    Serial.print(";\n");
+  }
 }
 
 /**
@@ -115,6 +136,7 @@ void buscar_linea_principal() {
   Serial.println();
   set_color_RGB(0, 255, 0);
   delay(250);
+  set_color_RGB(0, 0, 0);
 }
 
 /**

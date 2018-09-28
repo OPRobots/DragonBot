@@ -39,7 +39,7 @@
 #define PISTA MODO_LINEA
 #define LINEA LINEA_NEGRA
 #define LIPO LIPO_2S
-#define TIEMPO_CALIBRADO 5000
+#define TIEMPO_CALIBRADO 2500
 #define NUMERO_SECTORES 2
 #define CALIBRAR_SENSORES true
 #define MAPEO_CIRCUITO false
@@ -80,8 +80,8 @@
 /////////////
 // MOTORES //
 /////////////
-#define MOTOR_DERECHO_ADELANTE PB15
-#define MOTOR_DERECHO_ATRAS PB14
+#define MOTOR_DERECHO_ADELANTE PB14
+#define MOTOR_DERECHO_ATRAS PB15
 #define MOTOR_DERECHO_PWM PA8
 #define MOTOR_IZQUIERDO_ADELANTE PB13
 #define MOTOR_IZQUIERDO_ATRAS PB12
@@ -137,6 +137,10 @@
 // VARIABLES //
 ///////////////
 int velocidad = 0;
+int velocidadBase = 70;
+float velocidadMs = 0;
+float velocidadMsIdeal = 0;
+float velocidadMsIdealBase = 0;
 int velocidadSuccion = 0;
 int velocidadMaxima = 255;
 float velocidadDerecha = 0;
@@ -145,7 +149,6 @@ long ultimaLinea = 0;
 long ultimaBateria = 0;
 bool avisoBateria = false;
 int intervaloAviso = 500;
-int velocidadBase = 70;
 int velocidadCurvas = 80;
 int velocidadRectas = 120;
 int velocidadSuccionBase = 50;
@@ -168,6 +171,9 @@ float kd = 4.0f;
 float kpFrontal = 0.15f;
 float kiFrontal = 0;
 float kdFrontal = 4.0f;
+float kpVelocidad = 5;
+float kdVelocidad = 10;
+float ultimoErrorVelocidad = 0;
 int correccion = 0;
 int correccionFrontal = 0;
 long ultimoControlBrushless = 0;
@@ -185,7 +191,6 @@ long ultimoCambioCarril;
 #define ENCODER_PPR 119
 #define RUEDAS_RADIO 0.01275
 float ticksMm = 1.444f;
-float velocidadMs = 0;
 long ticksDerechoAnteriores = 0;
 long ticksIzquierdoAnteriores = 0;
 volatile long ticksDerecho = 0;
@@ -233,6 +238,7 @@ int calibradoDegradado[NUMERO_CALIBRACIONES_DEGRADADO][NUMERO_SENSORES];
 ///////////////////////////////
 int valoresCalibracionMinimos[] = {4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096};
 int valoresCalibracionMaximos[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+int umbralesCalibracionSensores[NUMERO_SENSORES];
 int valorCalibradoMaximo;
 int valorCalibradoMinimo;
 // int valoresCalibracionMaximos[] = {2263, 2429, 2312, 2333, 2399, 2592, 2257, 2385, 2912, 3512, 3471, 3972};
@@ -307,7 +313,7 @@ int menuConfigCambioPista[] = {0, 5, 5};
 //////////////////////////////
 HardwareTimer TimerPID(2);
 HardwareTimer TimerBrushless(3);
-PIDfromBT CalibracionPID(&kp, &ki, &kd, &velocidad, &posicionIdeal, &velocidadSuccion, DEBUG);
+PIDfromBT CalibracionPID(&kpVelocidad, &velocidadMsIdeal, &kdVelocidad, &velocidad, &posicionIdeal, &velocidadSuccion, DEBUG);
 ExponentialFilter<long> filtroBateria(15, 0);
 ExponentialFilter<long> filtroMapeo(50, 0);
 ExponentialFilter<long> filtroPosicion(12, 0);
@@ -328,34 +334,43 @@ void loop() {
   // LOG DE SENSORES Y CÁLCULO DE LÍNEA //
   ////////////////////////////////////////
 
-  /*  for (int sensor = 0; sensor < NUMERO_SENSORES; sensor++) {
-    // int lectura = mux_analog_read(pinesSensores[sensor]);
-    Serial.print(valoresSensores[sensor]);
-    // Serial.print(" (");
-    // Serial.print(valoresSensores[sensor]);
-    // Serial.print(")");
-    Serial.print("\t");
-  }
-  Serial.print("=>");
-  // posicionActual = calcular_posicion(posicionActual);
-  Serial.print(posicionActual);
-    Serial.print("\t(");
-    Serial.print(lineaPrincipal[0]);
-    Serial.print(" - ");
-    Serial.print(lineaPrincipal[1]);
-    Serial.print(" - ");
-    Serial.print(sensoresDetectando);
-    Serial.print(")\n");
-  delay(100); */
-
+  // for (int sensor = 0; sensor < NUMERO_SENSORES; sensor++) {
+  //   int lectura = mux_analog_read(pinesSensores[sensor]);
+  //   // Serial.print(valoresSensores[sensor]);
+  //   Serial.print(lectura);
+  //   // Serial.print(" (");
+  //   // Serial.print(valoresSensores[sensor]);
+  //   // Serial.print(")");
+  //   Serial.print("\t");
+  // }
+  // Serial.print("=>");
+  // // posicionActual = calcular_posicion(posicionActual);
+  // Serial.print(posicionActual);
+  //   Serial.print("\t(");
+  //   Serial.print(lineaPrincipal[0]);
+  //   Serial.print(" - ");
+  //   Serial.print(lineaPrincipal[1]);
+  //   // Serial.print(" - ");
+  //   // Serial.print(sensoresDetectando);
+  //   Serial.print(")\n");
+////   Serial.print(ticksIzquierdo);
+////   Serial.print("\t");
+////   Serial.print(ticksDerecho);
+////   Serial.println();
+//   delay(100);
+// return;
   ////////////////////////////////////////////
   // LOG DE SENSORES Y CÁLCULO DE DEGRADADO //
   ////////////////////////////////////////////
   // lectura_sensores_calibrados();
-   for (int sensor = 0; sensor < NUMERO_SENSORES; sensor++) {
-    Serial.print(valoresSensores[sensor]);
-    Serial.print("\t");
-  }
+  //  for (int sensor = 0; sensor < NUMERO_SENSORES; sensor++) {
+  //     Serial.print(mux_analog_read(pinesSensores[sensor]));
+  //Serial.print(valoresSensores[sensor]);
+  // Serial.print(" (");
+  // Serial.print(valoresSensoresRaw[sensor]);
+  // Serial.print(")");
+  // Serial.print("\t");
+  // }
   // Serial.print(posicionIdealObjetivo);
   // Serial.print("\t");
   // Serial.print(posicionIdealStep);
@@ -372,16 +387,43 @@ void loop() {
   // Serial.print(valoresSensoresLaterales[1]);
   // Serial.print("\t");
   // Serial.print(valorSensorFrontal);
-  Serial.print("\n");
-  // //   // Serial.println(analogRead(SENSOR_FRONTAL));
-  delay(100);
+  // CalibracionPID.update();
 
-  // //   // set_color_RGB(0, 0, 255);
+  // dar_velocidad(0, 0);
+  // Serial.print(ticksIzquierdo);
+  // Serial.print("\t");
+  // Serial.print(ticksDerecho);
+  // Serial.print("\t");
+  // Serial.print(velocidadMs);
+  // Serial.print("\t");
+  // Serial.print(analogRead(NIVEL_BATERIA));
+  // Serial.print("\n");
+  // if (btn_pulsado() && (millis()-tiempo) > 1000) {
+  //   if(velocidadMsIdeal > 0){
+  //     velocidadMsIdeal = 0;
+  //   }else{
+  //     velocidadMsIdeal = 3.0f;
+  //   }
+  //   tiempo = millis();
+  // }
+  // Serial.print(velocidadMs);
+  // Serial.print(" ");
+  // Serial.print(velocidadMsIdeal);
+  // Serial.print("\n");
+  // Serial.println(analogRead(SENSOR_FRONTAL));
+  // delay(100);
 
-  return;
+  // set_color_RGB(255, 0, 0);
+  // delay(250);
+  // set_color_RGB(0, 255, 0);
+  // delay(250);
+  // set_color_RGB(0, 0, 255);
+  // delay(250);
+  // set_color_RGB(0, 0, 0);
+  // delay(250);
+  // return;
 
   // CalibracionPID.update();
-  delay(100);
   if (!competicionIniciada) {
     btn_cruceta_simple();
     if (!btn_pulsado()) {
@@ -399,7 +441,7 @@ void loop() {
           g = map(tiempoPasado, 0, 1000, 0, 255);
           set_color_RGB(r, g, 0);
           if ((tiempoPasado > MILLIS_INICIO * 0.75f || MILLIS_INICIO == 0) && velocidadSuccion == 0) {
-            velocidadSuccion = velocidadSuccionBase;
+            velocidadSuccion = 50;
           }
         }
         ticksDerecho = 0;
@@ -408,7 +450,12 @@ void loop() {
         ticksMapeoIzquierdoAnteriores = 0;
         competicionIniciada = true;
         set_color_RGB(0, 0, 0);
-        velocidad = velocidadBase;
+        if (velocidadMsIdealBase == 0) {
+          velocidad = velocidadBase;
+        }else{
+          velocidadMsIdeal = velocidadMsIdealBase;
+            velocidadSuccion = velocidadSuccionBase;
+        }
       }
     }
   }
