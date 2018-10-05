@@ -1,0 +1,16 @@
+#######################################
+# Syntax Coloring Map For PIDfromBT
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+PIDfromBT	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+update	KEYWORD2
+execute_task	KEYWORD2
+setMinIdeal	KEYWORD2
+setMaxIdeal	KEYWORD2

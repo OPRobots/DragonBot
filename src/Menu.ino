@@ -1,0 +1,73 @@
+void btn_cruceta_simple() {
+  bool btnPulsado = false;
+  switch (calcular_btn_cruceta(analogRead(BTN_CRUCETA))) {
+  case CRUCETA_ARRIBA:
+    // velocidadBase = 190;
+    velocidadMsIdealBase = 3.0f;
+    velocidadSuccionBase = 150;
+    kp = 0.03f;
+    ki = 0;
+    kd = 4.0f;
+    kpFrontal = 0;
+    kiFrontal = 0;
+    kdFrontal = 0;
+    set_color_RGB(255, 0, 0);
+    btnPulsado = true;
+    break;
+  case CRUCETA_ABAJO:
+    // velocidadBase = 230;
+    velocidadMsIdealBase = 2.5f;
+    velocidadSuccionBase = 80;
+    kp = 0.03f;
+    ki = 0;
+    kd = 4.0f;
+    kpFrontal = 0;
+    kiFrontal = 0;
+    kdFrontal = 0;
+    set_color_RGB(255, 0, 255);
+    btnPulsado = true;
+    break;
+  case CRUCETA_DERECHA:
+    // velocidadBase = 120;
+    velocidadMsIdealBase = 1.5f;
+    velocidadSuccionBase = 25;
+    kp = 0.03f;
+    ki = 0;
+    kd = 4.0f;
+    kpFrontal = 0;
+    kiFrontal = 0;
+    kdFrontal = 0;
+    set_color_RGB(0, 255, 0);
+    btnPulsado = true;
+    break;
+  case CRUCETA_IZQUIERDA:
+    // velocidadBase = 160;
+    velocidadMsIdealBase = 2.0f;
+    velocidadSuccionBase = 50;
+    kp = 0.04f;
+    ki = 0;
+    kd = 8.0f;
+    kpFrontal = 0;
+    kiFrontal = 0;
+    kdFrontal = 0;
+    set_color_RGB(255, 255, 0);
+    btnPulsado = true;
+    break;
+  }
+  if (btnPulsado) {
+    delay(1000);
+    set_color_RGB(0, 0, 0);
+  }
+}
+
+/**
+ * Función para encontrar el botón pulsado de la cruceta con un +-50 de error en las mediciones
+ */
+int calcular_btn_cruceta(int valorBtn) {
+  for (int combinacion = 0; combinacion < NUMERO_COMBINACIONES; combinacion++) {
+    if (valorBtn > (crucetaCombinaciones[combinacion] - 50) && valorBtn < (crucetaCombinaciones[combinacion] + 50)) {
+      return crucetaCombinaciones[combinacion];
+    }
+  }
+  return 0;
+}
