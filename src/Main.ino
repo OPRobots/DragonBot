@@ -42,13 +42,11 @@
 #define TIEMPO_CALIBRADO 2500
 #define NUMERO_SECTORES 2
 #define CALIBRAR_SENSORES true
-#define MAPEO_CIRCUITO false
 
 //////////////
 // SENSORES //
 //////////////
 #define NUMERO_SENSORES 12
-#define NUMERO_SENSORES_LATERALES 2
 #define TIEMPO_SIN_PISTA 150
 #define SENSOR_1 0
 #define SENSOR_2 1
@@ -80,11 +78,18 @@
 /////////////
 // MOTORES //
 /////////////
+// DRAGON A
+// #define MOTOR_DERECHO_ADELANTE PB15
+// #define MOTOR_DERECHO_ATRAS PB14
+// #define MOTOR_IZQUIERDO_ADELANTE PB13
+// #define MOTOR_IZQUIERDO_ATRAS PB12
+// DRAGON B
 #define MOTOR_DERECHO_ADELANTE PB14
 #define MOTOR_DERECHO_ATRAS PB15
-#define MOTOR_DERECHO_PWM PA8
 #define MOTOR_IZQUIERDO_ADELANTE PB13
 #define MOTOR_IZQUIERDO_ATRAS PB12
+
+#define MOTOR_DERECHO_PWM PA8
 #define MOTOR_IZQUIERDO_PWM PB8
 #define MOTOR_SUCCION PB9
 #define COMPENSACION_DERECHO 0
@@ -138,9 +143,14 @@
 ///////////////
 int velocidad = 0;
 int velocidadBase = 70;
+float anguloGiro = 0;
+float anguloGiroR = 0;
+float velocidadW = 0;
 float velocidadMs = 0;
 float velocidadMsIdeal = 0;
 float velocidadMsIdealBase = 0;
+float posXm = 0;
+float posYm = 0;
 int velocidadSuccion = 0;
 int velocidadMaxima = 255;
 float velocidadDerecha = 0;
@@ -148,12 +158,8 @@ float velocidadIzquierda = 0;
 long ultimaLinea = 0;
 long ultimaBateria = 0;
 bool avisoBateria = false;
-int intervaloAviso = 500;
-int velocidadCurvas = 80;
-int velocidadRectas = 120;
+int intervaloAvisoBateria = 500;
 int velocidadSuccionBase = 50;
-int velocidadSuccionCurvas = 100;
-int velocidadSuccionRectas = 30;
 
 //////////////////////////
 // VARIABLES DE CONTROL //
@@ -161,9 +167,7 @@ int velocidadSuccionRectas = 30;
 int posicionActual = 0;
 int posicionIdeal = 0;
 int posicionIdealObjetivo;
-int posicionIdealStep = 0;
 float errorAnterior = 0;
-float errorFrontalAnterior = 0;
 float integralErrores = 0;
 float kp = 0.03f;
 float ki = 0;
@@ -175,15 +179,9 @@ float kpVelocidad = 5;
 float kdVelocidad = 10;
 float ultimoErrorVelocidad = 0;
 int correccion = 0;
-int correccionFrontal = 0;
 long ultimoControlBrushless = 0;
 int lineaPrincipal[] = {-1, -1};
 bool mantenerCorreccion = false;
-int valoresSensoresLaterales[NUMERO_SENSORES_LATERALES];
-long ultimaDeteccionLateral[NUMERO_SENSORES_LATERALES];
-long ultimaDeteccionFrontal = 0;
-bool cambioCarril = false;
-long ultimoCambioCarril;
 
 ////////////////////////////
 // VARIABLES DE ENCODERS  //
@@ -195,24 +193,6 @@ long ticksDerechoAnteriores = 0;
 long ticksIzquierdoAnteriores = 0;
 volatile long ticksDerecho = 0;
 volatile long ticksIzquierdo = 0;
-
-//////////////////////
-// VARIABLES MAPEO  //
-//////////////////////
-int contMapeo = 5;
-#define TIPO_SECTOR_RECTA 1
-#define TIPO_SECTOR_CURVA 2
-#define SECTOR_TICKS 0
-#define SECTOR_TIPO 1
-int tipoSector = TIPO_SECTOR_RECTA;
-int sectorActual = 0;
-bool mapeoRealizado = false;
-bool mapeoIniciado = false;
-int sectoresPista[NUMERO_SECTORES][2];
-long ticksMapeoDerechoAnteriores = 0;
-long ticksMapeoIzquierdoAnteriores = 0;
-bool ticksReseteados = true;
-int mediaDiferenciaRecta = 0;
 
 ///////////////////////////
 // VARIABLES DE SENSORES //
@@ -274,40 +254,6 @@ int crucetaCombinaciones[] = {CRUCETA_ARRIBA,
                               CRUCETA_ABAJO_IZQUIERDA,
                               CRUCETA_IZQUIERDA_ARRIBA};
 
-#define MENU_PRINCIPAL 0
-#define MENU_PID 1
-#define MENU_VELOCIDAD 2
-#define MENU_SUCCION 3
-#define MENU_PISTA 4
-#define MENU_FINAL 5
-
-#define NUMERO_MENU_PRINCIPAL 4
-#define NUMERO_MENU_PID 3
-#define NUMERO_MENU_VELOCIDAD 3
-#define NUMERO_MENU_SUCCION 3
-#define NUMERO_MENU_PISTA 1
-#define NUMERO_MENU_MAXIMO 4
-
-int menuActual = MENU_PRINCIPAL;
-int menuSeleccion[NUMERO_MENU_PRINCIPAL + 1];
-bool modoMenu = false;
-bool menuSeleccionVolver = false;
-bool menuSeleccionModificar = false;
-
-String menuPrincipal[] = {"PID", "Velocidad", "Succion", "Pista"};
-String menuPID[] = {"Proporcional", "Integral", "Derivativa"};
-float *menuConfigPID[] = {&kp, &ki, &kd};
-float menuConfigCambioPID[] = {0.001f, 0.001f, 0.05f};
-String menuVelocidad[] = {"Base", "Rectas", "Curvas"};
-int *menuConfigVelocidad[] = {&velocidadBase, &velocidadCurvas, &velocidadRectas};
-int menuConfigCambioVelocidad[] = {5, 5, 5};
-String menuSuccion[] = {"Base", "Rectas", "Curvas"};
-int *menuConfigSuccion[] = {&velocidadSuccionBase, &velocidadSuccionCurvas, &velocidadSuccionRectas};
-int menuConfigCambioSuccion[] = {5, 5, 5};
-String menuPista[] = {"Sectores"};
-int menuConfigPista[] = {NUMERO_SECTORES};
-int menuConfigCambioPista[] = {0, 5, 5};
-
 //////////////////////////////
 // INICIALIZACION LIBRERIAS //
 //////////////////////////////
@@ -315,7 +261,6 @@ HardwareTimer TimerPID(2);
 HardwareTimer TimerBrushless(3);
 PIDfromBT CalibracionPID(&kpVelocidad, &velocidadMsIdeal, &kdVelocidad, &velocidad, &posicionIdeal, &velocidadSuccion, DEBUG);
 ExponentialFilter<long> filtroBateria(15, 0);
-ExponentialFilter<long> filtroMapeo(50, 0);
 ExponentialFilter<long> filtroPosicion(12, 0);
 
 void setup() {
@@ -329,100 +274,6 @@ void setup() {
 long tiempo = 0;
 int numeroSensoresPista;
 void loop() {
-
-  ////////////////////////////////////////
-  // LOG DE SENSORES Y CÁLCULO DE LÍNEA //
-  ////////////////////////////////////////
-
-  // for (int sensor = 0; sensor < NUMERO_SENSORES; sensor++) {
-  //   int lectura = mux_analog_read(pinesSensores[sensor]);
-  //   // Serial.print(valoresSensores[sensor]);
-  //   Serial.print(lectura);
-  //   // Serial.print(" (");
-  //   // Serial.print(valoresSensores[sensor]);
-  //   // Serial.print(")");
-  //   Serial.print("\t");
-  // }
-  // Serial.print("=>");
-  // // posicionActual = calcular_posicion(posicionActual);
-  // Serial.print(posicionActual);
-  //   Serial.print("\t(");
-  //   Serial.print(lineaPrincipal[0]);
-  //   Serial.print(" - ");
-  //   Serial.print(lineaPrincipal[1]);
-  //   // Serial.print(" - ");
-  //   // Serial.print(sensoresDetectando);
-  //   Serial.print(")\n");
-////   Serial.print(ticksIzquierdo);
-////   Serial.print("\t");
-////   Serial.print(ticksDerecho);
-////   Serial.println();
-//   delay(100);
-// return;
-  ////////////////////////////////////////////
-  // LOG DE SENSORES Y CÁLCULO DE DEGRADADO //
-  ////////////////////////////////////////////
-  // lectura_sensores_calibrados();
-  //  for (int sensor = 0; sensor < NUMERO_SENSORES; sensor++) {
-  //     Serial.print(mux_analog_read(pinesSensores[sensor]));
-  //Serial.print(valoresSensores[sensor]);
-  // Serial.print(" (");
-  // Serial.print(valoresSensoresRaw[sensor]);
-  // Serial.print(")");
-  // Serial.print("\t");
-  // }
-  // Serial.print(posicionIdealObjetivo);
-  // Serial.print("\t");
-  // Serial.print(posicionIdealStep);
-  // Serial.print(posicionIdeal);
-  // Serial.print("\t");
-  // Serial.print(numeroSensoresPista);
-  // Serial.print("\t");
-  // Serial.print(posicionActual);
-  // Serial.print("\t");
-  // Serial.print(correccion);
-  // Serial.print("\n");
-  // Serial.print(valoresSensoresLaterales[0]);
-  // Serial.print("\t");
-  // Serial.print(valoresSensoresLaterales[1]);
-  // Serial.print("\t");
-  // Serial.print(valorSensorFrontal);
-  // CalibracionPID.update();
-
-  // dar_velocidad(0, 0);
-  // Serial.print(ticksIzquierdo);
-  // Serial.print("\t");
-  // Serial.print(ticksDerecho);
-  // Serial.print("\t");
-  // Serial.print(velocidadMs);
-  // Serial.print("\t");
-  // Serial.print(analogRead(NIVEL_BATERIA));
-  // Serial.print("\n");
-  // if (btn_pulsado() && (millis()-tiempo) > 1000) {
-  //   if(velocidadMsIdeal > 0){
-  //     velocidadMsIdeal = 0;
-  //   }else{
-  //     velocidadMsIdeal = 3.0f;
-  //   }
-  //   tiempo = millis();
-  // }
-  // Serial.print(velocidadMs);
-  // Serial.print(" ");
-  // Serial.print(velocidadMsIdeal);
-  // Serial.print("\n");
-  // Serial.println(analogRead(SENSOR_FRONTAL));
-  // delay(100);
-
-  // set_color_RGB(255, 0, 0);
-  // delay(250);
-  // set_color_RGB(0, 255, 0);
-  // delay(250);
-  // set_color_RGB(0, 0, 255);
-  // delay(250);
-  // set_color_RGB(0, 0, 0);
-  // delay(250);
-  // return;
-
   // CalibracionPID.update();
   if (!competicionIniciada) {
     btn_cruceta_simple();
@@ -446,8 +297,6 @@ void loop() {
         }
         ticksDerecho = 0;
         ticksIzquierdo = 0;
-        ticksMapeoDerechoAnteriores = 0;
-        ticksMapeoIzquierdoAnteriores = 0;
         competicionIniciada = true;
         set_color_RGB(0, 0, 0);
         if (velocidadMsIdealBase == 0) {

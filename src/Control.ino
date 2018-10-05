@@ -6,7 +6,7 @@ void nivel_bateria(bool enLoop) {
   int carga;
   byte r, g;
   if (enLoop) {
-    if (millis() > (ultimaBateria + intervaloAviso)) {
+    if (millis() > (ultimaBateria + intervaloAvisoBateria)) {
       set_color_RGB(0, 0, 0);
       switch (LIPO) {
       case LIPO_2S:
@@ -19,9 +19,9 @@ void nivel_bateria(bool enLoop) {
       carga = filtroBateria.Current();
       if (carga <= 15) {
         if (carga <= 5) {
-          intervaloAviso = 100;
+          intervaloAvisoBateria = 100;
         } else {
-          intervaloAviso = 500;
+          intervaloAvisoBateria = 500;
         }
         avisoBateria = !avisoBateria;
         if (avisoBateria) {
@@ -31,13 +31,13 @@ void nivel_bateria(bool enLoop) {
         }
       }
       ultimaBateria = millis();
-    }else{
-      if(velocidad >= 255 /* && abs(velocidadMs-velocidadMsIdeal)>0.25 */){
-        if(!avisoBateria){
+    } else {
+      if (velocidad >= 255 /* && abs(velocidadMs-velocidadMsIdeal)>0.25 */) {
+        if (!avisoBateria) {
           set_color_RGB(0, 255, 255);
         }
-      }else{
-        if(!avisoBateria){
+      } else {
+        if (!avisoBateria) {
           set_color_RGB(0, 0, 0);
         }
       }
@@ -70,7 +70,7 @@ void nivel_bateria(bool enLoop) {
       }
       delay(1);
     } while ((millis() - millisInicial) < 500);
-      set_color_RGB(r, g, 0);
+    set_color_RGB(r, g, 0);
     delay(2000);
     set_color_RGB(0, 0, 0);
   }
@@ -138,7 +138,6 @@ int calcula_posicion_linea(int ultimaPosicion) {
     sumaSensoresPonderados += (sensor + 1) * valoresSensores[sensor] * 1000L;
     sumaSensores += (long)valoresSensores[sensor];
   }
-
 
   /* if (lineaPrincipal[1] == -1) {
     lineaPrincipal[1] = NUMERO_SENSORES - 1;
@@ -322,51 +321,19 @@ int calcular_PID(int posicionActual) {
   }
 }
 
-int calcular_PID_frontal(int valorSensorFrontal) {
-  float p = 0;
-  float i = 0;
-  float d = 0;
-  int errorFrontal = 0;
-  int suma = 0;
-  errorFrontal = 500 - valorSensorFrontal;
-  if (errorFrontal < 0  && velocidad > 0 && (valorSensorFrontal < 800 || correccionFrontal != 0) && valorSensorFrontal > 400) {
-    p = kpFrontal * errorFrontal;
-    errorFrontalAnterior = errorFrontal;
-    if (ultimaDeteccionFrontal == 0) {
-      ultimaDeteccionFrontal = millis();
-      return 0;
-    } else {
-      if (millis() - ultimaDeteccionFrontal > 200) {
-        cambio_carril();
-        set_color_RGB(0, 255, 0);
-        suma = p + i + d;
-        return abs(suma) > velocidad ? -velocidad : suma;
-      } else {
-        return 0;
-      }
-    }
-  } else {
-
-    ultimaDeteccionFrontal = 0;
-    set_color_RGB(0, 0, 0);
-    errorFrontalAnterior = 0;
-    return 0;
-  }
-}
-
 /**
  * Función para asignar velocidad a los motores teniendo en cuenta la corrección calculada por el PID
  * @param correccion Parámetro calculado por el PID para seguir la posición deseada en la pista
  */
-void dar_velocidad(int correccion, int correccionFrontal) {
-  if(velocidad > 200){
+void dar_velocidad(int correccion) {
+  if (velocidad > 200) {
     velocidad = 200;
   }
   velocidadIzquierda = velocidad;
   velocidadDerecha = velocidad;
   if (velocidad > 0) {
-    velocidadIzquierda = velocidadIzquierda - correccion + correccionFrontal;
-    velocidadDerecha = velocidadDerecha + correccion + correccionFrontal;
+    velocidadIzquierda = velocidadIzquierda - correccion;
+    velocidadDerecha = velocidadDerecha + correccion;
   }
 
   int pin_motor_derecho = MOTOR_DERECHO_ADELANTE;
@@ -486,152 +453,37 @@ void encoder_izquierdo_B() {
  * @return Velocidad en m/s del robot, actualizada cada 20ms
  */
 float calcular_velocidad() {
+  // 0.02 porque se ejecuta cada 20ms
+  float velocidadLinealDerecha = ((2 * 3.1416f * (ticksDerecho - ticksDerechoAnteriores)) / (ENCODER_PPR * 0.02f)) * (float)RUEDAS_RADIO;
+  float velocidadLinealIzquierda = ((2 * 3.1416f * (ticksIzquierdo - ticksIzquierdoAnteriores)) / (ENCODER_PPR * 0.02f)) * (float)RUEDAS_RADIO;
+  float velocidadLinealMedia = (velocidadLinealIzquierda + velocidadLinealDerecha) / 2.0f;
+  velocidadW = (velocidadLinealIzquierda - velocidadLinealDerecha)/0.120f;
+  anguloGiroR += velocidadW * 0.02f;
+  anguloGiro = anguloGiroR * 57.2958f;
 
-  float velocidadAngularDerecha = (2 * 3.1416f * (ticksDerecho - ticksDerechoAnteriores)) / (ENCODER_PPR * 0.02f);
-  float velocidadAngularIzquierda = (2 * 3.1416f * (ticksIzquierdo - ticksIzquierdoAnteriores)) / (ENCODER_PPR * 0.02f);
-  float velocidadAngular = (velocidadAngularIzquierda + velocidadAngularDerecha) / 2.0f;
-
+  float avance = velocidadLinealMedia * 0.02f;
+  posXm += avance * cos(anguloGiroR);
+  posYm += avance * sin(anguloGiroR);
+  /* if(ticksDerecho>2000){
+    if(abs(posXm) < 0.2f && abs(posYm)< 0.2f){
+      velocidadMsIdeal = 0;
+      set_color_RGB(0,255,0);
+    }
+  } */
   ticksDerechoAnteriores = ticksDerecho;
   ticksIzquierdoAnteriores = ticksIzquierdo;
-  return velocidadAngular * (float)RUEDAS_RADIO;
+  return velocidadLinealMedia;
 }
 
 /**
  * Función para calcular la velocidad del robot en PWM para asignar a los motores
  * @return Velocidad en PWM del robot, actualizada cada 20ms a partir de los m/s de consigna
  */
-int ajustar_velocidad_encoders(){
+int ajustar_velocidad_encoders() {
   float errorVelocidad = velocidadMsIdeal - velocidadMs;
   float p = kpVelocidad * errorVelocidad;
-  float d = kdVelocidad * (errorVelocidad-ultimoErrorVelocidad);
+  float d = kdVelocidad * (errorVelocidad - ultimoErrorVelocidad);
   ultimoErrorVelocidad = errorVelocidad;
-  
+
   return p + d;
-}
-
-/**
- * Función para mapeado del circuito en busca de rectas para acelerar.
- */
-void mapeado_circuito() {
-  // 5213 1598
-  int diferencia;
-  if (mapeoRealizado) {
-    diferencia = abs((ticksDerecho - ticksMapeoDerechoAnteriores) - (ticksIzquierdo - ticksMapeoIzquierdoAnteriores));
-    filtroMapeo.Filter(diferencia);
-
-    switch (sectoresPista[sectorActual][SECTOR_TIPO]) {
-    case TIPO_SECTOR_RECTA:
-      velocidad = velocidadRectas;
-      velocidadSuccionBase = velocidadSuccionRectas;
-      if (mediaDiferenciaRecta == 0) {
-        mediaDiferenciaRecta = filtroMapeo.Current();
-      } else {
-        mediaDiferenciaRecta = (mediaDiferenciaRecta + diferencia) / 2;
-      }
-      break;
-    case TIPO_SECTOR_CURVA:
-      mediaDiferenciaRecta = 0;
-      velocidad = velocidadCurvas;
-      velocidadSuccionBase = velocidadSuccionCurvas;
-      break;
-    }
-
-    if (ticksDerecho >= sectoresPista[sectorActual][SECTOR_TICKS]) {
-      ticksDerecho = 0;
-      ticksIzquierdo = 0;
-      sectorActual++;
-      filtroMapeo.SetCurrent(0);
-      if (sectorActual == NUMERO_SECTORES) {
-        sectorActual = 0;
-        ticksReseteados = false;
-      }
-    }
-    if (sectorActual == 0 && !ticksReseteados && filtroMapeo.Current() > (mediaDiferenciaRecta + 10)) {
-      ticksReseteados = true;
-      ticksDerecho = 700;
-      ticksIzquierdo = 700;
-      mediaDiferenciaRecta = 0;
-      Serial.println("reset");
-    }
-    ticksMapeoDerechoAnteriores = ticksDerecho;
-    ticksMapeoIzquierdoAnteriores = ticksIzquierdo;
-  } else {
-    diferencia = abs((ticksDerecho - ticksMapeoDerechoAnteriores) - (ticksIzquierdo - ticksMapeoIzquierdoAnteriores));
-    filtroMapeo.Filter(diferencia);
-
-    if (ticksDerecho > 200 && ticksIzquierdo > 200) {
-      if (filtroMapeo.Current() <= 25) {
-        if (tipoSector == TIPO_SECTOR_CURVA && mapeoIniciado) {
-          Serial.println(filtroMapeo.Current());
-          sectoresPista[sectorActual][SECTOR_TICKS] = ticksDerecho;
-          sectoresPista[sectorActual][SECTOR_TIPO] = tipoSector;
-          sectorActual++;
-          tipoSector = TIPO_SECTOR_RECTA;
-          ticksDerecho = 0;
-          ticksIzquierdo = 0;
-          set_color_RGB(0, 255, 0);
-        }
-      } else {
-        if (tipoSector == TIPO_SECTOR_RECTA && mapeoIniciado) {
-          sectoresPista[sectorActual][SECTOR_TICKS] = ticksDerecho - 700;
-          sectoresPista[sectorActual][SECTOR_TIPO] = tipoSector;
-          sectorActual++;
-          tipoSector = TIPO_SECTOR_CURVA;
-          ticksDerecho = 0;
-          ticksIzquierdo = 0;
-          set_color_RGB(0, 0, 255);
-        } else if (!mapeoIniciado) {
-          mapeoIniciado = true;
-          ticksDerecho = 0;
-          ticksIzquierdo = 0;
-          sectorActual = 0;
-          tipoSector = TIPO_SECTOR_CURVA;
-          set_color_RGB(0, 0, 255);
-        }
-      }
-      if (sectorActual == NUMERO_SECTORES) {
-        sectorActual = 0;
-        for (int i = 0; i < NUMERO_SECTORES; i++) {
-          Serial.print(sectoresPista[i][SECTOR_TICKS]);
-          Serial.print("\t");
-        }
-        Serial.println();
-        mapeoRealizado = true;
-        ticksIzquierdo = 700;
-        ticksDerecho = 700;
-        set_color_RGB(0, 0, 0);
-      }
-    }
-    ticksMapeoDerechoAnteriores = ticksDerecho;
-    ticksMapeoIzquierdoAnteriores = ticksIzquierdo;
-  }
-}
-
-void cambio_carril() {
-  if (millis() - ultimoCambioCarril > 2000) {
-    if (posicionActual > 0 && !valoresSensoresLaterales[0]) {
-
-      posicionIdealObjetivo = -posicionIdeal;
-      posicionIdealStep = -posicionIdeal / 25;
-      ultimoCambioCarril = millis();
-    } else if (posicionActual < 0 && !valoresSensoresLaterales[1]) {
-
-      posicionIdealObjetivo = -posicionIdeal;
-      posicionIdealStep = -posicionIdeal / 25;
-      ultimoCambioCarril = millis();
-    }
-  }
-}
-void cambio_ideal() {
-  if (posicionIdeal != posicionIdealObjetivo) {
-    // if ((posicionIdeal < 0 && posicionIdealObjetivo > 0) || (posicionIdeal > 0 && posicionIdealObjetivo < 0)) {
-    posicionIdeal += posicionIdealStep;
-    /* } else {
-      if (abs(posicionIdeal) < abs(posicionIdealObjetivo)) {
-        posicionIdeal -= posicionIdealStep;
-      } else {
-        posicionIdeal = posicionIdealObjetivo;
-      }
-    } */
-  }
 }
