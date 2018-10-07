@@ -328,6 +328,7 @@ int calcular_PID(int posicionActual) {
 void dar_velocidad(int correccion) {
   if (velocidad > 200) {
     velocidad = 200;
+    set_color_RGB(0,0,255);
   }
   velocidadIzquierda = velocidad;
   velocidadDerecha = velocidad;
