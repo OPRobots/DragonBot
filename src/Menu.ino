@@ -2,9 +2,8 @@ void btn_cruceta_simple() {
   bool btnPulsado = false;
   switch (calcular_btn_cruceta(analogRead(BTN_CRUCETA))) {
   case CRUCETA_ARRIBA:
-    // velocidadBase = 190;
-    velocidadMsIdealBase = 3.0f;
-    velocidadSuccionBase = 150;
+    velocidadMsIdealBase = 2.5f;
+    velocidadSuccionBase = 120;
     kp = 0.03f;
     ki = 0;
     kd = 4.0f;
@@ -15,9 +14,8 @@ void btn_cruceta_simple() {
     btnPulsado = true;
     break;
   case CRUCETA_ABAJO:
-    // velocidadBase = 230;
-    velocidadMsIdealBase = 2.5f;
-    velocidadSuccionBase = 80;
+    velocidadMsIdealBase = 3.0f;
+    velocidadSuccionBase = 150;
     kp = 0.03f;
     ki = 0;
     kd = 4.0f;
@@ -28,7 +26,6 @@ void btn_cruceta_simple() {
     btnPulsado = true;
     break;
   case CRUCETA_DERECHA:
-    // velocidadBase = 120;
     velocidadMsIdealBase = 1.5f;
     velocidadSuccionBase = 25;
     kp = 0.03f;
@@ -41,9 +38,8 @@ void btn_cruceta_simple() {
     btnPulsado = true;
     break;
   case CRUCETA_IZQUIERDA:
-    // velocidadBase = 160;
     velocidadMsIdealBase = 2.0f;
-    velocidadSuccionBase = 50;
+    velocidadSuccionBase = 80;
     kp = 0.04f;
     ki = 0;
     kd = 8.0f;
