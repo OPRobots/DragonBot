@@ -35,10 +35,10 @@
 ///////////////////
 // CONFIGURACION //
 ///////////////////
-#define MILLIS_INICIO 5000
+#define MILLIS_INICIO 2000
 #define PISTA MODO_LINEA
 #define LINEA LINEA_NEGRA
-#define LIPO LIPO_2S
+#define LIPO LIPO_3S
 #define TIEMPO_CALIBRADO 2500
 #define NUMERO_SECTORES 2
 #define CALIBRAR_SENSORES true
@@ -47,7 +47,8 @@
 // SENSORES //
 //////////////
 #define NUMERO_SENSORES 12
-#define TIEMPO_SIN_PISTA 150
+// #define NUMERO_SENSORES 6
+#define TIEMPO_SIN_PISTA 200
 #define SENSOR_1 0
 #define SENSOR_2 1
 #define SENSOR_3 2
@@ -200,6 +201,7 @@ volatile long ticksIzquierdo = 0;
 int valorSaturacionBajo;
 int valorSaturacionAlto;
 int pinesSensores[] = {SENSOR_1, SENSOR_2, SENSOR_3, SENSOR_4, SENSOR_5, SENSOR_6, SENSOR_7, SENSOR_8, SENSOR_9, SENSOR_10, SENSOR_11, SENSOR_12};
+// int pinesSensores[] = {/* SENSOR_1, SENSOR_2, SENSOR_3, */ SENSOR_4, SENSOR_5, SENSOR_6, SENSOR_7, SENSOR_8, SENSOR_9 /* , SENSOR_10, SENSOR_11, SENSOR_12 */};
 int pinesSensoresLaterales[] = {SENSOR_IZQUIERDO, SENSOR_DERECHO};
 int posicionMaxima = 6500;
 int posicionMinima = -6500;
@@ -301,9 +303,9 @@ void loop() {
         set_color_RGB(0, 0, 0);
         if (velocidadMsIdealBase == 0) {
           velocidad = velocidadBase;
-        }else{
+        } else {
           velocidadMsIdeal = velocidadMsIdealBase;
-            velocidadSuccion = velocidadSuccionBase;
+          velocidadSuccion = velocidadSuccionBase;
         }
       }
     }

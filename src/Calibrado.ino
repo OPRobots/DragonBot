@@ -86,7 +86,7 @@ void calibrado_sensores_linea() {
 void calibrado_sensores_linea_digital() {
   calibrado_sensores_linea();
   for (int sensor = 0; sensor < NUMERO_SENSORES; sensor++) {
-    umbralesCalibracionSensores[sensor] = valoresCalibracionMinimos[sensor] + (valoresCalibracionMaximos[sensor] - valoresCalibracionMinimos[sensor]) / 2.0f;
+    umbralesCalibracionSensores[sensor] = (valoresCalibracionMinimos[sensor] + valoresCalibracionMaximos[sensor]) / 2.0f;
     umbralesCalibracionSensores[sensor] = map(umbralesCalibracionSensores[sensor], valoresCalibracionMinimos[sensor], valoresCalibracionMaximos[sensor], valorCalibradoMinimo, valorCalibradoMaximo);
 
     Serial.print("umbralesCalibracionSensores[");
