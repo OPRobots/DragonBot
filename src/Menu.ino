@@ -3,10 +3,10 @@ void btn_cruceta_simple() {
   switch (calcular_btn_cruceta(analogRead(BTN_CRUCETA))) {
   case CRUCETA_ARRIBA:
     velocidadMsIdealBase = 2.5f;
-    velocidadSuccionBase = 120;
-    kp = 0.03f;
+    velocidadSuccionBase = LIPO == LIPO_2S ? 120 : 85;
+    kp = 0.15f;
     ki = 0;
-    kd = 4.0f;
+    kd = 20.0f;
     kpFrontal = 0;
     kiFrontal = 0;
     kdFrontal = 0;
@@ -27,10 +27,10 @@ void btn_cruceta_simple() {
     break;
   case CRUCETA_DERECHA:
     velocidadMsIdealBase = 1.5f;
-    velocidadSuccionBase = 25;
-    kp = 0.03f;
+    velocidadSuccionBase = LIPO == LIPO_2S ? 25 : 17;
+    kp = 0.15f;
     ki = 0;
-    kd = 4.0f;
+    kd = 20.0f;
     kpFrontal = 0;
     kiFrontal = 0;
     kdFrontal = 0;
@@ -39,10 +39,10 @@ void btn_cruceta_simple() {
     break;
   case CRUCETA_IZQUIERDA:
     velocidadMsIdealBase = 2.0f;
-    velocidadSuccionBase = 80;
-    kp = 0.04f;
+    velocidadSuccionBase = LIPO == LIPO_2S ? 80 : 55;
+    kp = 0.15f;
     ki = 0;
-    kd = 8.0f;
+    kd = 20.0f;
     kpFrontal = 0;
     kiFrontal = 0;
     kdFrontal = 0;
