@@ -109,39 +109,14 @@ int calcula_posicion_linea(int ultimaPosicion) {
 
   for (int sensor = 0; (sensor < NUMERO_SENSORES && numLineas < 2); sensor++) {
 
-    // Satura todos los sensores salvo la línea principal y sus adyacentes para eliminar falsas lecturas en los sensores de los extremos
-    if (!((sensor >= lineaPrincipal[0] && sensor <= lineaPrincipal[1]) || abs(sensor - lineaPrincipal[0]) <= 1 || abs(sensor - lineaPrincipal[1]) <= 1)) {
-      if (LINEA == LINEA_NEGRA) {
-        valoresSensores[sensor] = valorCalibradoMinimo;
-      } else {
-        valoresSensores[sensor] = valorCalibradoMaximo;
-      }
-    } else if (valoresSensores[sensor] > umbralesCalibracionSensores[sensor]) {
+    if (valoresSensores[sensor] > umbralesCalibracionSensores[sensor]) {
       sensoresDetectando++;
-    }
-
-    // Busca la nueva línea principal. Por la regla anterior, solo podría ser el mismo o +-1 sensor.
-    if (!detectandoAnterior && valoresSensores[sensor] > umbralesCalibracionSensores[sensor]) {
-      detectandoAnterior = true;
-      lineaPrincipal[0] = sensor;
-      numLineas++;
-    } else if (detectandoAnterior && valoresSensores[sensor] <= umbralesCalibracionSensores[sensor]) {
-      lineaPrincipal[1] = sensor - 1;
-      detectandoAnterior = false;
-    }
-    // Si es el último sensor y el anterior estaba detectando, lo asigna como fin de línea principal.
-    if (sensor == NUMERO_SENSORES - 1 && detectandoAnterior && valoresSensores[sensor] > umbralesCalibracionSensores[sensor]) {
-      lineaPrincipal[1] = sensor;
     }
 
     // Realiza los cálculos para la posición
     sumaSensoresPonderados += (sensor + 1) * valoresSensores[sensor] * 1000L;
     sumaSensores += (long)valoresSensores[sensor];
   }
-
-  /* if (lineaPrincipal[1] == -1) {
-    lineaPrincipal[1] = NUMERO_SENSORES - 1;
-  } */
 
   // Comprueba el tiempo sin pista y se para automáticamente para evitar daños
   if (sensoresDetectando > 0 && sensoresDetectando < NUMERO_SENSORES) {
@@ -156,16 +131,17 @@ int calcula_posicion_linea(int ultimaPosicion) {
     competicionIniciada = false;
     set_color_RGB(0, 0, 0);
   }
-
+int pos;
   if (numLineas <= 1) {
     if (sensoresDetectando > 0) {
-      return ((sumaSensoresPonderados / sumaSensores) - (NUMERO_SENSORES + 1) * (float)(1000 / 2));
+      pos = ((sumaSensoresPonderados / sumaSensores) - (NUMERO_SENSORES + 1) * (float)(1000 / 2));
     } else {
-      return (ultimaPosicion > 0) ? (1000 * (NUMERO_SENSORES + 1) / 2) : -(1000 * (NUMERO_SENSORES + 1) / 2);
+      pos = (ultimaPosicion > 0) ? (1000 * (NUMERO_SENSORES + 1) / 2) : -(1000 * (NUMERO_SENSORES + 1) / 2);
     }
   } else {
-    return ultimaPosicion;
+    pos = ultimaPosicion;
   }
+  return map(pos, -6500, 6500, -1000, 1000);
 }
 
 /**
@@ -328,7 +304,7 @@ int calcular_PID(int posicionActual) {
 void dar_velocidad(int correccion) {
   if (velocidad > 200) {
     velocidad = 200;
-    set_color_RGB(0,0,255);
+    set_color_RGB(0, 0, 255);
   }
   velocidadIzquierda = velocidad;
   velocidadDerecha = velocidad;
@@ -458,7 +434,7 @@ float calcular_velocidad() {
   float velocidadLinealDerecha = ((2 * 3.1416f * (ticksDerecho - ticksDerechoAnteriores)) / (ENCODER_PPR * 0.02f)) * (float)RUEDAS_RADIO;
   float velocidadLinealIzquierda = ((2 * 3.1416f * (ticksIzquierdo - ticksIzquierdoAnteriores)) / (ENCODER_PPR * 0.02f)) * (float)RUEDAS_RADIO;
   float velocidadLinealMedia = (velocidadLinealIzquierda + velocidadLinealDerecha) / 2.0f;
-  velocidadW = (velocidadLinealIzquierda - velocidadLinealDerecha)/0.120f;
+  velocidadW = (velocidadLinealIzquierda - velocidadLinealDerecha) / 0.120f;
   anguloGiroR += velocidadW * 0.02f;
   anguloGiro = anguloGiroR * 57.2958f;
 
