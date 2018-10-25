@@ -46,7 +46,7 @@
 //////////////
 // SENSORES //
 //////////////
-#define NUMERO_SENSORES 12
+#define NUMERO_SENSORES 8
 // #define NUMERO_SENSORES 6
 #define TIEMPO_SIN_PISTA 200
 #define SENSOR_1 0
@@ -200,7 +200,7 @@ volatile long ticksIzquierdo = 0;
 ///////////////////////////
 int valorSaturacionBajo;
 int valorSaturacionAlto;
-int pinesSensores[] = {SENSOR_1, SENSOR_2, SENSOR_3, SENSOR_4, SENSOR_5, SENSOR_6, SENSOR_7, SENSOR_8, SENSOR_9, SENSOR_10, SENSOR_11, SENSOR_12};
+int pinesSensores[] = {/* SENSOR_1, SENSOR_2, */ SENSOR_3, SENSOR_4, SENSOR_5, SENSOR_6, SENSOR_7, SENSOR_8, SENSOR_9, SENSOR_10/* , SENSOR_11, SENSOR_12 */};
 // int pinesSensores[] = {/* SENSOR_1, SENSOR_2, SENSOR_3, */ SENSOR_4, SENSOR_5, SENSOR_6, SENSOR_7, SENSOR_8, SENSOR_9 /* , SENSOR_10, SENSOR_11, SENSOR_12 */};
 int pinesSensoresLaterales[] = {SENSOR_IZQUIERDO, SENSOR_DERECHO};
 int posicionMaxima = 6500;
@@ -276,6 +276,15 @@ void setup() {
 long tiempo = 0;
 int numeroSensoresPista;
 void loop() {
+  
+  // for(int s = 0; s < NUMERO_SENSORES; s++)
+  // {
+  //   Serial.print(mux_analog_read_map(pinesSensores[s], s));
+  //   Serial.print("\t");
+  // }
+  // Serial.print("\n");
+  // delay(50);
+  // return;
   // CalibracionPID.update();
   if (!competicionIniciada) {
     btn_cruceta_simple();
