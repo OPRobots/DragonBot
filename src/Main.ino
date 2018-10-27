@@ -161,6 +161,8 @@ long ultimaBateria = 0;
 bool avisoBateria = false;
 int intervaloAvisoBateria = 500;
 int velocidadSuccionBase = 50;
+long millisInitESC = -1;
+bool ESCIniciado = false;
 
 //////////////////////////
 // VARIABLES DE CONTROL //
@@ -267,11 +269,11 @@ ExponentialFilter<long> filtroPosicion(12, 0);
 
 void setup() {
   inicia_todo();
+  inicia_timer_Brushless();
   nivel_bateria(false);
   calibra_sensores();
   delay(100);
-  inicia_timers();
-  delay(100);
+  inicia_timer_PID();
 }
 long tiempo = 0;
 int numeroSensoresPista;
