@@ -46,7 +46,7 @@
 //////////////
 // SENSORES //
 //////////////
-#define NUMERO_SENSORES 12
+#define NUMERO_SENSORES 8
 // #define NUMERO_SENSORES 6
 #define TIEMPO_SIN_PISTA 200
 #define SENSOR_1 0
@@ -161,6 +161,8 @@ long ultimaBateria = 0;
 bool avisoBateria = false;
 int intervaloAvisoBateria = 500;
 int velocidadSuccionBase = 50;
+long millisInitESC = -1;
+bool ESCIniciado = false;
 
 //////////////////////////
 // VARIABLES DE CONTROL //
@@ -200,7 +202,7 @@ volatile long ticksIzquierdo = 0;
 ///////////////////////////
 int valorSaturacionBajo;
 int valorSaturacionAlto;
-int pinesSensores[] = {SENSOR_1, SENSOR_2, SENSOR_3, SENSOR_4, SENSOR_5, SENSOR_6, SENSOR_7, SENSOR_8, SENSOR_9, SENSOR_10, SENSOR_11, SENSOR_12};
+int pinesSensores[] = {/* SENSOR_1, SENSOR_2, */ SENSOR_3, SENSOR_4, SENSOR_5, SENSOR_6, SENSOR_7, SENSOR_8, SENSOR_9, SENSOR_10/* , SENSOR_11, SENSOR_12 */};
 // int pinesSensores[] = {/* SENSOR_1, SENSOR_2, SENSOR_3, */ SENSOR_4, SENSOR_5, SENSOR_6, SENSOR_7, SENSOR_8, SENSOR_9 /* , SENSOR_10, SENSOR_11, SENSOR_12 */};
 int pinesSensoresLaterales[] = {SENSOR_IZQUIERDO, SENSOR_DERECHO};
 int posicionMaxima = 6500;
@@ -255,6 +257,10 @@ int crucetaCombinaciones[] = {CRUCETA_ARRIBA,
                               CRUCETA_DERECHA_ABAJO,
                               CRUCETA_ABAJO_IZQUIERDA,
                               CRUCETA_IZQUIERDA_ARRIBA};
+#define NUMERO_VELOCIDADES 9;
+int velocidad_menu = 0;
+#define NUMERP_VELOCIDADES_SUCCION 9;
+int velocidad_succion_menu = 0;
 
 //////////////////////////////
 // INICIALIZACION LIBRERIAS //
@@ -264,21 +270,29 @@ HardwareTimer TimerBrushless(3);
 PIDfromBT CalibracionPID(&kpVelocidad, &velocidadMsIdeal, &kdVelocidad, &velocidad, &posicionIdeal, &velocidadSuccion, DEBUG);
 ExponentialFilter<long> filtroBateria(15, 0);
 ExponentialFilter<long> filtroPosicion(12, 0);
-
+bool timerPID_pause = false;
 void setup() {
   inicia_todo();
+  inicia_timer_Brushless();
   nivel_bateria(false);
   calibra_sensores();
-  delay(100);
-  inicia_timers();
   delay(100);
 }
 long tiempo = 0;
 int numeroSensoresPista;
 void loop() {
+  
+  // for(int s = 0; s < NUMERO_SENSORES; s++)
+  // {
+  //   Serial.print(mux_analog_read_map(pinesSensores[s], s));
+  //   Serial.print("\t");
+  // }
+  // Serial.print("\n");
+  // delay(50);
+  // return;
   // CalibracionPID.update();
   if (!competicionIniciada) {
-    btn_cruceta_simple();
+    btn_cruceta();
     if (!btn_pulsado()) {
       delay(100);
       if (btn_pulsado()) {
@@ -293,21 +307,21 @@ void loop() {
           r = map(tiempoPasado, 0, MILLIS_INICIO, 255, 0);
           g = map(tiempoPasado, 0, 1000, 0, 255);
           set_color_RGB(r, g, 0);
-          if ((tiempoPasado > MILLIS_INICIO * 0.75f || MILLIS_INICIO == 0) && velocidadSuccion == 0) {
+          if ((tiempoPasado > MILLIS_INICIO * 0.75f || MILLIS_INICIO == 0) && velocidadSuccion == 0 && velocidadSuccionBase > 0) {
             velocidadSuccion = 50;
           }
         }
         ticksDerecho = 0;
         ticksIzquierdo = 0;
+        ticksDerechoAnteriores = 0;
+        ticksIzquierdoAnteriores = 0;
+        velocidadMs = 0;
+        inicia_timer_PID();
         competicionIniciada = true;
         set_color_RGB(0, 0, 0);
-        if (velocidadMsIdealBase == 0) {
-          velocidad = velocidadBase;
-        } else {
           velocidadMsIdeal = velocidadMsIdealBase;
           velocidadSuccion = velocidadSuccionBase;
         }
       }
     }
   }
-}
