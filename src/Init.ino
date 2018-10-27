@@ -102,33 +102,3 @@ void inicia_misc() {
   pinMode(NIVEL_BATERIA, INPUT);
 }
 
-/**
- * Configura el ESC del Brushless para la succión
- */
-void inicia_brushless() {
-  set_color_RGB(0, 0, 25);
-  pinMode(MOTOR_SUCCION, OUTPUT);
-  long millisIni = millis();
-  do {
-    digitalWrite(MOTOR_SUCCION, HIGH);
-    delay(2);
-    digitalWrite(MOTOR_SUCCION, LOW);
-    delay(18);
-  } while (millis() < millisIni + 5000);
-  millisIni = millis();
-  do {
-    digitalWrite(MOTOR_SUCCION, HIGH);
-    delay(1);
-    digitalWrite(MOTOR_SUCCION, LOW);
-    delay(19);
-  } while (millis() < millisIni + 5000);
-  set_color_RGB(0, 0, 0);
-}
-
-/**
- * Configuración de todos los Timers en uso
- */
-void inicia_timers() {
-  inicia_timer_PID();
-  inicia_timer_Brushless();
-}
