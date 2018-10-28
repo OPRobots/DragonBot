@@ -10,27 +10,25 @@
 #include <PIDfromBT.h>
 #include <Wire.h>
 
+////////////////////////
+// SELECTOR DE ROBOT  //
+////////////////////////
+// #define DRAGON_A 1
+#define DRAGON_B 1
+
+#define MORRO_ANCHO 1
+// #define MORRO_ESTRECHO 1
+
 ////////////
 // MODOS  //
 ////////////
 #define MODO_LINEA 1
-#define MODO_DEGRADADO 2
 
 #define LINEA_NEGRA 1
 #define LINEA_BLANCA 2
 
 #define LIPO_2S 1
 #define LIPO_3S 2
-
-#define CALIBRADO_MAXIMO_SENSORES_LINEA 4000
-#define CALIBRADO_MINIMO_SENSORES_LINEA 0
-#define SATURACION_MAXIMO_SENSORES_LINEA 3000
-#define SATURACION_MINIMO_SENSORES_LINEA 1000
-
-#define CALIBRADO_MAXIMO_SENSORES_DEGRADADO 4000
-#define CALIBRADO_MINIMO_SENSORES_DEGRADADO 0
-#define SATURACION_MAXIMO_SENSORES_DEGRADADO 4000
-#define SATURACION_MINIMO_SENSORES_DEGRADADO 5
 
 ///////////////////
 // CONFIGURACION //
@@ -40,15 +38,15 @@
 #define LINEA LINEA_NEGRA
 #define LIPO LIPO_3S
 #define TIEMPO_CALIBRADO 2500
-#define NUMERO_SECTORES 2
 #define CALIBRAR_SENSORES true
 
 //////////////
 // SENSORES //
 //////////////
-#define NUMERO_SENSORES 8
-// #define NUMERO_SENSORES 6
 #define TIEMPO_SIN_PISTA 200
+
+#ifdef MORRO_ANCHO
+#define NUMERO_SENSORES 8
 #define SENSOR_1 0
 #define SENSOR_2 1
 #define SENSOR_3 2
@@ -61,11 +59,31 @@
 #define SENSOR_10 11
 #define SENSOR_11 10
 #define SENSOR_12 9
-#define SENSOR_FRONTAL PA7
-#define SENSOR_DERECHO 7
-#define SENSOR_IZQUIERDO 15
+
+#elif MORRO_ESTRECHO
+#define NUMERO_SENSORES 14
+#define SENSOR_1 0
+#define SENSOR_2 1
+#define SENSOR_3 2
+#define SENSOR_4 3
+#define SENSOR_5 4
+#define SENSOR_6 5
+#define SENSOR_7 7
+#define SENSOR_8 15
+#define SENSOR_9 14
+#define SENSOR_10 13
+#define SENSOR_11 12
+#define SENSOR_12 11
+#define SENSOR_13 10
+#define SENSOR_14 9
+#endif
 #define SENSOR_ROBOTRACER_DERECHO PA4
 #define SENSOR_ROBOTRACER_IZQUIERDO PA5
+
+#define CALIBRADO_MAXIMO_SENSORES_LINEA 4000
+#define CALIBRADO_MINIMO_SENSORES_LINEA 0
+#define SATURACION_MAXIMO_SENSORES_LINEA 3000
+#define SATURACION_MINIMO_SENSORES_LINEA 1000
 
 ///////////////////
 // MULTIPLEXADOR //
@@ -79,22 +97,23 @@
 /////////////
 // MOTORES //
 /////////////
-// DRAGON A
-// #define MOTOR_DERECHO_ADELANTE PB15
-// #define MOTOR_DERECHO_ATRAS PB14
-// #define MOTOR_IZQUIERDO_ADELANTE PB13
-// #define MOTOR_IZQUIERDO_ATRAS PB12
-// DRAGON B
+#ifdef DRAGON_A
+#define MOTOR_DERECHO_ADELANTE PB15
+#define MOTOR_DERECHO_ATRAS PB14
+#define MOTOR_IZQUIERDO_ADELANTE PB13
+#define MOTOR_IZQUIERDO_ATRAS PB12
+#endif
+
+#ifdef DRAGON_B
 #define MOTOR_DERECHO_ADELANTE PB14
 #define MOTOR_DERECHO_ATRAS PB15
 #define MOTOR_IZQUIERDO_ADELANTE PB13
 #define MOTOR_IZQUIERDO_ATRAS PB12
+#endif
 
 #define MOTOR_DERECHO_PWM PA8
 #define MOTOR_IZQUIERDO_PWM PB8
 #define MOTOR_SUCCION PB9
-#define COMPENSACION_DERECHO 0
-#define COMPENSACION_IZQUIERDO 14
 
 //////////////
 // ENCODERS //
@@ -108,7 +127,6 @@
 // MPU9250  //
 //////////////
 #define MPU9250_ADDRESS 0x68
-#define MAG_ADDRESS 0x0C
 
 #define GYRO_FULL_SCALE_250_DPS 0x00
 #define GYRO_FULL_SCALE_500_DPS 0x08
@@ -127,6 +145,14 @@
 #define RED_RGB_G PA2
 #define RED_RGB_B PA3
 
+///////////////////////////////////
+// VARIABLES DE CONTROL DE LEDS  //
+///////////////////////////////////
+int colorRGB[] = {255, 0, 0};
+int colorDesc = 0;
+int colorAsc = 1;
+long ultimoCambioRGB = 0;
+
 /////////////
 // BOTONES //
 /////////////
@@ -136,31 +162,27 @@
 //////////
 // MISC //
 //////////
-#define CHOP_PIN PB0
 #define NIVEL_BATERIA PA0
 
 ///////////////
 // VARIABLES //
 ///////////////
-int velocidad = 0;
-int velocidadBase = 70;
 float anguloGiro = 0;
 float anguloGiroR = 0;
 float velocidadW = 0;
 float velocidadMs = 0;
-float velocidadMsIdeal = 0;
-float velocidadMsIdealBase = 0;
 float posXm = 0;
 float posYm = 0;
+int velocidad = 0;
+float velocidadMsIdeal = 0;
+float velocidadMsIdealBase = 0;
 int velocidadSuccion = 0;
+int velocidadSuccionBase = 50;
 int velocidadMaxima = 255;
-float velocidadDerecha = 0;
-float velocidadIzquierda = 0;
 long ultimaLinea = 0;
 long ultimaBateria = 0;
 bool avisoBateria = false;
 int intervaloAvisoBateria = 500;
-int velocidadSuccionBase = 50;
 long millisInitESC = -1;
 bool ESCIniciado = false;
 
@@ -172,19 +194,13 @@ int posicionIdeal = 0;
 int posicionIdealObjetivo;
 float errorAnterior = 0;
 float integralErrores = 0;
-float kp = 0.03f;
-float ki = 0;
-float kd = 4.0f;
-float kpFrontal = 0.15f;
-float kiFrontal = 0;
-float kdFrontal = 4.0f;
+float kp;
+float ki;
+float kd;
 float kpVelocidad = 5;
 float kdVelocidad = 10;
 float ultimoErrorVelocidad = 0;
 int correccion = 0;
-long ultimoControlBrushless = 0;
-int lineaPrincipal[] = {-1, -1};
-bool mantenerCorreccion = false;
 
 ////////////////////////////
 // VARIABLES DE ENCODERS  //
@@ -202,31 +218,31 @@ volatile long ticksIzquierdo = 0;
 ///////////////////////////
 int valorSaturacionBajo;
 int valorSaturacionAlto;
+#ifdef MORRO_ANCHO
 int pinesSensores[] = {/* SENSOR_1, SENSOR_2, */ SENSOR_3, SENSOR_4, SENSOR_5, SENSOR_6, SENSOR_7, SENSOR_8, SENSOR_9, SENSOR_10/* , SENSOR_11, SENSOR_12 */};
-// int pinesSensores[] = {/* SENSOR_1, SENSOR_2, SENSOR_3, */ SENSOR_4, SENSOR_5, SENSOR_6, SENSOR_7, SENSOR_8, SENSOR_9 /* , SENSOR_10, SENSOR_11, SENSOR_12 */};
-int pinesSensoresLaterales[] = {SENSOR_IZQUIERDO, SENSOR_DERECHO};
+int valoresSensores[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+int valoresSensoresRaw[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+#elif MORRO_ESTRECHO
+int pinesSensores[] = {SENSOR_1, SENSOR_2, SENSOR_3, SENSOR_4, SENSOR_5, SENSOR_6, SENSOR_7, SENSOR_8, SENSOR_9, SENSOR_10, SENSOR_11, SENSOR_12, SENSOR_13, SENSOR_14};
+int valoresSensores[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+int valoresSensoresRaw[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+#endif
 int posicionMaxima = 6500;
 int posicionMinima = -6500;
-int posicionDegradadoMaxima = 0;
-int valoresSensores[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-int valoresSensoresRaw[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-#define SENSOR_FRONTAL_IDEAL 750;
-int valorSensorFrontal = 0;
-int inicioLineaAnterior = 0;
-int finLineaAnterior = 0;
-#define NUMERO_CALIBRACIONES_DEGRADADO 21
-int calibradoDegradado[NUMERO_CALIBRACIONES_DEGRADADO][NUMERO_SENSORES];
 
 ///////////////////////////////
 // VARIABLES DE CALIBRACIÓN  //
 ///////////////////////////////
-int valoresCalibracionMinimos[] = {4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096};
-int valoresCalibracionMaximos[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+#ifdef MORRO_ANCHO
+int valoresCalibracionMinimos[] = {4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096};
+int valoresCalibracionMaximos[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+#elif MORRO_ESTRECHO
+int valoresCalibracionMinimos[] = {4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096};
+int valoresCalibracionMaximos[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+#endif
 int umbralesCalibracionSensores[NUMERO_SENSORES];
 int valorCalibradoMaximo;
 int valorCalibradoMinimo;
-// int valoresCalibracionMaximos[] = {2263, 2429, 2312, 2333, 2399, 2592, 2257, 2385, 2912, 3512, 3471, 3972};
-// int valoresCalibracionMinimos[] = {197, 201, 199, 198, 201, 204, 196, 202, 202, 208, 195, 207};
 
 ///////////////////////////////
 // VARIABLES DE COMPETICIÓN  //
@@ -257,20 +273,20 @@ int crucetaCombinaciones[] = {CRUCETA_ARRIBA,
                               CRUCETA_DERECHA_ABAJO,
                               CRUCETA_ABAJO_IZQUIERDA,
                               CRUCETA_IZQUIERDA_ARRIBA};
-#define NUMERO_VELOCIDADES 9;
+#define NUMERO_VELOCIDADES 9
 int velocidad_menu = 0;
-#define NUMERP_VELOCIDADES_SUCCION 9;
+#define NUMERO_VELOCIDADES_SUCCION 9
 int velocidad_succion_menu = 0;
 
 //////////////////////////////
 // INICIALIZACION LIBRERIAS //
 //////////////////////////////
 HardwareTimer TimerPID(2);
-HardwareTimer TimerBrushless(3);
-PIDfromBT CalibracionPID(&kpVelocidad, &velocidadMsIdeal, &kdVelocidad, &velocidad, &posicionIdeal, &velocidadSuccion, DEBUG);
-ExponentialFilter<long> filtroBateria(15, 0);
-ExponentialFilter<long> filtroPosicion(12, 0);
 bool timerPID_pause = false;
+HardwareTimer TimerBrushless(3);
+PIDfromBT CalibracionPID(&kp, &ki, &kd, &velocidad, &posicionIdeal, &velocidadSuccion, DEBUG);
+ExponentialFilter<long> filtroBateria(15, 0);
+
 void setup() {
   inicia_todo();
   inicia_timer_Brushless();
@@ -278,18 +294,8 @@ void setup() {
   calibra_sensores();
   delay(100);
 }
-long tiempo = 0;
-int numeroSensoresPista;
+
 void loop() {
-  
-  // for(int s = 0; s < NUMERO_SENSORES; s++)
-  // {
-  //   Serial.print(mux_analog_read_map(pinesSensores[s], s));
-  //   Serial.print("\t");
-  // }
-  // Serial.print("\n");
-  // delay(50);
-  // return;
   // CalibracionPID.update();
   if (!competicionIniciada) {
     btn_cruceta();
@@ -319,9 +325,9 @@ void loop() {
         inicia_timer_PID();
         competicionIniciada = true;
         set_color_RGB(0, 0, 0);
-          velocidadMsIdeal = velocidadMsIdealBase;
-          velocidadSuccion = velocidadSuccionBase;
-        }
+        velocidadMsIdeal = velocidadMsIdealBase;
+        velocidadSuccion = velocidadSuccionBase;
       }
     }
   }
+}

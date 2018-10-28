@@ -11,14 +11,6 @@ int mux_analog_read(byte canalMux) {
   return analogRead(MUX_LECTURA);
 }
 
-int mux_digital_read(byte canalMux) {
-  digitalWrite(MUX_CANAL_0, bitRead(canalMux, 0));
-  digitalWrite(MUX_CANAL_1, bitRead(canalMux, 1));
-  digitalWrite(MUX_CANAL_2, bitRead(canalMux, 2));
-  digitalWrite(MUX_CANAL_3, bitRead(canalMux, 3));
-  return digitalRead(MUX_LECTURA);
-}
-
 /**
  * Función de lectura del sensor indicado mapeando los máximos y mínimos del mismo
  * @param  canalMux Canal del Multiplexador correspondiente al sensor que se desea leer.
@@ -42,15 +34,6 @@ void lectura_sensores_calibrados() {
     } else if (valoresSensores[sensor] < /* umbralesCalibracionSensores[sensor] */1000) {
       valoresSensores[sensor] = valorCalibradoMinimo;
     }
-    if (LINEA == LINEA_BLANCA) {
-      valoresSensores[sensor] = valorCalibradoMaximo - valoresSensores[sensor];
-    }
-  }
-}
-
-void lectura_sensores() {
-  for (int sensor = 0; sensor < NUMERO_SENSORES; sensor++) {
-    valoresSensores[sensor] = mux_analog_read(pinesSensores[sensor]);
     if (LINEA == LINEA_BLANCA) {
       valoresSensores[sensor] = valorCalibradoMaximo - valoresSensores[sensor];
     }
