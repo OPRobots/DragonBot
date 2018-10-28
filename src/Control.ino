@@ -86,9 +86,6 @@ int calcular_posicion(int ultimaPosicion) {
   case MODO_LINEA:
     return calcula_posicion_linea(ultimaPosicion);
     break;
-  case MODO_DEGRADADO:
-    return calcula_posicion_degradado(ultimaPosicion);
-    break;
   }
   return 0;
 }
@@ -104,15 +101,12 @@ int calcula_posicion_linea(int ultimaPosicion) {
   unsigned long sumaSensoresPonderados = 0;
   unsigned long sumaSensores = 0;
   int sensoresDetectando = 0;
-  int numLineas = 0;
   bool detectandoAnterior = false;
 
-  for (int sensor = 0; (sensor < NUMERO_SENSORES && numLineas < 2); sensor++) {
-
+  for (int sensor = 0; sensor < NUMERO_SENSORES; sensor++) {
     if (valoresSensores[sensor] > umbralesCalibracionSensores[sensor]) {
       sensoresDetectando++;
     }
-
     // Realiza los cálculos para la posición
     sumaSensoresPonderados += (sensor + 1) * valoresSensores[sensor] * 1000L;
     sumaSensores += (long)valoresSensores[sensor];
@@ -126,132 +120,13 @@ int calcula_posicion_linea(int ultimaPosicion) {
     set_color_RGB(0, 0, 0);
     pausa_timer_PID();
   }
-int pos;
-  if (numLineas <= 1) {
-    if (sensoresDetectando > 0) {
-      pos = ((sumaSensoresPonderados / sumaSensores) - (NUMERO_SENSORES + 1) * (float)(1000 / 2));
-    } else {
-      pos = (ultimaPosicion > 0) ? (1000 * (NUMERO_SENSORES + 1) / 2) : -(1000 * (NUMERO_SENSORES + 1) / 2);
-    }
+  int pos;
+  if (sensoresDetectando > 0) {
+    pos = ((sumaSensoresPonderados / sumaSensores) - (NUMERO_SENSORES + 1) * (float)(1000 / 2));
   } else {
-    pos = ultimaPosicion;
+    pos = (ultimaPosicion > 0) ? (1000 * (NUMERO_SENSORES + 1) / 2) : -(1000 * (NUMERO_SENSORES + 1) / 2);
   }
   return map(pos, -6500, 6500, -1000, 1000);
-}
-
-/**
- * Función para realizar el cálculo de la posición en base a la lectura de los sensores.
- * @param  ultimaPosicion Última posición calculada para usar en caso de pérdida de degradado
- * @return [int]           Posición actual sobre el degradado
- */
-int calcula_posicion_degradado(int ultimaPosicion) {
-  lectura_sensores_calibrados();
-  int posicionesSensores[NUMERO_SENSORES];
-  int posicionSensores = 0;
-  numeroSensoresPista = 0;
-  int sensorPistaInicial = -1;
-  int sensorPistaFinal = -1;
-  int posicion = 0;
-
-  for (int sensor = 5; sensor <= 7; sensor++) {
-    bool rangoEncontrado = false;
-    bool sensorEnPista = false;
-    int rangoInicio = 0;
-    int rangoFinal = 0;
-    mantenerCorreccion = false;
-
-    // BUSCAR SENSORES EN PISTA
-    if (valoresSensores[sensor] > 0) {
-      if (valoresSensores[sensor] == 4000) {
-        mantenerCorreccion = true;
-        return ultimaPosicion;
-      }
-      if (sensorPistaInicial < 0) {
-        sensorPistaInicial = sensor;
-      } else {
-        sensorPistaFinal = sensor;
-      }
-      sensorEnPista = true;
-      numeroSensoresPista++;
-    }
-    // numeroSensoresPista = 4;
-    // sensorEnPista = true;
-
-    if (sensorEnPista) {
-      // BUSCAR RANGO DE CALIBRADO
-      for (int calibrado = 0; (calibrado < NUMERO_CALIBRACIONES_DEGRADADO && !rangoEncontrado); calibrado++) {
-        if (calibrado != NUMERO_CALIBRACIONES_DEGRADADO - 1) {
-          if (valoresSensores[sensor] <= calibradoDegradado[calibrado][sensor] && valoresSensores[sensor] >= calibradoDegradado[calibrado + 1][sensor]) {
-            rangoEncontrado = true;
-            rangoInicio = calibrado;
-            rangoFinal = calibrado + 1;
-          }
-        }
-      }
-
-      // CALCULAR DISTANCIA
-      if (rangoEncontrado) {
-        posicionesSensores[sensor] = map(valoresSensores[sensor], calibradoDegradado[rangoInicio][sensor], calibradoDegradado[rangoFinal][sensor], rangoInicio * 1000, rangoFinal * 1000);
-      } else {
-        if (valoresSensores[sensor] > calibradoDegradado[0][sensor]) {
-          posicionesSensores[sensor] = 0;
-        } else {
-          posicionesSensores[sensor] = 20000;
-        }
-      }
-
-      // ASIGNAR OFFSET EN FUCIÓN DE NUMERO DE SENSOR
-      posicionesSensores[sensor] += (((numeroSensoresPista + 1) / 2.0f) - (sensor + 1)) * 1000;
-      posicionSensores += posicionesSensores[sensor];
-    }
-  }
-
-  if (sensorPistaFinal < 0) {
-    sensorPistaFinal = 7;
-  }
-  if (numeroSensoresPista > 0) {
-    posicion = posicionDegradadoMaxima - (posicionSensores / numeroSensoresPista);
-    posicion = posicion / 100;
-  } else {
-    posicion = 250;
-  }
-
-  // DAR SIGNO EN FUNCIÓN DE SENSORES DE EXTREMO
-
-  if (numeroSensoresPista > 0) {
-    ultimaLinea = millis();
-  } else if (millis() > (ultimaLinea + TIEMPO_SIN_PISTA)) {
-    // kp = 0;
-    // ki = 0;
-    // kd = 0;
-    velocidad = 0;
-    velocidadSuccion = 0;
-    competicionIniciada = false;
-    set_color_RGB(0, 0, 0);
-  }
-
-  if (numeroSensoresPista >= 2) {
-    if (valoresSensores[sensorPistaInicial] > valoresSensores[sensorPistaFinal]) {
-      posicion = -posicion;
-    }
-  } else {
-    if (ultimaPosicion < 0) {
-      posicion = -posicion;
-    }
-  }
-
-  // Evita cambios de signo en los extremos de la pista
-  if ((ultimaPosicion < 0 && posicion >= 0) || (ultimaPosicion >= 0 && posicion < 0)) {
-    if (abs(posicion) > 2000 || abs(ultimaPosicion) > 2000) {
-      if (posicionIdeal != 0) {
-        posicion = -posicion;
-      }
-    }
-  }
-
-  bool negativo = posicion < 0 ? true : false;
-  posicion = map(abs(posicion), 150, 220, 0, 6500) / 100 * 100;
-  return negativo ? -posicion : posicion;
 }
 
 /**
@@ -266,13 +141,6 @@ int calcular_PID(int posicionActual) {
   int error = 0;
   error = posicionIdeal - posicionActual;
 
-  if (mantenerCorreccion) {
-    return correccion;
-  }
-
-  if (PISTA == MODO_DEGRADADO) {
-    error = -error;
-  }
   p = kp * error;
   if (error < 100) {
     integralErrores += error;
@@ -283,13 +151,7 @@ int calcular_PID(int posicionActual) {
   }
   d = kd * (error - errorAnterior);
   errorAnterior = error;
-  if (true || velocidad > 0) {
-    return p + i + d;
-  } else {
-    errorAnterior = 0;
-    integralErrores = 0;
-    return 0;
-  }
+  return p + i + d;
 }
 
 /**
@@ -301,44 +163,43 @@ void dar_velocidad(int correccion) {
     velocidad = 200;
     set_color_RGB(0, 0, 255);
   }
-  velocidadIzquierda = velocidad;
-  velocidadDerecha = velocidad;
-  if (velocidad > 0) {
+  int velocidadIzquierda = velocidad;
+  int velocidadDerecha = velocidad;
+  if (!timerPID_pause) {
     velocidadIzquierda = velocidadIzquierda - correccion;
     velocidadDerecha = velocidadDerecha + correccion;
   }
 
-  int pin_motor_derecho = MOTOR_DERECHO_ADELANTE;
-  int pin_motor_izquierdo = MOTOR_IZQUIERDO_ADELANTE;
+  int MOTOR_DERECHO_ADELANTE_STATE = HIGH;
+  int MOTOR_DERECHO_ATRAS_STATE = LOW;
+  int MOTOR_IZQUIERDO_ADELANTE_STATE = HIGH;
+  int MOTOR_IZQUIERDO_ATRAS_STATE = LOW;
 
   if (velocidadDerecha > velocidadMaxima) {
     velocidadDerecha = velocidadMaxima;
-    pin_motor_derecho = MOTOR_DERECHO_ADELANTE;
   } else if (velocidadDerecha < 0) {
     velocidadDerecha = abs(velocidadDerecha);
     if (velocidadDerecha > velocidadMaxima) {
       velocidadDerecha = velocidadMaxima;
     }
-    pin_motor_derecho = MOTOR_DERECHO_ATRAS;
+    MOTOR_DERECHO_ADELANTE_STATE = LOW;
+    MOTOR_DERECHO_ATRAS_STATE = HIGH;
   }
   if (velocidadIzquierda > velocidadMaxima) {
     velocidadIzquierda = velocidadMaxima;
-    pin_motor_izquierdo = MOTOR_IZQUIERDO_ADELANTE;
   } else if (velocidadIzquierda < 0) {
     velocidadIzquierda = abs(velocidadIzquierda);
     if (velocidadIzquierda > velocidadMaxima) {
       velocidadIzquierda = velocidadMaxima;
     }
-    pin_motor_izquierdo = MOTOR_IZQUIERDO_ATRAS;
+    MOTOR_IZQUIERDO_ADELANTE_STATE = LOW;
+    MOTOR_IZQUIERDO_ATRAS_STATE = HIGH;
   }
 
-  digitalWrite(MOTOR_DERECHO_ADELANTE, LOW);
-  digitalWrite(MOTOR_DERECHO_ATRAS, LOW);
-  digitalWrite(MOTOR_IZQUIERDO_ADELANTE, LOW);
-  digitalWrite(MOTOR_IZQUIERDO_ATRAS, LOW);
-
-  digitalWrite(pin_motor_derecho, HIGH);
-  digitalWrite(pin_motor_izquierdo, HIGH);
+  digitalWrite(MOTOR_DERECHO_ADELANTE, MOTOR_DERECHO_ADELANTE_STATE);
+  digitalWrite(MOTOR_DERECHO_ATRAS, MOTOR_DERECHO_ATRAS_STATE);
+  digitalWrite(MOTOR_IZQUIERDO_ADELANTE, MOTOR_IZQUIERDO_ADELANTE_STATE);
+  digitalWrite(MOTOR_IZQUIERDO_ATRAS, MOTOR_IZQUIERDO_ATRAS_STATE);
 
   analogWrite(MOTOR_DERECHO_PWM, velocidadDerecha);
   analogWrite(MOTOR_IZQUIERDO_PWM, velocidadIzquierda);
@@ -432,16 +293,9 @@ float calcular_velocidad() {
   velocidadW = (velocidadLinealIzquierda - velocidadLinealDerecha) / 0.120f;
   anguloGiroR += velocidadW * 0.02f;
   anguloGiro = anguloGiroR * 57.2958f;
-
   float avance = velocidadLinealMedia * 0.02f;
   posXm += avance * cos(anguloGiroR);
   posYm += avance * sin(anguloGiroR);
-  /* if(ticksDerecho>2000){
-    if(abs(posXm) < 0.2f && abs(posYm)< 0.2f){
-      velocidadMsIdeal = 0;
-      set_color_RGB(0,255,0);
-    }
-  } */
   ticksDerechoAnteriores = ticksDerecho;
   ticksIzquierdoAnteriores = ticksIzquierdo;
   return velocidadLinealMedia;
@@ -456,6 +310,5 @@ int ajustar_velocidad_encoders() {
   float p = kpVelocidad * errorVelocidad;
   float d = kdVelocidad * (errorVelocidad - ultimoErrorVelocidad);
   ultimoErrorVelocidad = errorVelocidad;
-
   return p + d;
 }

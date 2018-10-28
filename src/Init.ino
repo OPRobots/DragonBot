@@ -28,7 +28,6 @@ void inicia_sensores() {
   pinMode(MUX_CANAL_2, OUTPUT);
   pinMode(MUX_CANAL_3, OUTPUT);
   pinMode(MUX_LECTURA, INPUT);
-  pinMode(SENSOR_FRONTAL, INPUT);
   pinMode(SENSOR_ROBOTRACER_DERECHO, INPUT);
   pinMode(SENSOR_ROBOTRACER_IZQUIERDO, INPUT);
 }
@@ -97,8 +96,6 @@ void inicia_switch_boton() {
  * Registra los demás componentes
  */
 void inicia_misc() {
-  pinMode(CHOP_PIN, OUTPUT);
-  digitalWrite(CHOP_PIN, HIGH);
   pinMode(NIVEL_BATERIA, INPUT);
 }
 

@@ -1,19 +1,3 @@
-///////////////////////////////////
-// VARIABLES DE CONTROL DE LEDS  //
-///////////////////////////////////
-int colorRGB[] = {255, 0, 0};
-int colorDesc = 0;
-int colorAsc = 1;
-long ultimoCambioRGB = 0;
-
-/**
- * Función para aplicar un Rainbow al led RGB de la placa principal
- * Esta función aplica un intervalo por defecto de 1 ms
- */
-void set_rainbow_color() {
-  set_rainbow_color(1);
-}
-
 /**
  * Función para aplicar un Rainbow al led RGB de la placa principal
  * @param [int] intervalo Tiempo en ms que transcurre entre cambios de color
