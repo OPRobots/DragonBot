@@ -30,66 +30,120 @@ void btn_cruceta() {
       switch (velocidad_menu) {
       case 0:
         set_color_RGB(0, 255, 0);
-        velocidadMsIdealBase = 1.0;
-        kp = 0.15f;
+        velocidadMsIdealBase = 1.25;
+        #ifdef DRAGON_A
+        kp = 0.10f;
         ki = 0;
-        kd = 20.0f;
+        kd = 5.0f;
+        #elif DRAGON_B
+        kp = 0.2f;
+        ki = 0;
+        kd = 25.0f;
+        #endif
         break;
       case 1:
         set_color_RGB(63, 189, 0);
-        velocidadMsIdealBase = 1.25;
-        kp = 0.15f;
+        velocidadMsIdealBase = 1.5;
+        #ifdef DRAGON_A
+        kp = 0.10f;
         ki = 0;
-        kd = 20.0f;
+        kd = 5.0f;
+        #elif DRAGON_B
+        kp = 0.2f;
+        ki = 0;
+        kd = 25.0f;
+        #endif
         break;
       case 2:
         set_color_RGB(126, 126, 0);
-        velocidadMsIdealBase = 1.5;
-        kp = 0.15f;
+        velocidadMsIdealBase = 1.75;
+        #ifdef DRAGON_A
+        kp = 0.10f;
         ki = 0;
-        kd = 20.0f;
+        kd = 5.0f;
+        #elif DRAGON_B
+        kp = 0.2f;
+        ki = 0;
+        kd = 25.0f;
+        #endif
         break;
       case 3:
         set_color_RGB(189, 63, 0);
-        velocidadMsIdealBase = 1.75;
-        kp = 0.15f;
+        velocidadMsIdealBase = 2.0;
+        #ifdef DRAGON_A
+        kp = 0.10f;
         ki = 0;
-        kd = 20.0f;
+        kd = 5.0f;
+        #elif DRAGON_B
+        kp = 0.2f;
+        ki = 0;
+        kd = 25.0f;
+        #endif
         break;
       case 4:
         set_color_RGB(255, 0, 0);
-        velocidadMsIdealBase = 2.0;
-        kp = 0.15f;
+        velocidadMsIdealBase = 2.25;
+        #ifdef DRAGON_A
+        kp = 0.10f;
         ki = 0;
-        kd = 20.0f;
+        kd = 5.0f;
+        #elif DRAGON_B
+        kp = 0.2f;
+        ki = 0;
+        kd = 25.0f;
+        #endif
         break;
       case 5:
         set_color_RGB(255, 0, 63);
         velocidadMsIdealBase = 2.5;
-        kp = 0.15f;
+        #ifdef DRAGON_A
+        kp = 0.10f;
         ki = 0;
-        kd = 20.0f;
+        kd = 5.0f;
+        #elif DRAGON_B
+        kp = 0.2f;
+        ki = 0;
+        kd = 25.0f;
+        #endif
         break;
       case 6:
         set_color_RGB(255, 0, 126);
         velocidadMsIdealBase = 2.75;
-        kp = 0.15f;
+        #ifdef DRAGON_A
+        kp = 0.10f;
         ki = 0;
-        kd = 20.0f;
+        kd = 5.0f;
+        #elif DRAGON_B
+        kp = 0.2f;
+        ki = 0;
+        kd = 25.0f;
+        #endif
         break;
       case 7:
         set_color_RGB(255, 0, 189);
         velocidadMsIdealBase = 3.0;
-        kp = 0.15f;
+        #ifdef DRAGON_A
+        kp = 0.10f;
         ki = 0;
-        kd = 20.0f;
+        kd = 5.0f;
+        #elif DRAGON_B
+        kp = 0.2f;
+        ki = 0;
+        kd = 25.0f;
+        #endif
         break;
       case 8:
         set_color_RGB(255, 0, 255);
         velocidadMsIdealBase = 3.25;
-        kp = 0.15f;
+        #ifdef DRAGON_A
+        kp = 0.10f;
         ki = 0;
-        kd = 20.0f;
+        kd = 5.0f;
+        #elif DRAGON_B
+        kp = 0.2f;
+        ki = 0;
+        kd = 25.0f;
+        #endif
         break;
       }
       break;
@@ -101,38 +155,39 @@ void btn_cruceta() {
         set_color_RGB(0, 255, 0);
         break;
       case 1:
-        velocidadSuccionBase = LIPO == LIPO_2S ? 0 : 0;
+        velocidadSuccionBase = LIPO == LIPO_2S ? 30 : 15;
         set_color_RGB(63, 189, 0);
         break;
       case 2:
-        velocidadSuccionBase = LIPO == LIPO_2S ? 25 : 17;
+        velocidadSuccionBase = LIPO == LIPO_2S ? 35 : 20;
         set_color_RGB(126, 126, 0);
         break;
       case 3:
-        velocidadSuccionBase = LIPO == LIPO_2S ? 30 : 20;
+        velocidadSuccionBase = LIPO == LIPO_2S ? 40 : 25;
         set_color_RGB(189, 63, 0);
         break;
       case 4:
-        velocidadSuccionBase = LIPO == LIPO_2S ? 50 : 34;
+        velocidadSuccionBase = LIPO == LIPO_2S ? 45 : 30;
         set_color_RGB(255, 0, 0);
         break;
       case 5:
-        velocidadSuccionBase = LIPO == LIPO_2S ? 80 : 54;
+        velocidadSuccionBase = LIPO == LIPO_2S ? 50 : 35;
         set_color_RGB(255, 0, 63);
         break;
       case 6:
-        velocidadSuccionBase = LIPO == LIPO_2S ? 95 : 64;
+        velocidadSuccionBase = LIPO == LIPO_2S ? 55 : 40;
         set_color_RGB(255, 0, 126);
         break;
       case 7:
-        velocidadSuccionBase = LIPO == LIPO_2S ? 110 : 74;
+        velocidadSuccionBase = LIPO == LIPO_2S ? 60 : 45;
         set_color_RGB(255, 0, 189);
         break;
       case 8:
-        velocidadSuccionBase = LIPO == LIPO_2S ? 130 : 87;
+        velocidadSuccionBase = LIPO == LIPO_2S ? 65 : 50;
         set_color_RGB(255, 0, 255);
         break;
       }
+      velocidadSuccionBase = map(velocidadSuccionBase, 0, 100, 0,255);
       break;
     }
     do {
