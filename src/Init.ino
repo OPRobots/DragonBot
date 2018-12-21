@@ -15,6 +15,8 @@ void inicia_todo() {
   delay(100);
   inicia_switch_boton();
   delay(100);
+  asigna_prioridades_timers();
+  delay(100);
 }
 
 /**
@@ -86,5 +88,20 @@ void inicia_switch_boton() {
  */
 void inicia_misc() {
   pinMode(NIVEL_BATERIA, INPUT);
+}
+
+/**
+ * Asigna las prioridades a los timers para asegurarse de que no se solapan las ejecuciones.
+ */
+void asigna_prioridades_timers(){
+  // Prioridades máximas a Timers PWM
+	nvic_irq_set_priority(NVIC_TIMER1_CC, 0);
+	nvic_irq_set_priority(NVIC_TIMER4, 16);
+
+  // Prioridad Timer PID
+	nvic_irq_set_priority(NVIC_TIMER2, 24);
+
+  // Prioridad Timer Brushless
+	nvic_irq_set_priority(NVIC_TIMER3, 32);
 }
 
