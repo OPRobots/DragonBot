@@ -31,11 +31,11 @@ void btn_cruceta() {
       case 0:
         set_color_RGB(0, 255, 0);
         velocidadMsIdealBase = 1.25;
-        #ifdef DRAGON_A
+        #ifdef MORRO_ESTRECHO
         kp = 0.10f;
         ki = 0;
         kd = 5.0f;
-        #elif DRAGON_B
+        #elif MORRO_ANCHO
         kp = 0.2f;
         ki = 0;
         kd = 25.0f;
@@ -44,11 +44,11 @@ void btn_cruceta() {
       case 1:
         set_color_RGB(63, 189, 0);
         velocidadMsIdealBase = 1.5;
-        #ifdef DRAGON_A
+        #ifdef MORRO_ESTRECHO
         kp = 0.10f;
         ki = 0;
         kd = 5.0f;
-        #elif DRAGON_B
+        #elif MORRO_ANCHO
         kp = 0.2f;
         ki = 0;
         kd = 25.0f;
@@ -57,11 +57,11 @@ void btn_cruceta() {
       case 2:
         set_color_RGB(126, 126, 0);
         velocidadMsIdealBase = 1.75;
-        #ifdef DRAGON_A
+        #ifdef MORRO_ESTRECHO
         kp = 0.10f;
         ki = 0;
         kd = 5.0f;
-        #elif DRAGON_B
+        #elif MORRO_ANCHO
         kp = 0.2f;
         ki = 0;
         kd = 25.0f;
@@ -70,11 +70,11 @@ void btn_cruceta() {
       case 3:
         set_color_RGB(189, 63, 0);
         velocidadMsIdealBase = 2.0;
-        #ifdef DRAGON_A
+        #ifdef MORRO_ESTRECHO
         kp = 0.10f;
         ki = 0;
         kd = 5.0f;
-        #elif DRAGON_B
+        #elif MORRO_ANCHO
         kp = 0.2f;
         ki = 0;
         kd = 25.0f;
@@ -83,11 +83,11 @@ void btn_cruceta() {
       case 4:
         set_color_RGB(255, 0, 0);
         velocidadMsIdealBase = 2.25;
-        #ifdef DRAGON_A
+        #ifdef MORRO_ESTRECHO
         kp = 0.10f;
         ki = 0;
         kd = 5.0f;
-        #elif DRAGON_B
+        #elif MORRO_ANCHO
         kp = 0.2f;
         ki = 0;
         kd = 25.0f;
@@ -96,11 +96,11 @@ void btn_cruceta() {
       case 5:
         set_color_RGB(255, 0, 63);
         velocidadMsIdealBase = 2.5;
-        #ifdef DRAGON_A
+        #ifdef MORRO_ESTRECHO
         kp = 0.10f;
         ki = 0;
         kd = 5.0f;
-        #elif DRAGON_B
+        #elif MORRO_ANCHO
         kp = 0.2f;
         ki = 0;
         kd = 25.0f;
@@ -109,11 +109,11 @@ void btn_cruceta() {
       case 6:
         set_color_RGB(255, 0, 126);
         velocidadMsIdealBase = 2.75;
-        #ifdef DRAGON_A
+        #ifdef MORRO_ESTRECHO
         kp = 0.10f;
         ki = 0;
         kd = 5.0f;
-        #elif DRAGON_B
+        #elif MORRO_ANCHO
         kp = 0.2f;
         ki = 0;
         kd = 25.0f;
@@ -122,11 +122,11 @@ void btn_cruceta() {
       case 7:
         set_color_RGB(255, 0, 189);
         velocidadMsIdealBase = 3.0;
-        #ifdef DRAGON_A
+        #ifdef MORRO_ESTRECHO
         kp = 0.10f;
         ki = 0;
         kd = 5.0f;
-        #elif DRAGON_B
+        #elif MORRO_ANCHO
         kp = 0.2f;
         ki = 0;
         kd = 25.0f;
@@ -135,11 +135,11 @@ void btn_cruceta() {
       case 8:
         set_color_RGB(255, 0, 255);
         velocidadMsIdealBase = 3.25;
-        #ifdef DRAGON_A
+        #ifdef MORRO_ESTRECHO
         kp = 0.10f;
         ki = 0;
         kd = 5.0f;
-        #elif DRAGON_B
+        #elif MORRO_ANCHO
         kp = 0.2f;
         ki = 0;
         kd = 25.0f;
