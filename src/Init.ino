@@ -15,8 +15,6 @@ void inicia_todo() {
   delay(100);
   inicia_switch_boton();
   delay(100);
-  inicia_I2C();
-  delay(100);
 }
 
 /**
@@ -63,15 +61,6 @@ void inicia_encoders() {
   attachInterrupt(MOTOR_DERECHO_ENCODER_B, encoder_derecho_B, CHANGE);
   attachInterrupt(MOTOR_IZQUIERDO_ENCODER_A, encoder_izquierdo_A, CHANGE);
   attachInterrupt(MOTOR_IZQUIERDO_ENCODER_B, encoder_izquierdo_B, CHANGE);
-}
-
-/**
- * Inicia el protocolo I2C mediante la librería Wire.h y el MPU9250
- */
-void inicia_I2C() {
-  Wire.begin();
-  delay(100);
-  inicia_MPU9250();
 }
 
 /**

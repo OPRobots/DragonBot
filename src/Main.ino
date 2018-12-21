@@ -8,7 +8,6 @@
 #include <Filter.h>
 #include <MegunoLink.h>
 #include <PIDfromBT.h>
-#include <Wire.h>
 
 ////////////////////////
 // SELECTOR DE ROBOT  //
