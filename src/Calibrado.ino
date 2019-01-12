@@ -5,12 +5,10 @@
 void calibra_sensores() {
   switch (PISTA) {
   case MODO_LINEA:
-    valorSaturacionBajo = SATURACION_MINIMO_SENSORES_LINEA;
-    valorSaturacionAlto = SATURACION_MAXIMO_SENSORES_LINEA;
     valorCalibradoMaximo = CALIBRADO_MAXIMO_SENSORES_LINEA;
     valorCalibradoMinimo = CALIBRADO_MINIMO_SENSORES_LINEA;
-    posicionMaxima = 6500;
-    posicionMinima = -6500;
+    posicionMaxima = (NUMERO_SENSORES + 1) * 500;
+    posicionMinima = -(NUMERO_SENSORES + 1) * 500;
     calibrado_sensores_linea();
     calculo_umbrales_sensores();
     break;
