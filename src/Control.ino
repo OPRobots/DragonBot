@@ -126,7 +126,7 @@ int calcula_posicion_linea(int ultimaPosicion) {
   } else {
     pos = (ultimaPosicion > 0) ? (1000 * (NUMERO_SENSORES + 1) / 2) : -(1000 * (NUMERO_SENSORES + 1) / 2);
   }
-  return map(pos, -6500, 6500, -1000, 1000);
+  return map(pos, posicionMinima, posicionMaxima, -1000, 1000);
 }
 
 /**

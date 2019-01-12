@@ -79,10 +79,10 @@
 #define SENSOR_ROBOTRACER_DERECHO PA4
 #define SENSOR_ROBOTRACER_IZQUIERDO PA5
 
-#define CALIBRADO_MAXIMO_SENSORES_LINEA 4000
+#define LECTURA_MAXIMO_SENSORES_LINEA 4096
+#define LECTURA_MINIMO_SENSORES_LINEA 0
+#define CALIBRADO_MAXIMO_SENSORES_LINEA 2000
 #define CALIBRADO_MINIMO_SENSORES_LINEA 0
-#define SATURACION_MAXIMO_SENSORES_LINEA 3000
-#define SATURACION_MINIMO_SENSORES_LINEA 1000
 
 ///////////////////
 // MULTIPLEXADOR //
@@ -215,8 +215,6 @@ volatile long ticksIzquierdo = 0;
 ///////////////////////////
 // VARIABLES DE SENSORES //
 ///////////////////////////
-int valorSaturacionBajo;
-int valorSaturacionAlto;
 #ifdef MORRO_ANCHO
 int pinesSensores[] = {SENSOR_1, SENSOR_2, SENSOR_3, SENSOR_4, SENSOR_5, SENSOR_6, SENSOR_7, SENSOR_8, SENSOR_9, SENSOR_10, SENSOR_11, SENSOR_12};
 int valoresSensores[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -226,8 +224,6 @@ int pinesSensores[] = {SENSOR_1, SENSOR_2, SENSOR_3, SENSOR_4, SENSOR_5, SENSOR_
 int valoresSensores[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 int valoresSensoresRaw[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 #endif
-int posicionMaxima = 6500;
-int posicionMinima = -6500;
 
 ///////////////////////////////
 // VARIABLES DE CALIBRACIÓN  //
@@ -242,6 +238,8 @@ int valoresCalibracionMaximos[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 int umbralesCalibracionSensores[NUMERO_SENSORES];
 int valorCalibradoMaximo;
 int valorCalibradoMinimo;
+int posicionMaxima;
+int posicionMinima;
 
 ///////////////////////////////
 // VARIABLES DE COMPETICIÓN  //
