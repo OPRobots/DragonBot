@@ -33,10 +33,10 @@ void btn_cruceta() {
         if(VELOCIDAD == MODO_MS){
           velocidadMsIdealBase = 1.25;
         }else{
-          velocidadPercentBase = 30;
+          velocidadPercentBase = 20;
         }
         #ifdef MORRO_ESTRECHO
-        kp = 0.10f;
+        kp = 0.12f;
         ki = 0;
         kd = 5.0f;
         #elif MORRO_ANCHO
@@ -53,7 +53,7 @@ void btn_cruceta() {
           velocidadPercentBase = 38;
         }
         #ifdef MORRO_ESTRECHO
-        kp = 0.10f;
+        kp = 0.12f;
         ki = 0;
         kd = 5.0f;
         #elif MORRO_ANCHO
@@ -70,7 +70,7 @@ void btn_cruceta() {
           velocidadPercentBase = 44;
         }
         #ifdef MORRO_ESTRECHO
-        kp = 0.10f;
+        kp = 0.12f;
         ki = 0;
         kd = 5.0f;
         #elif MORRO_ANCHO
@@ -87,7 +87,7 @@ void btn_cruceta() {
           velocidadPercentBase = 50;
         }
         #ifdef MORRO_ESTRECHO
-        kp = 0.10f;
+        kp = 0.12f;
         ki = 0;
         kd = 5.0f;
         #elif MORRO_ANCHO
@@ -104,7 +104,7 @@ void btn_cruceta() {
           velocidadPercentBase = 56;
         }
         #ifdef MORRO_ESTRECHO
-        kp = 0.10f;
+        kp = 0.12f;
         ki = 0;
         kd = 5.0f;
         #elif MORRO_ANCHO
@@ -121,7 +121,7 @@ void btn_cruceta() {
           velocidadPercentBase = 63;
         }
         #ifdef MORRO_ESTRECHO
-        kp = 0.10f;
+        kp = 0.12f;
         ki = 0;
         kd = 5.0f;
         #elif MORRO_ANCHO
@@ -138,7 +138,7 @@ void btn_cruceta() {
           velocidadPercentBase = 69;
         }
         #ifdef MORRO_ESTRECHO
-        kp = 0.10f;
+        kp = 0.12f;
         ki = 0;
         kd = 5.0f;
         #elif MORRO_ANCHO
@@ -155,7 +155,7 @@ void btn_cruceta() {
           velocidadPercentBase = 75;
         }
         #ifdef MORRO_ESTRECHO
-        kp = 0.10f;
+        kp = 0.12f;
         ki = 0;
         kd = 5.0f;
         #elif MORRO_ANCHO
@@ -172,7 +172,7 @@ void btn_cruceta() {
           velocidadPercentBase = 81;
         }
         #ifdef MORRO_ESTRECHO
-        kp = 0.10f;
+        kp = 0.12f;
         ki = 0;
         kd = 5.0f;
         #elif MORRO_ANCHO
