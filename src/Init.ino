@@ -54,15 +54,17 @@ void inicia_motores() {
  * Configura las interrupciones para lectrua de los encoders
  */
 void inicia_encoders() {
-  pinMode(MOTOR_DERECHO_ENCODER_A, INPUT_PULLUP);
-  pinMode(MOTOR_DERECHO_ENCODER_B, INPUT_PULLUP);
-  pinMode(MOTOR_IZQUIERDO_ENCODER_A, INPUT_PULLUP);
-  pinMode(MOTOR_IZQUIERDO_ENCODER_B, INPUT_PULLUP);
+  if (VELOCIDAD == MODO_MS) {
+    pinMode(MOTOR_DERECHO_ENCODER_A, INPUT_PULLUP);
+    pinMode(MOTOR_DERECHO_ENCODER_B, INPUT_PULLUP);
+    pinMode(MOTOR_IZQUIERDO_ENCODER_A, INPUT_PULLUP);
+    pinMode(MOTOR_IZQUIERDO_ENCODER_B, INPUT_PULLUP);
 
-  attachInterrupt(MOTOR_DERECHO_ENCODER_A, encoder_derecho_A, CHANGE);
-  attachInterrupt(MOTOR_DERECHO_ENCODER_B, encoder_derecho_B, CHANGE);
-  attachInterrupt(MOTOR_IZQUIERDO_ENCODER_A, encoder_izquierdo_A, CHANGE);
-  attachInterrupt(MOTOR_IZQUIERDO_ENCODER_B, encoder_izquierdo_B, CHANGE);
+    attachInterrupt(MOTOR_DERECHO_ENCODER_A, encoder_derecho_A, CHANGE);
+    attachInterrupt(MOTOR_DERECHO_ENCODER_B, encoder_derecho_B, CHANGE);
+    attachInterrupt(MOTOR_IZQUIERDO_ENCODER_A, encoder_izquierdo_A, CHANGE);
+    attachInterrupt(MOTOR_IZQUIERDO_ENCODER_B, encoder_izquierdo_B, CHANGE);
+  }
 }
 
 /**
@@ -93,15 +95,14 @@ void inicia_misc() {
 /**
  * Asigna las prioridades a los timers para asegurarse de que no se solapan las ejecuciones.
  */
-void asigna_prioridades_timers(){
+void asigna_prioridades_timers() {
   // Prioridades máximas a Timers PWM
-	nvic_irq_set_priority(NVIC_TIMER1_CC, 0);
-	nvic_irq_set_priority(NVIC_TIMER4, 16);
+  nvic_irq_set_priority(NVIC_TIMER1_CC, 0);
+  nvic_irq_set_priority(NVIC_TIMER4, 16);
 
   // Prioridad Timer PID
-	nvic_irq_set_priority(NVIC_TIMER2, 24);
+  nvic_irq_set_priority(NVIC_TIMER2, 24);
 
   // Prioridad Timer Brushless
-	nvic_irq_set_priority(NVIC_TIMER3, 32);
+  nvic_irq_set_priority(NVIC_TIMER3, 32);
 }
-

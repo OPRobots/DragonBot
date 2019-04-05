@@ -37,6 +37,7 @@ void pausa_timer_PID() {
   velocidadMs = 0;
   velocidadMsIdealBase = 0;
   velocidadMsIdeal = 0;
+  velocidadPercentBase = 0;
   velocidadSuccionBase = 0;
   velocidadSuccion = 0;
   dar_velocidad(0);
@@ -86,7 +87,7 @@ void handler_timer_Brushless() {
       nivel_bateria(true);
     }
 
-    if (competicionIniciada) {
+    if (competicionIniciada && VELOCIDAD == MODO_MS) {
       velocidadMs = calcular_velocidad();
       if (velocidadMsIdeal > 0 || velocidadMs > 0) {
         velocidad += ajustar_velocidad_encoders();

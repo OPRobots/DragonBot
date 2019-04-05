@@ -29,6 +29,9 @@
 #define LIPO_2S 1
 #define LIPO_3S 2
 
+#define MODO_MS 1
+#define MODO_PWM 2
+
 ///////////////////
 // CONFIGURACION //
 ///////////////////
@@ -36,13 +39,14 @@
 #define PISTA MODO_LINEA
 #define LINEA LINEA_NEGRA
 #define LIPO LIPO_3S
+#define VELOCIDAD MODO_PWM
 #define TIEMPO_CALIBRADO 2500
 #define CALIBRAR_SENSORES true
 
 //////////////
 // SENSORES //
 //////////////
-#define TIEMPO_SIN_PISTA 100
+#define TIEMPO_SIN_PISTA 200
 
 #ifdef MORRO_ANCHO
 #define NUMERO_SENSORES 12
@@ -106,8 +110,8 @@
 #ifdef DRAGON_B
 #define MOTOR_DERECHO_ADELANTE PB14
 #define MOTOR_DERECHO_ATRAS PB15
-#define MOTOR_IZQUIERDO_ADELANTE PB13
-#define MOTOR_IZQUIERDO_ATRAS PB12
+#define MOTOR_IZQUIERDO_ADELANTE PB12
+#define MOTOR_IZQUIERDO_ATRAS PB13
 #endif
 
 #define MOTOR_DERECHO_PWM PA8
@@ -160,6 +164,7 @@ float posYm = 0;
 int velocidad = 0;
 float velocidadMsIdeal = 0;
 float velocidadMsIdealBase = 0;
+int velocidadPercentBase = 0;
 int velocidadSuccion = 0;
 int velocidadSuccionBase = 50;
 int velocidadMaxima = 255;
@@ -307,7 +312,11 @@ void loop() {
         inicia_timer_PID();
         competicionIniciada = true;
         set_color_RGB(0, 0, 0);
-        velocidadMsIdeal = velocidadMsIdealBase;
+        if (VELOCIDAD == MODO_MS) {
+          velocidadMsIdeal = velocidadMsIdealBase;
+        } else {
+          velocidad = map(velocidadPercentBase, 0, 100, 0, 255);
+        }
         velocidadSuccion = velocidadSuccionBase;
       }
     }

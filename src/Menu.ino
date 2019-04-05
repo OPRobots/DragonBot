@@ -30,7 +30,11 @@ void btn_cruceta() {
       switch (velocidad_menu) {
       case 0:
         set_color_RGB(0, 255, 0);
-        velocidadMsIdealBase = 1.25;
+        if(VELOCIDAD == MODO_MS){
+          velocidadMsIdealBase = 1.25;
+        }else{
+          velocidadPercentBase = 30;
+        }
         #ifdef MORRO_ESTRECHO
         kp = 0.10f;
         ki = 0;
@@ -43,7 +47,11 @@ void btn_cruceta() {
         break;
       case 1:
         set_color_RGB(63, 189, 0);
-        velocidadMsIdealBase = 1.5;
+        if(VELOCIDAD == MODO_MS){
+          velocidadMsIdealBase = 1.5;
+        }else{
+          velocidadPercentBase = 38;
+        }
         #ifdef MORRO_ESTRECHO
         kp = 0.10f;
         ki = 0;
@@ -56,7 +64,11 @@ void btn_cruceta() {
         break;
       case 2:
         set_color_RGB(126, 126, 0);
-        velocidadMsIdealBase = 1.75;
+        if(VELOCIDAD == MODO_MS){
+          velocidadMsIdealBase = 1.75;
+        }else{
+          velocidadPercentBase = 44;
+        }
         #ifdef MORRO_ESTRECHO
         kp = 0.10f;
         ki = 0;
@@ -69,7 +81,11 @@ void btn_cruceta() {
         break;
       case 3:
         set_color_RGB(189, 63, 0);
-        velocidadMsIdealBase = 2.0;
+        if(VELOCIDAD == MODO_MS){
+          velocidadMsIdealBase = 2.0;
+        }else{
+          velocidadPercentBase = 50;
+        }
         #ifdef MORRO_ESTRECHO
         kp = 0.10f;
         ki = 0;
@@ -82,7 +98,11 @@ void btn_cruceta() {
         break;
       case 4:
         set_color_RGB(255, 0, 0);
-        velocidadMsIdealBase = 2.25;
+        if(VELOCIDAD == MODO_MS){
+          velocidadMsIdealBase = 2.25;
+        }else{
+          velocidadPercentBase = 56;
+        }
         #ifdef MORRO_ESTRECHO
         kp = 0.10f;
         ki = 0;
@@ -95,7 +115,11 @@ void btn_cruceta() {
         break;
       case 5:
         set_color_RGB(255, 0, 63);
-        velocidadMsIdealBase = 2.5;
+        if(VELOCIDAD == MODO_MS){
+          velocidadMsIdealBase = 2.5;
+        }else{
+          velocidadPercentBase = 63;
+        }
         #ifdef MORRO_ESTRECHO
         kp = 0.10f;
         ki = 0;
@@ -108,7 +132,11 @@ void btn_cruceta() {
         break;
       case 6:
         set_color_RGB(255, 0, 126);
-        velocidadMsIdealBase = 2.75;
+        if(VELOCIDAD == MODO_MS){
+          velocidadMsIdealBase = 2.75;
+        }else{
+          velocidadPercentBase = 69;
+        }
         #ifdef MORRO_ESTRECHO
         kp = 0.10f;
         ki = 0;
@@ -121,7 +149,11 @@ void btn_cruceta() {
         break;
       case 7:
         set_color_RGB(255, 0, 189);
-        velocidadMsIdealBase = 3.0;
+        if(VELOCIDAD == MODO_MS){
+          velocidadMsIdealBase = 3.0;
+        }else{
+          velocidadPercentBase = 75;
+        }
         #ifdef MORRO_ESTRECHO
         kp = 0.10f;
         ki = 0;
@@ -134,7 +166,11 @@ void btn_cruceta() {
         break;
       case 8:
         set_color_RGB(255, 0, 255);
-        velocidadMsIdealBase = 3.25;
+        if(VELOCIDAD == MODO_MS){
+          velocidadMsIdealBase = 3.25;
+        }else{
+          velocidadPercentBase = 81;
+        }
         #ifdef MORRO_ESTRECHO
         kp = 0.10f;
         ki = 0;
