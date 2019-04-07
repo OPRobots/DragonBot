@@ -35,10 +35,10 @@
 ///////////////////
 // CONFIGURACION //
 ///////////////////
-#define MILLIS_INICIO 2000
+#define MILLIS_INICIO 5000
 #define PISTA MODO_LINEA
 #define LINEA LINEA_NEGRA
-#define LIPO LIPO_3S
+#define LIPO LIPO_2S
 #define VELOCIDAD MODO_PWM
 #define TIEMPO_CALIBRADO 2500
 #define CALIBRAR_SENSORES true
