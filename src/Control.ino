@@ -32,7 +32,7 @@ void nivel_bateria(bool enLoop) {
       }
       ultimaBateria = millis();
     } else {
-      if (velocidad >= 255 /* && abs(velocidadMs-velocidadMsIdeal)>0.25 */) {
+      if (velocidad >= 200 /* && abs(velocidadMs-velocidadMsIdeal)>0.25 */) {
         if (!avisoBateria) {
           set_color_RGB(0, 255, 255);
         }
@@ -159,7 +159,7 @@ int calcular_PID(int posicionActual) {
  * @param correccion Parámetro calculado por el PID para seguir la posición deseada en la pista
  */
 void dar_velocidad(int correccion) {
-  if (velocidad > 200) {
+  if (velocidad > 200 && VELOCIDAD == MODO_MS) {
     velocidad = 200;
     set_color_RGB(0, 0, 255);
   }

@@ -15,8 +15,8 @@
 // #define DRAGON_A 1
 #define DRAGON_B 1
 
-#define MORRO_ANCHO 1
-// #define MORRO_ESTRECHO 1
+// #define MORRO_ANCHO 1
+#define MORRO_ESTRECHO 1
 
 ////////////
 // MODOS  //
@@ -260,7 +260,7 @@ int crucetaCombinaciones[] = {CRUCETA_ARRIBA,
                               CRUCETA_DERECHA_ABAJO,
                               CRUCETA_ABAJO_IZQUIERDA,
                               CRUCETA_IZQUIERDA_ARRIBA};
-#define NUMERO_VELOCIDADES 9
+#define NUMERO_VELOCIDADES 10
 int velocidad_menu = 0;
 #define NUMERO_VELOCIDADES_SUCCION 9
 int velocidad_succion_menu = 0;
