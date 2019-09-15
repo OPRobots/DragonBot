@@ -36,18 +36,8 @@ void inicia_sensores() {
  * Registra los pines de los Puente-H para los motores y los inicia en parado.
  */
 void inicia_motores() {
-  pinMode(MOTOR_DERECHO_ADELANTE, OUTPUT);
-  pinMode(MOTOR_DERECHO_ATRAS, OUTPUT);
-  pinMode(MOTOR_DERECHO_PWM, OUTPUT);
-  pinMode(MOTOR_IZQUIERDO_ADELANTE, OUTPUT);
-  pinMode(MOTOR_IZQUIERDO_ATRAS, OUTPUT);
-  pinMode(MOTOR_IZQUIERDO_PWM, OUTPUT);
-
-  //	Inicializa los motores a estado parado
-  digitalWrite(MOTOR_DERECHO_ADELANTE, LOW);
-  digitalWrite(MOTOR_DERECHO_ATRAS, LOW);
-  digitalWrite(MOTOR_IZQUIERDO_ADELANTE, LOW);
-  digitalWrite(MOTOR_IZQUIERDO_ATRAS, LOW);
+  pinMode(MOTOR_DERECHO_PWM, PWM);
+  pinMode(MOTOR_IZQUIERDO_PWM, PWM);
 }
 
 /**
@@ -103,6 +93,6 @@ void asigna_prioridades_timers() {
   // Prioridad Timer PID
   nvic_irq_set_priority(NVIC_TIMER2, 24);
 
-  // Prioridad Timer Brushless
+  // Prioridad Timer Succion
   nvic_irq_set_priority(NVIC_TIMER3, 32);
 }

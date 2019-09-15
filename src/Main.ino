@@ -9,12 +9,6 @@
 #include <MegunoLink.h>
 #include <PIDfromBT.h>
 
-////////////////////////
-// SELECTOR DE ROBOT  //
-////////////////////////
-// #define DRAGON_A 1
-#define DRAGON_B 1
-
 // #define MORRO_ANCHO 1
 #define MORRO_ESTRECHO 1
 
@@ -42,6 +36,11 @@
 #define VELOCIDAD MODO_PWM
 #define TIEMPO_CALIBRADO 2500
 #define CALIBRAR_SENSORES true
+
+#define MIN_ESC_VELOCIDAD 9000
+#define MAX_ESC_VELOCIDAD 17990
+#define MIN_VELOCIDAD -1000
+#define MAX_VELOCIDAD 1000
 
 //////////////
 // SENSORES //
@@ -100,22 +99,9 @@
 /////////////
 // MOTORES //
 /////////////
-#ifdef DRAGON_A
-#define MOTOR_DERECHO_ADELANTE PB15
-#define MOTOR_DERECHO_ATRAS PB14
-#define MOTOR_IZQUIERDO_ADELANTE PB12
-#define MOTOR_IZQUIERDO_ATRAS PB13
-#endif
 
-#ifdef DRAGON_B
-#define MOTOR_DERECHO_ADELANTE PB14
-#define MOTOR_DERECHO_ATRAS PB15
-#define MOTOR_IZQUIERDO_ADELANTE PB12
-#define MOTOR_IZQUIERDO_ATRAS PB13
-#endif
-
-#define MOTOR_DERECHO_PWM PA8
-#define MOTOR_IZQUIERDO_PWM PB8
+#define MOTOR_DERECHO_PWM PB7
+#define MOTOR_IZQUIERDO_PWM PB6
 #define MOTOR_SUCCION PB9
 
 //////////////
@@ -167,7 +153,7 @@ float velocidadMsIdealBase = 0;
 int velocidadPercentBase = 0;
 int velocidadSuccion = 0;
 int velocidadSuccionBase = 50;
-int velocidadMaxima = 255;
+int velocidadMaxima = 1000;
 long ultimaLinea = 0;
 long ultimaBateria = 0;
 bool avisoBateria = false;
@@ -239,27 +225,17 @@ bool competicionIniciada = false;
 /////////////////////////////////////////
 // VARIABLES DE MENÚ DE CONFIGURACIÓN  //
 /////////////////////////////////////////
-#define NUMERO_COMBINACIONES 10
-#define CRUCETA_ARRIBA 1460
-#define CRUCETA_ABAJO 475
-#define CRUCETA_DERECHA 860
-#define CRUCETA_IZQUIERDA 2040
-#define CRUCETA_ARRIBA_ABAJO 1670
-#define CRUCETA_DERECHA_IZQUIERDA 2280
-#define CRUCETA_ARRIBA_DERECHA 1840
-#define CRUCETA_DERECHA_ABAJO 1160
-#define CRUCETA_ABAJO_IZQUIERDA 2170
-#define CRUCETA_IZQUIERDA_ARRIBA 2490
-int crucetaCombinaciones[] = {CRUCETA_ARRIBA,
-                              CRUCETA_ABAJO,
-                              CRUCETA_DERECHA,
-                              CRUCETA_IZQUIERDA,
-                              CRUCETA_ARRIBA_ABAJO,
-                              CRUCETA_DERECHA_IZQUIERDA,
-                              CRUCETA_ARRIBA_DERECHA,
-                              CRUCETA_DERECHA_ABAJO,
-                              CRUCETA_ABAJO_IZQUIERDA,
-                              CRUCETA_IZQUIERDA_ARRIBA};
+#define NUMERO_COMBINACIONES 4
+#define CRUCETA_ARRIBA 3070
+#define CRUCETA_ABAJO 1680
+#define CRUCETA_DERECHA 2320
+#define CRUCETA_IZQUIERDA 3430
+int crucetaCombinaciones[] = {
+    CRUCETA_ARRIBA,
+    CRUCETA_ABAJO,
+    CRUCETA_DERECHA,
+    CRUCETA_IZQUIERDA,
+};
 #define NUMERO_VELOCIDADES 10
 int velocidad_menu = 0;
 #define NUMERO_VELOCIDADES_SUCCION 9
@@ -270,13 +246,15 @@ int velocidad_succion_menu = 0;
 //////////////////////////////
 HardwareTimer TimerPID(2);
 bool timerPID_pause = false;
-HardwareTimer TimerBrushless(3);
+HardwareTimer TimerSuccion(3);
+HardwareTimer TimerBrushless(4);
 PIDfromBT CalibracionPID(&kp, &ki, &kd, &velocidad, &posicionIdeal, &velocidadSuccion, DEBUG);
 ExponentialFilter<long> filtroBateria(15, 0);
 
 void setup() {
   inicia_todo();
   inicia_timer_Brushless();
+  inicia_timer_Succion();
   nivel_bateria(false);
   calibra_sensores();
   delay(100);
@@ -315,7 +293,9 @@ void loop() {
         if (VELOCIDAD == MODO_MS) {
           velocidadMsIdeal = velocidadMsIdealBase;
         } else {
-          velocidad = map(velocidadPercentBase, 0, 100, 0, 255);
+          velocidad = map(velocidadPercentBase, 0, 100, 0, velocidadMaxima);
+          kp = kp*4.0f;
+          kd = kd*4.0f;
         }
         velocidadSuccion = velocidadSuccionBase;
       }

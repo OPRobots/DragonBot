@@ -32,15 +32,18 @@ void nivel_bateria(bool enLoop) {
       }
       ultimaBateria = millis();
     } else {
-      if (velocidad >= 200 /* && abs(velocidadMs-velocidadMsIdeal)>0.25 */) {
+      set_color_RGB(0, 0, 0);
+      /* if (velocidad >= 200) {
         if (!avisoBateria) {
           set_color_RGB(0, 255, 255);
         }
-      } else {
+      }
+      else {
         if (!avisoBateria) {
           set_color_RGB(0, 0, 0);
         }
       }
+      */
     }
   } else {
     filtroBateria.Filter(0);
@@ -159,10 +162,7 @@ int calcular_PID(int posicionActual) {
  * @param correccion Parámetro calculado por el PID para seguir la posición deseada en la pista
  */
 void dar_velocidad(int correccion) {
-  if (velocidad > 200 && VELOCIDAD == MODO_MS) {
-    velocidad = 200;
-    set_color_RGB(0, 0, 255);
-  }
+
   int velocidadIzquierda = velocidad;
   int velocidadDerecha = velocidad;
   if (!timerPID_pause) {
@@ -170,39 +170,30 @@ void dar_velocidad(int correccion) {
     velocidadDerecha = velocidadDerecha + correccion;
   }
 
-  int MOTOR_DERECHO_ADELANTE_STATE = HIGH;
-  int MOTOR_DERECHO_ATRAS_STATE = LOW;
-  int MOTOR_IZQUIERDO_ADELANTE_STATE = HIGH;
-  int MOTOR_IZQUIERDO_ATRAS_STATE = LOW;
-
   if (velocidadDerecha > velocidadMaxima) {
     velocidadDerecha = velocidadMaxima;
-  } else if (velocidadDerecha < 0) {
-    velocidadDerecha = abs(velocidadDerecha);
-    if (velocidadDerecha > velocidadMaxima) {
-      velocidadDerecha = velocidadMaxima;
-    }
-    MOTOR_DERECHO_ADELANTE_STATE = LOW;
-    MOTOR_DERECHO_ATRAS_STATE = HIGH;
+  } else if (velocidadDerecha < -velocidadMaxima) {
+    velocidadDerecha = -velocidadMaxima;
   }
   if (velocidadIzquierda > velocidadMaxima) {
     velocidadIzquierda = velocidadMaxima;
-  } else if (velocidadIzquierda < 0) {
-    velocidadIzquierda = abs(velocidadIzquierda);
-    if (velocidadIzquierda > velocidadMaxima) {
-      velocidadIzquierda = velocidadMaxima;
-    }
-    MOTOR_IZQUIERDO_ADELANTE_STATE = LOW;
-    MOTOR_IZQUIERDO_ATRAS_STATE = HIGH;
+  } else if (velocidadIzquierda < -velocidadMaxima) {
+    velocidadIzquierda = velocidadMaxima;
   }
 
-  digitalWrite(MOTOR_DERECHO_ADELANTE, MOTOR_DERECHO_ADELANTE_STATE);
-  digitalWrite(MOTOR_DERECHO_ATRAS, MOTOR_DERECHO_ATRAS_STATE);
-  digitalWrite(MOTOR_IZQUIERDO_ADELANTE, MOTOR_IZQUIERDO_ADELANTE_STATE);
-  digitalWrite(MOTOR_IZQUIERDO_ATRAS, MOTOR_IZQUIERDO_ATRAS_STATE);
+  if (velocidadDerecha < 0) {
+    velocidadDerecha = 0;
+  }
+  if (velocidadIzquierda < 0) {
+    velocidadIzquierda = 0;
+  }
+  if (velocidad > 0) {
+    velocidadDerecha = constrain(velocidadDerecha, 200, 1000);
+    velocidadIzquierda = constrain(velocidadIzquierda, 200, 1000);
+  }
 
-  analogWrite(MOTOR_DERECHO_PWM, velocidadDerecha);
-  analogWrite(MOTOR_IZQUIERDO_PWM, velocidadIzquierda);
+  pwmWrite(MOTOR_DERECHO_PWM, map(velocidadDerecha, velocidadMaxima, -velocidadMaxima, MIN_ESC_VELOCIDAD, MAX_ESC_VELOCIDAD));
+  pwmWrite(MOTOR_IZQUIERDO_PWM, map(velocidadIzquierda, velocidadMaxima, -velocidadMaxima, MIN_ESC_VELOCIDAD, MAX_ESC_VELOCIDAD));
 }
 
 /**
