@@ -309,6 +309,7 @@ void loop() {
         ticksDerechoAnteriores = 0;
         ticksIzquierdoAnteriores = 0;
         velocidadMs = 0;
+        ultimaLinea = millis();
         inicia_timer_PID();
         competicionIniciada = true;
         set_color_RGB(0, 0, 0);

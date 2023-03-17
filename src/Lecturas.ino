@@ -13,8 +13,8 @@ int mux_analog_read(byte canalMux) {
 
 /**
  * Función de lectura del sensor indicado mapeando los máximos y mínimos del mismo
- * @param  canalMux Canal del Multiplexador correspondiente al sensor que se desea leer.
- * @param  sensor 	Índice del array de sensores correspondiente al sensor leído actualmente.
+ * @param  canalMux Canal del Multiplexador correspond  iente al sensor que se desea leer.
+ * @param  sensor 	Indice del array de sensores correspondiente al sensor leído actualmente.
  * @return [int]    Lectura analógica del sensor indicado.
  */
 int mux_analog_read_map(byte canalMux, int sensor) {

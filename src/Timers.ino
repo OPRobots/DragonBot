@@ -68,11 +68,11 @@ void handler_timer_Brushless() {
     if (millis() < millisInitESC + 5000) {
       pinMode(MOTOR_SUCCION, OUTPUT);
       digitalWrite(MOTOR_SUCCION, HIGH);
-      delayMicroseconds(2000);
+      delayMicroseconds(1665);
       digitalWrite(MOTOR_SUCCION, LOW);
     } else if (millis() < millisInitESC + 10000) {
       digitalWrite(MOTOR_SUCCION, HIGH);
-      delayMicroseconds(1000);
+      delayMicroseconds(832);
       digitalWrite(MOTOR_SUCCION, LOW);
     }
     if (millis() >= millisInitESC + 10000) {
@@ -80,7 +80,7 @@ void handler_timer_Brushless() {
     }
   } else {
     digitalWrite(MOTOR_SUCCION, HIGH);
-    delayMicroseconds(map(velocidadSuccion, 0, 255, 1000, 2000));
+    delayMicroseconds(map(velocidadSuccion, 0, 255, 832, 1665));
     digitalWrite(MOTOR_SUCCION, LOW);
 
     if (competicionIniciada || velocidadSuccion > 0) {

@@ -61,7 +61,14 @@ void calibrado_sensores_linea() {
  * Realiza una calibración simple de valores máximos y mínimos durante el tiempo de calibración establecido y calcula el umbral de detección en base a ello.
  */
 void calculo_umbrales_sensores() {
+
+  bool calibracion_ok = true;
   for (int sensor = 0; sensor < NUMERO_SENSORES; sensor++) {
+
+    if (abs(valoresCalibracionMaximos[sensor] - valoresCalibracionMinimos[sensor]) < 1000) {
+      calibracion_ok = false;
+    }
+
     umbralesCalibracionSensores[sensor] = (valoresCalibracionMinimos[sensor] + valoresCalibracionMaximos[sensor]) / 2.0f;
 
     Serial.print("umbralesCalibracionSensores[");
@@ -69,5 +76,18 @@ void calculo_umbrales_sensores() {
     Serial.print("] = ");
     Serial.print(umbralesCalibracionSensores[sensor]);
     Serial.print(";\n");
+  }
+
+  if (calibracion_ok) {
+    set_color_RGB(0, 5, 0);
+  } else {
+    set_color_RGB(5, 0, 0);
+  }
+  while (!btn_pulsado()) {
+    delay(100);
+    while (btn_pulsado()) {
+      set_color_RGB(0, 0, 0);
+      return;
+    }
   }
 }
